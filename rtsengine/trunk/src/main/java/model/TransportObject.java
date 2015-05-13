@@ -26,7 +26,7 @@ public class TransportObject {
     // preprocessor needs to stem the tweet's content (e.g. via the Stanford Stemming
     // library, insert each term into the TermDictionary and then store the list
     // of termIDs here)
-    private ArrayList<String> termIDs;
+    private ArrayList<Integer> termIDs;
 
     // can probably just be copied from the tweet by the preprocessor
     private Date timestamp;
@@ -57,11 +57,11 @@ public class TransportObject {
         this.tweetID = tweetID;
     }
 
-    public ArrayList<String> getTermIDs() {
+    public ArrayList<Integer> getTermIDs() {
         return termIDs;
     }
 
-    public void setTermIDs(ArrayList<String> termIDs) {
+    public void setTermIDs(ArrayList<Integer> termIDs) {
         this.termIDs = termIDs;
     }
 
