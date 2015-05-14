@@ -28,25 +28,38 @@ public class AppendOnlyIndex implements IRTSIndex {
             UnsortedPostingList postingListForEachTermID=  this.invertedIndex.get(termID);
             // traversing the each list and maintaining the top k element needed
             int value;
+            int count=0;
             value = postingListForEachTermID.getLast();
-            for (int i=value; i>=k;i++)
+            for (int i=value;i>=postingListForEachTermID.getFirst();i--)
             {
-                UnsortedPostingList postingListForEachKTerm=  this.invertedIndex.get(termID);
-                // need to compare the top k elements in the list and find the actually result
+                // using a counter to get the K term
+                count++;
+                UnsortedPostingList postingListForEachKTerm= this.invertedIndex.get(termID);
+                if(count==k)
+                    break;
+                // also need to write condition for freshness score
+
+                // need to compare the top k elements in the list and find the actual result
+                //needed freshness score
+               float freshness= transportObject.getFreshness();//To Make it verify
+                //Date dateValue=transportObject.getTimestamp();
+                // int hh=dateValue.getHours();
+                //int dd=dateValue.getMinutes();
+                //int mm=dateValue.getSeconds();
+                //String time= hh+":"+mm+":"+ dd;
+                float w1_fresh=(1/3);
+                float w1_significance=(1/3);
+                float w1_similarity=(1/3);
+                float freshness_score;
+                freshness_score=(w1_fresh*freshness+w1_significance*0+w1_similarity*0);
+
 
             }
 
 
         }
         // was trying for freshnes score
-        //Date dateValue=transportObject.getTimestamp();
-        // int hh=dateValue.getHours();
-        //int dd=dateValue.getMinutes();
-        //int mm=dateValue.getSeconds();
-        //String time= hh+":"+mm+":"+ dd;
-        //float freshness_score;
-        //float w1,w2,w3= (1/3);
-        //freshness_score=(0.33*time+0+0);
+
 
 
         return null;
