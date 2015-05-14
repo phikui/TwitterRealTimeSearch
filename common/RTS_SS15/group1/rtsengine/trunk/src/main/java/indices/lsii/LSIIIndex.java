@@ -10,7 +10,7 @@ import java.util.Date;
  * Created by chans on 5/14/15.
  */
 public class LSIIIndex implements IRTSIndex {
-    public ArrayList<Integer> searchTweetIDs(String terms, Date timestamp, int k) {
+    public ArrayList<Integer> searchTweetIDs(TransportObject transportObject, int k) {
         // TODO
         return null;
     }

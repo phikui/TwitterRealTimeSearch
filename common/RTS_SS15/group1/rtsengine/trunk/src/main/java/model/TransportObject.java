@@ -31,8 +31,16 @@ public class TransportObject {
     // can probably just be copied from the tweet by the preprocessor
     private Date timestamp;
 
+    // for determining if the object is a query or not
+    private boolean isQuery;
+
     // needs to be calculated somehow by the preprocessor
     private float significance;
+
+    // probably need something like this if we can get it using the preprocessor
+    private float freshness; // based on timeStamp
+
+    private float similarity; // based on word occurrence in relation to tweet word count
 
     // Add more fields if necessary during preprocessor implementation
 
@@ -73,6 +81,14 @@ public class TransportObject {
         this.timestamp = timestamp;
     }
 
+    public boolean isQuery() {
+        return isQuery;
+    }
+
+    public void setIsQuery(boolean isQuery)  {
+        this.isQuery = isQuery;
+    }
+
     public float getSignificance() {
         return significance;
     }
@@ -80,5 +96,17 @@ public class TransportObject {
     public void setSignificance(float significance) {
         this.significance = significance;
     }
+
+    public float getFreshness() {
+        return freshness;
+    }
+
+    public void setFreshness(float freshness) {
+        this.freshness = freshness;
+    }
+
+    public float getSimilarity() { return similarity; }
+
+    public void setSimilarity(float similarity) { this.similarity = similarity; }
 
 }
