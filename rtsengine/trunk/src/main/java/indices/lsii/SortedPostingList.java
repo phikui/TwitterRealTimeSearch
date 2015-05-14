@@ -1,6 +1,7 @@
 package indices.lsii;
 
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 /**
  * This posting list is always sorted according to
@@ -11,13 +12,27 @@ import java.util.LinkedList;
 public class SortedPostingList extends LinkedList<SortedPostingListElement> {
 
     /**
-     * This function inserts the tweetID sorted according to sortKey
+     * This function inserts the tweetID sorted according to sortKey, should be O(1) on already sorted lists
      *
      * @param tweetID
      * @param sortKey
      */
-    public void insertSorted(int tweetID, int sortKey) {
-        // TODO: implement
+    public void insertSorted(int tweetID, float sortKey) {
+        SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
+        ListIterator<SortedPostingListElement> iterator = listIterator();
+        while(true) {
+            if (iterator.hasNext() == false) {
+                iterator.add(sortElement);
+                return;
+            }
+
+            SortedPostingListElement elementInList = iterator.next();
+            if (elementInList.getSortKey() > sortElement.getSortKey()) {
+                iterator.previous();
+                iterator.add(sortElement);
+                return;
+            }
+        }
     }
 
 }

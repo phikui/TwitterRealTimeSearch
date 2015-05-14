@@ -21,13 +21,12 @@ public interface IRTSIndex {
     /**
      * Returns top k tweetIDs according to ranking function f
      *
-     * @param   terms        Query terms
-     * @param   timestamp    Query timestamp
+     * @param   transportObject     isQuery transport object
      * @param   k            Number of Tweet IDs to return
      *
      * @return  ArrayList<Integer>
      */
-    public ArrayList<Integer> searchTweetIDs(String terms, Date timestamp, int k);
+    public ArrayList<Integer> searchTweetIDs(TransportObject transportObject, int k);
 
     /**
      * Inserts the tweetID transported in transportObject into the index.
