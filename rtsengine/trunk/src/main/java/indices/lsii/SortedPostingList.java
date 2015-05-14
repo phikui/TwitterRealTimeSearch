@@ -35,4 +35,21 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
         }
     }
 
+    /*
+    @Override
+    public boolean equals(int tweetID){
+        SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, -1);
+        ListIterator<SortedPostingListElement> iterator = listIterator();
+        while(true){
+            if (iterator.hasNext() == false) {
+                return false;
+            }
+            SortedPostingListElement elementInList = iterator.next();
+            if (elementInList.getTweetID() == sortElement.getTweetID()) {
+                return true;
+            }
+        }
+
+    }*/
+
 }
