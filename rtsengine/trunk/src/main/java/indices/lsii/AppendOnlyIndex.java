@@ -21,8 +21,34 @@ public class AppendOnlyIndex implements IRTSIndex {
         this.invertedIndex = new HashMap<Integer, UnsortedPostingList>();
     }
 
-    public ArrayList<Integer> searchTweetIDs(String terms, Date timestamp, int k) {
-        // TODO
+    public ArrayList<Integer> searchTweetIDs(TransportObject transportObject, int k) {
+        ArrayList<Integer> termIDs = transportObject.getTermIDs();
+        // for each term maintaining a posting list for the querry object
+        for (int termID: termIDs){
+            UnsortedPostingList postingListForEachTermID=  this.invertedIndex.get(termID);
+            // traversing the each list and maintaining the top k element needed
+            int value;
+            value = postingListForEachTermID.getLast();
+            for (int i=value; i>=k;i++)
+            {
+                UnsortedPostingList postingListForEachKTerm=  this.invertedIndex.get(termID);
+                // need to compare the top k elements in the list and find the actually result
+
+            }
+
+
+        }
+        // was trying for freshnes score
+        //Date dateValue=transportObject.getTimestamp();
+        // int hh=dateValue.getHours();
+        //int dd=dateValue.getMinutes();
+        //int mm=dateValue.getSeconds();
+        //String time= hh+":"+mm+":"+ dd;
+        //float freshness_score;
+        //float w1,w2,w3= (1/3);
+        //freshness_score=(0.33*time+0+0);
+
+
         return null;
     }
 
@@ -34,12 +60,16 @@ public class AppendOnlyIndex implements IRTSIndex {
         // the corresponding PostingList
         for (int termID: termIDs) {
             UnsortedPostingList postingListForTermID = this.invertedIndex.get(termID);
+            //caluculate the time of each posting list
+
 
             // Create PostingList for this termID if necessary
             if (postingListForTermID == null) {
                 postingListForTermID = new UnsortedPostingList();
                 this.invertedIndex.put(termID, postingListForTermID);
             }
+
+
 
             // Insert tweetID into posting list for this term at the last position
             // of the posting list, since this is the latest arriving tweet with the
