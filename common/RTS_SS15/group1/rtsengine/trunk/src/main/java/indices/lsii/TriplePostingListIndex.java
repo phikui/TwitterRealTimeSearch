@@ -35,6 +35,7 @@ public class TriplePostingListIndex implements IRTSIndex {
         float currSimilarity = 0;
 
         float fValue = 0;
+        float threshold = 0;
 
 
         for (int termID: termIDs){
@@ -60,7 +61,7 @@ public class TriplePostingListIndex implements IRTSIndex {
                 // for TA we would need to look up fresh and sig for the current tweetID and then calculate f:
                 // currFreshness = TweetDictionary.getTransportObject(currentTweetID).getFreshness();
                 // currSimilarity = TweetDictionary.getTransportObject(currentTweetID).getSimilarity();
-                // fValue = calculateRankingFunction(murrFreshness, maxSignificance, currSimilarity);
+                // fValue = calculateRankingFunction(currFreshness, maxSignificance, currSimilarity);
                 if(!currentTopK.contains(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
@@ -75,6 +76,12 @@ public class TriplePostingListIndex implements IRTSIndex {
                 if(!currentTopK.contains(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
+
+                threshold = calculateRankingFunction(maxFreshness, maxSignificance, maxSimilarity);
+                if((currentTopK.get((k-1)).getSortKey() >= threshold) && (currentTopK.get((k-1)) != null)){
+                    break;
+                }
+
             }
 
         }
