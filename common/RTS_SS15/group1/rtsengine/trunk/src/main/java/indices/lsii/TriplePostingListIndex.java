@@ -26,16 +26,16 @@ public class TriplePostingListIndex implements IRTSIndex {
         int currentTweetID;
 
         // max values for TA to calculate threshold
-        float maxFreshness = 0;
-        float maxSignificance = 0;
-        float maxSimilarity = 0;
+        float maxFreshness;
+        float maxSignificance;
+        float maxSimilarity;
 
         float currFreshness = 0;
         float currSignificance = 0;
         float currSimilarity = 0;
 
         float fValue = 0;
-        float threshold = 0;
+        float threshold;
 
 
         for (int termID: termIDs){
@@ -67,7 +67,7 @@ public class TriplePostingListIndex implements IRTSIndex {
                 }
 
                 currentTweetID = triplePostingListForTermID.getTermSimilarityPostingList().get(i).getTweetID();
-                maxSignificance = triplePostingListForTermID.getTermSimilarityPostingList().get(i).getSortKey();
+                maxSimilarity = triplePostingListForTermID.getTermSimilarityPostingList().get(i).getSortKey();
 
                 // for TA we would need to look up fresh and sim for the current tweetID and then calculate f:
                 // currFreshness = TweetDictionary.getTransportObject(currentTweetID).getFreshness();
@@ -86,7 +86,7 @@ public class TriplePostingListIndex implements IRTSIndex {
 
         }
 
-        // shorten to top-k elements and copy to arrayList
+        // shorten to top-k elements and copy to arrayList, this may be done better as it currently is O(list.size())
         currentTopK.subList((k-1), currentTopK.size()).clear();
         for(int j = 0; j < k; j++){
             topKTweetIDs.add(currentTopK.get(j).getTweetID());
