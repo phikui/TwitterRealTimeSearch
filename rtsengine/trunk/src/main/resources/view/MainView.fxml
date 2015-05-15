@@ -10,14 +10,24 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ListView layoutX="95.0" layoutY="86.0" prefHeight="398.0" prefWidth="372.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ScrollPane layoutX="77.0" layoutY="130.0" prefHeight="398.0" prefWidth="372.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ComboBox layoutX="109.0" layoutY="52.0" prefHeight="26.0" prefWidth="82.0" promptText="Index" />
-                  <ComboBox layoutX="128.0" layoutY="97.0" prefHeight="26.0" prefWidth="63.0" promptText="K" />
-                  <Button layoutX="80.0" layoutY="324.0" mnemonicParsing="false" text="Search" />
+                  <Label layoutX="85.0" layoutY="309.0" text="Freshness:" />
+                  <Label layoutX="90.0" layoutY="274.0" text="Similarity:" />
+                  <Label layoutX="73.0" layoutY="240.0" text="Significance:" />
+                  <TextField layoutX="152.0" layoutY="235.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
+                  <TextField layoutX="152.0" layoutY="269.0" prefHeight="16.0" prefWidth="47.0" promptText="100" />
+                  <TextField layoutX="152.0" layoutY="304.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
+                  <ComboBox layoutX="115.0" layoutY="24.0" prefHeight="26.0" prefWidth="82.0" promptText="Index" />
+                  <Button layoutX="86.0" layoutY="344.0" mnemonicParsing="false" text="Start" />
+                  <Label layoutX="19.0" layoutY="207.0" text="Ratio Tweets/Queries" />
+                  <TextField layoutX="152.0" layoutY="202.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
+                  <ToggleButton layoutX="135.0" layoutY="167.0" mnemonicParsing="false" text="Stream" />
+                  <TextField layoutX="152.0" layoutY="62.0" prefHeight="26.0" prefWidth="47.0" text="10" />
+                  <Label layoutX="72.0" layoutY="67.0" text="# of Threads" />
                </children>
             </AnchorPane>
         </items>
