@@ -18,12 +18,14 @@ public class TweetObject implements Comparable, Serializable {
 
     private GeoLocation geoLocation;
     private Place place;
+    private int followers;
 
-    public TweetObject(String username, String text, GeoLocation geoLocation, Place place) {
+    public TweetObject(String username, String text, GeoLocation geoLocation, Place place, int followers) {
         this.username = username;
         this.text = text;
         this.geoLocation = geoLocation;
         this.place = place;
+        this.followers = followers;
     }
 
     public String getUsername() {

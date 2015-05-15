@@ -17,6 +17,7 @@
                <children>
                   <ComboBox layoutX="109.0" layoutY="52.0" prefHeight="26.0" prefWidth="82.0" promptText="Index" />
                   <ComboBox layoutX="128.0" layoutY="97.0" prefHeight="26.0" prefWidth="63.0" promptText="K" />
+                  <Button layoutX="80.0" layoutY="324.0" mnemonicParsing="false" text="Search" />
                </children>
             </AnchorPane>
         </items>
