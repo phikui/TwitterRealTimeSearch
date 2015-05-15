@@ -12,7 +12,7 @@ import java.util.ListIterator;
 public class SortedPostingList extends LinkedList<SortedPostingListElement> {
 
     /**
-     * This function inserts the tweetID sorted according to sortKey, should be O(1) on already sorted lists
+     * This function inserts the tweetID sorted according to sortKey should be O(1) on already sorted lists
      *
      * @param tweetID
      * @param sortKey

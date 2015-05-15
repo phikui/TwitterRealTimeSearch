@@ -4,6 +4,7 @@ import twitter4j.GeoLocation;
 import twitter4j.Place;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Phil on 27.04.2015.
@@ -11,6 +12,8 @@ import java.io.Serializable;
 public class TweetObject implements Comparable, Serializable {
     private String username;
     private String text;
+    private Date timestamp;
+    private float numberOfAuthorFollowers;
 
     public GeoLocation getGeoLocation() { return geoLocation; }
 
@@ -18,22 +21,30 @@ public class TweetObject implements Comparable, Serializable {
 
     private GeoLocation geoLocation;
     private Place place;
-    private int followers;
 
-    public TweetObject(String username, String text, GeoLocation geoLocation, Place place, int followers) {
+    public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers) {
         this.username = username;
         this.text = text;
         this.geoLocation = geoLocation;
         this.place = place;
-        this.followers = followers;
+        this.timestamp = timestamp;
+        this.numberOfAuthorFollowers = numberOfAuthorFollowers;
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public String getText() {
-        return text;
+        return this.text;
+    }
+
+    public Date getTimestamp() {
+        return this.timestamp;
+    }
+
+    public float getNumberOfAuthorFollowers() {
+        return this.numberOfAuthorFollowers;
     }
 
     public int compareTo(Object o) {
