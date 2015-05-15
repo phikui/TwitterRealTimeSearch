@@ -1,7 +1,10 @@
 package model;
 
-import java.util.ArrayList;
+import utilities.HelperFunctions;
+
+import java.util.List;
 import java.util.Date;
+
 
 /**
  * Transports a tweetObject and stores
@@ -13,48 +16,87 @@ import java.util.Date;
  */
 public class TransportObject {
 
-    private TweetObject tweetObject;
+    /*
+     * Fields populated by the constructor
+     */
+    // for determining if the object is a query or not
+    private boolean isQuery;
+    // Holds either the tweet's content or the search query
+    private String text;
+    // either query timestamp or taken from the tweet
+    private Date timestamp;
+    // number of tweets to return in queries, only used for queries
+    private int k;
+    // filled by the preprocessor based on number of
+    // followers at point in time when tweet was written
+    private float significance;
 
     /*
      * Fields populated by the preprocessor
      */
+    // filled by the preprocessor using stemming,
+    // based on the text field
+    private List<String> terms;
 
-    // preprocessor needs to insert the tweet into the
-    // TweetDictionary and store the fetched tweetID here
+    /*
+     * Fields populated by the writer/one of the query processors
+     */
+    // Writer needs to insert the tweet into the
+    // TweetDictionary and store the fetched tweetID here.
+    // No work for the query processor here, tweetID is null
+    // for queries.
     private int tweetID;
 
-    // preprocessor needs to stem the tweet's content (e.g. via the Stanford Stemming
-    // library, insert each term into the TermDictionary and then store the list
-    // of termIDs here)
-    private ArrayList<Integer> termIDs;
-
-    // can probably just be copied from the tweet by the preprocessor
-    private Date timestamp;
-
-    // for determining if the object is a query or not
-    private boolean isQuery;
-
-    // needs to be calculated somehow by the preprocessor
-    private float significance;
-
-    // probably need something like this if we can get it using the preprocessor
-    private float freshness; // based on timeStamp
-
-    private float similarity; // based on word occurrence in relation to tweet word count
-
-    // Add more fields if necessary during preprocessor implementation
-
-
+    // Writer translates already stemmed list of terms into
+    // list of termIDs. Therefore the writer has to insert
+    // terms into the TermDictionary and retrieve TermIDs
+    private List<Integer> termIDs;
 
     /*
      * Constructor and Getters/Setters
      */
+    // Constructor for arriving tweets
     public TransportObject(TweetObject tweetObject) {
-        this.tweetObject = tweetObject;
+        this.isQuery = false;
+        this.text = tweetObject.getText();
+        this.timestamp = tweetObject.getTimestamp();
+        this.significance = HelperFunctions.calculateSignificance(tweetObject);
     }
 
-    public TweetObject getTweetObject() {
-        return tweetObject;
+    // Constructor for arriving queries
+    public TransportObject(String query, Date timestamp, int k) {
+        this.isQuery = true;
+        this.text = query;
+        this.timestamp = timestamp;
+        this.k = k;
+    }
+
+    public boolean isQuery() {
+        return isQuery;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public int getk() {
+        return this.k;
+    }
+
+    public float getSignificance() {
+        return this.significance;
+    }
+
+    public List<String> getTerms() {
+        return terms;
+    }
+
+    public void setTerms(List<String> terms) {
+        this.terms = terms;
     }
 
     public int getTweetID() {
@@ -65,48 +107,22 @@ public class TransportObject {
         this.tweetID = tweetID;
     }
 
-    public ArrayList<Integer> getTermIDs() {
+    public List<Integer> getTermIDs() {
         return termIDs;
     }
 
-    public void setTermIDs(ArrayList<Integer> termIDs) {
+    public void setTermIDs(List<Integer> termIDs) {
         this.termIDs = termIDs;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    /*
+     * Helper functions
+     */
+    public float calculateFreshness() {
+        return HelperFunctions.calculateFreshness(this.timestamp);
     }
 
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
+    public float calculateTermSimilarity(List<Integer> otherTermIDs) {
+        return HelperFunctions.calculateTermSimilarity(this.termIDs, otherTermIDs);
     }
-
-    public boolean isQuery() {
-        return isQuery;
-    }
-
-    public void setIsQuery(boolean isQuery)  {
-        this.isQuery = isQuery;
-    }
-
-    public float getSignificance() {
-        return significance;
-    }
-
-    public void setSignificance(float significance) {
-        this.significance = significance;
-    }
-
-    public float getFreshness() {
-        return freshness;
-    }
-
-    public void setFreshness(float freshness) {
-        this.freshness = freshness;
-    }
-
-    public float getSimilarity() { return similarity; }
-
-    public void setSimilarity(float similarity) { this.similarity = similarity; }
-
 }

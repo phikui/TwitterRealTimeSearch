@@ -41,7 +41,13 @@ public class TweetCollector {
         StatusListener listener = new StatusListener(){
             public void onStatus(Status status) {
                 //System.out.println(status.getUser().getName() + " : " + status.getText());
-                TweetObject newTweet = new TweetObject(status.getUser().getName(),status.getText(),status.getGeoLocation(),status.getPlace(),status.getUser().getFollowersCount());
+                TweetObject newTweet = new TweetObject(
+                        status.getUser().getName(),
+                        status.getText(),
+                        status.getGeoLocation(),
+                        status.getPlace(),
+                        status.getCreatedAt(),
+                        status.getUser().getFollowersCount());
 
                 map.put(newTweet,status.getId());
                 counter[0]++;

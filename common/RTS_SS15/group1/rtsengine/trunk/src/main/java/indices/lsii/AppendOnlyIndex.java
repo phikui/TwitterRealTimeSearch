@@ -2,10 +2,8 @@ package indices.lsii;
 
 import indices.IRTSIndex;
 import model.TransportObject;
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Inverted Index mapping one TermID to one UnsortedPostingList
@@ -21,8 +19,9 @@ public class AppendOnlyIndex implements IRTSIndex {
         this.invertedIndex = new HashMap<Integer, UnsortedPostingList>();
     }
 
-    public ArrayList<Integer> searchTweetIDs(TransportObject transportObject, int k) {
-        ArrayList<Integer> termIDs = transportObject.getTermIDs();
+    public List<Integer> searchTweetIDs(TransportObject transportObject) {
+        int k = transportObject.getk();
+        List<Integer> termIDs = transportObject.getTermIDs();
         // for each term maintaining a posting list for the querry object
         for (int termID: termIDs){
             UnsortedPostingList postingListForEachTermID=  this.invertedIndex.get(termID);
@@ -60,14 +59,12 @@ public class AppendOnlyIndex implements IRTSIndex {
         }
         // was trying for freshnes score
 
-
-
         return null;
     }
 
     public void insertTransportObject(TransportObject transportObject) {
         int tweetID = transportObject.getTweetID();
-        ArrayList<Integer> termIDs = transportObject.getTermIDs();
+        List<Integer> termIDs = transportObject.getTermIDs();
 
         // For each termID of the tweet insert the tweetID into
         // the corresponding PostingList

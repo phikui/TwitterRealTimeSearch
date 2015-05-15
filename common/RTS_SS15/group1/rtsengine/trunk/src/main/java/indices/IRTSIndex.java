@@ -1,10 +1,8 @@
 package indices;
 
 import model.TransportObject;
-import model.TweetObject;
+import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * RTSIndices index tweetIDs (Integers) according
@@ -26,7 +24,7 @@ public interface IRTSIndex {
      *
      * @return  ArrayList<Integer>
      */
-    public ArrayList<Integer> searchTweetIDs(TransportObject transportObject, int k);
+    public List<Integer> searchTweetIDs(TransportObject transportObject);
 
     /**
      * Inserts the tweetID transported in transportObject into the index.
