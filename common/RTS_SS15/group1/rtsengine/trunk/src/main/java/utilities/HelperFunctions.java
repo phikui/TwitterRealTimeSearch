@@ -3,10 +3,7 @@ package utilities;
 import edu.stanford.nlp.util.Sets;
 import model.TweetObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by chans on 5/15/15.
@@ -22,15 +19,85 @@ public class HelperFunctions {
     private final static float THREE_DAYS = 259200000;
     private final static float ONE_WEEK = 604800000;
 
+    private final static int MAX_FOLLOWER = 10000000;
+
+
+    /**
+     * use MAX_FOLLOWER to determine 1.0 score / granularity
+     * everyone over MAX_FOLLOWER will have 1.0 score, should be improved
+     * for now to work with a value in interval [0,1]
+     *
+     * @param tweetObject
+     * @return
+     */
     public static float calculateSignificance(TweetObject tweetObject) {
-        return tweetObject.getNumberOfAuthorFollowers();
+        return (tweetObject.getNumberOfAuthorFollowers() / MAX_FOLLOWER);
     }
 
+    /**
+     * calculate the term similarity based on cosine similarity
+     * create word count vectors usable in cosine similarity function
+     *
+     * @param termIDs1
+     * @param termIDs2
+     * @return
+     */
     public static float calculateTermSimilarity(List<Integer> termIDs1, List<Integer> termIDs2) {
-        // For now calculate cosine similarity (i.e. number of terms in both lists)
-        List<Integer> retainList = new ArrayList<Integer>(termIDs1);
-        retainList.retainAll(termIDs2);
-        return retainList.size();
+        // get all terms without duplicates
+        List<Integer> allTermIDs = concatenateWithoutDuplicates(termIDs1,termIDs2);
+
+        List<Integer> vectorTextA = new ArrayList<Integer>();
+        List<Integer> vectorTextB = new ArrayList<Integer>();
+        int countWordA = 0;
+        int countWordB = 0;
+
+        // create vectors A and B which count occurrences of each word
+        for (int termID: allTermIDs){
+            // set count for vectorA
+            for(int i = 0; i < termIDs1.size(); i++){
+                if(termIDs1.get(i).equals(termID)){
+                    countWordA++;
+                }
+            }
+            vectorTextA.add(countWordA);
+            countWordA = 0;
+
+            // set count for vectorB
+            for(int j = 0; j < termIDs2.size(); j++){
+                if(termIDs2.get(j).equals(termID)){
+                    countWordB++;
+                }
+            }
+            vectorTextB.add(countWordB);
+            countWordB = 0;
+        }
+
+        float cosineSim = calculateCosineSimilarity(vectorTextA, vectorTextB);
+
+        return cosineSim;
+    }
+
+    public static List<Integer> concatenateWithoutDuplicates(List listA, List listB){
+        List tempList = new ArrayList();
+        tempList.addAll(listA);
+        tempList.addAll(listB);
+        List<Integer> listC = new ArrayList<Integer>(new LinkedHashSet<Integer>(tempList));
+        return listC;
+    }
+
+    private static float calculateCosineSimilarity(List<Integer> vectorA, List<Integer> vectorB) {
+        float dotProduct = 0;
+        float normA = 0;
+        float normB = 0;
+
+        // cosine similarity formula
+        for (int i = 0; i < vectorA.size(); i++) {
+            dotProduct += vectorA.get(i) * vectorB.get(i);
+            normA += Math.pow(vectorA.get(i), 2);
+            normB += Math.pow(vectorB.get(i), 2);
+        }
+
+        return dotProduct / ((float)Math.sqrt(normA) * (float)Math.sqrt(normB));
     }
 
     /**
