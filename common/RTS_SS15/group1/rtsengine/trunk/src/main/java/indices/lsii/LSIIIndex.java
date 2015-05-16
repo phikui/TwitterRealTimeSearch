@@ -12,12 +12,12 @@ import java.util.List;
  */
 public class LSIIIndex implements IRTSIndex {
 
-    public List<Integer> searchTweetIDs(TransportObject transportObject) {
+    public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
         // TODO: implement
         return null;
     }
 
-    public void insertTransportObject(TransportObject transportObject) {
+    public void insertTransportObject(TransportObject transportObjectInsertion) {
         // TODO: implement
     }
 }

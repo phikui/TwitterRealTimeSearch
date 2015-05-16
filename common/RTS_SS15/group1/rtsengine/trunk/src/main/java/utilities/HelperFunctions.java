@@ -1,8 +1,10 @@
 package utilities;
 
+import edu.stanford.nlp.util.Sets;
 import model.TweetObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -25,8 +27,10 @@ public class HelperFunctions {
     }
 
     public static float calculateTermSimilarity(List<Integer> termIDs1, List<Integer> termIDs2) {
-        // TODO: implement
-        return 0;
+        // For now calculate cosine similarity (i.e. number of terms in both lists)
+        List<Integer> retainList = new ArrayList<Integer>(termIDs1);
+        retainList.retainAll(termIDs2);
+        return retainList.size();
     }
 
     /**

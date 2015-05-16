@@ -18,13 +18,13 @@ public class TriplePostingListIndex implements IRTSIndex {
         this.invertedIndex = new HashMap<Integer, TriplePostingList>();
     }
 
-    public List<Integer> searchTweetIDs(TransportObject transportObject) {
-        int k = transportObject.getk();
+    public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
+        int k = transportObjectQuery.getk();
 
         // TODO
         List<Integer> topKTweetIDs = new ArrayList<Integer>();
         SortedPostingList currentTopK = new SortedPostingList();
-        List<Integer> termIDs = transportObject.getTermIDs();
+        List<Integer> termIDs = transportObjectQuery.getTermIDs();
         int currentTweetID;
 
         // max values for TA to calculate threshold
@@ -97,16 +97,16 @@ public class TriplePostingListIndex implements IRTSIndex {
         return topKTweetIDs;
     }
 
-    public void insertTransportObject(TransportObject transportObject) {
+    public void insertTransportObject(TransportObject transportObjectInsertion) {
 
         // extract the important information from the transport object
-        int tweetID = transportObject.getTweetID();
+        int tweetID = transportObjectInsertion.getTweetID();
 
         // Obtain significance and freshness from the transportObject
-        float significance = transportObject.getSignificance();
-        float freshness = transportObject.calculateFreshness();
+        float significance = transportObjectInsertion.getSignificance();
+        float freshness = transportObjectInsertion.calculateFreshness();
 
-        List<Integer> termIDs = transportObject.getTermIDs();
+        List<Integer> termIDs = transportObjectInsertion.getTermIDs();
 
         for (int termID: termIDs) {
             TriplePostingList triplePostingListForTermID = this.invertedIndex.get(termID);
@@ -121,7 +121,7 @@ public class TriplePostingListIndex implements IRTSIndex {
             // transportObject's termIDs
             List<Integer> singleTermIDList = new ArrayList<Integer>(1);
             singleTermIDList.add(termID);
-            float similarity = transportObject.calculateTermSimilarity(singleTermIDList);
+            float similarity = transportObjectInsertion.calculateTermSimilarity(singleTermIDList);
 
             // Insert tweetID into posting lists for this term sorted on the key
             triplePostingListForTermID.getSignificancePostingList().insertSorted(tweetID, significance);
