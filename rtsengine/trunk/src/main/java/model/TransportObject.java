@@ -19,6 +19,9 @@ public class TransportObject {
     /*
      * Fields populated by the constructor
      */
+    // Used by the writer to write the tweetObject into the TweetDictionary
+    // (Null for queries)
+    private TweetObject tweetObject;
     // for determining if the object is a query or not
     private boolean isQuery;
     // Holds either the tweet's content or the search query
@@ -26,10 +29,10 @@ public class TransportObject {
     // either query timestamp or taken from the tweet
     private Date timestamp;
     // number of tweets to return in queries, only used for queries
-    private int k;
+    private Integer k = null;
     // filled by the preprocessor based on number of
     // followers at point in time when tweet was written
-    private float significance;
+    private Float significance = null;
 
     /*
      * Fields populated by the preprocessor
@@ -45,7 +48,9 @@ public class TransportObject {
     // TweetDictionary and store the fetched tweetID here.
     // No work for the query processor here, tweetID is null
     // for queries.
-    private int tweetID;
+    // Init with null since 0 is already a valid tweetID and initially
+    // transportObjects don't have tweetID set
+    private Integer tweetID = null;
 
     // Writer translates already stemmed list of terms into
     // list of termIDs. Therefore the writer has to insert
@@ -57,6 +62,7 @@ public class TransportObject {
      */
     // Constructor for arriving tweets
     public TransportObject(TweetObject tweetObject) {
+        this.tweetObject = tweetObject;
         this.isQuery = false;
         this.text = tweetObject.getText();
         this.timestamp = tweetObject.getTimestamp();
@@ -71,8 +77,12 @@ public class TransportObject {
         this.k = k;
     }
 
+    public TweetObject getTweetObject() {
+        return this.tweetObject;
+    }
+
     public boolean isQuery() {
-        return isQuery;
+        return this.isQuery;
     }
 
     public String getText() {
@@ -80,7 +90,7 @@ public class TransportObject {
     }
 
     public Date getTimestamp() {
-        return timestamp;
+        return this.timestamp;
     }
 
     public int getk() {
@@ -92,7 +102,7 @@ public class TransportObject {
     }
 
     public List<String> getTerms() {
-        return terms;
+        return this.terms;
     }
 
     public void setTerms(List<String> terms) {
@@ -100,7 +110,7 @@ public class TransportObject {
     }
 
     public int getTweetID() {
-        return tweetID;
+        return this.tweetID;
     }
 
     public void setTweetID(int tweetID) {
@@ -108,7 +118,7 @@ public class TransportObject {
     }
 
     public List<Integer> getTermIDs() {
-        return termIDs;
+        return this.termIDs;
     }
 
     public void setTermIDs(List<Integer> termIDs) {
@@ -124,5 +134,19 @@ public class TransportObject {
 
     public float calculateTermSimilarity(List<Integer> otherTermIDs) {
         return HelperFunctions.calculateTermSimilarity(this.termIDs, otherTermIDs);
+    }
+
+    @Override
+    public String toString() {
+        return "TransportObject{" +
+                "isQuery=" + isQuery +
+                ", text='" + text + '\'' +
+                ", timestamp=" + timestamp +
+                ", k=" + k +
+                ", significance=" + significance +
+                ", terms=" + terms +
+                ", tweetID=" + tweetID +
+                ", termIDs=" + termIDs +
+                '}';
     }
 }

@@ -49,7 +49,7 @@ public class TermDictionary {
 
         // Get new termID and insert tweet
         int termID = termIDCounter;
-        termID++;
+        termIDCounter++;
         termDictionary.put(term, termID);
 
         return termID;
