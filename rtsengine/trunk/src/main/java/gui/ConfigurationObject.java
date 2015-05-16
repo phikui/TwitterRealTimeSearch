@@ -5,88 +5,92 @@ package gui;
  */
 public class ConfigurationObject {
 
-    private int wSignificance, wSimilarity, wFreshness;
-    private int ratio;
-    private int threads;
-    private int k;
-    private boolean streamQueries;
-    private boolean streamTweets;
-    private String index;
+    private static int wSignificance = (1/3);
+    private static int wSimilarity = (1/3);
+    private static int wFreshness = (1/3);
 
-    public ConfigurationObject() {}
+    private static int ratio;
+    private static int numberOfThreads;
+    private static int k;
+
+    private static boolean streamQueries;
+    private static boolean streamTweets;
+    private static String indexType;
+
 
     /**
      * Getter and Setter
      */
-    public int getK() {
-        return k;
+    public static int getK() {
+        return ConfigurationObject.k;
     }
 
-    public void setK(int k) {
-        this.k = k;
-    }
-    public int getwSignificance() {
-        return wSignificance;
+    public static void setK(int k) {
+        ConfigurationObject.k = k;
     }
 
-    public void setwSignificance(int wSignificance) {
-        this.wSignificance = wSignificance;
+    public static int getwSignificance() {
+        return ConfigurationObject.wSignificance;
     }
 
-    public int getwSimilarity() {
-        return wSimilarity;
+    public static void setwSignificance(int wSignificance) {
+        ConfigurationObject.wSignificance = wSignificance;
     }
 
-    public void setwSimilarity(int wSimilarity) {
-        this.wSimilarity = wSimilarity;
+    public static int getwSimilarity() {
+        return ConfigurationObject.wSimilarity;
     }
 
-    public int getwFreshness() {
-        return wFreshness;
+    public static void setwSimilarity(int wSimilarity) {
+        ConfigurationObject.wSimilarity = wSimilarity;
     }
 
-    public void setwFreshness(int wFreshness) {
-        this.wFreshness = wFreshness;
+    public static int getwFreshness() {
+        return ConfigurationObject.wFreshness;
     }
 
-    public int getRatio() {
-        return ratio;
+    public static void setwFreshness(int wFreshness) {
+        ConfigurationObject.wFreshness = wFreshness;
     }
 
-    public void setRatio(int ratio) {
-        this.ratio = ratio;
+    public static int getRatio() {
+        return ConfigurationObject.ratio;
     }
 
-    public int getThreads() {
-        return threads;
+    public static void setRatio(int ratio) {
+        ConfigurationObject.ratio = ratio;
     }
 
-    public void setThreads(int threads) {
-        this.threads = threads;
+    public static int getNumberOfThreads() {
+        return ConfigurationObject.numberOfThreads;
     }
 
-    public boolean isStreamQueries() {
-        return streamQueries;
+    public static void setNumberOfThreads(int numberOfThreads) {
+        ConfigurationObject.numberOfThreads = numberOfThreads;
     }
 
-    public void setStreamQueries(boolean streamQueries) {
-        this.streamQueries = streamQueries;
+    public static boolean isStreamQueries() {
+        return ConfigurationObject.streamQueries;
     }
 
-    public boolean isStreamTweets() {
-        return streamTweets;
+    public static void setStreamQueries(boolean streamQueries) {
+        ConfigurationObject.streamQueries = streamQueries;
     }
 
-    public void setStreamTweets(boolean streamTweets) {
-        this.streamTweets = streamTweets;
+    public static boolean isStreamTweets() {
+        return ConfigurationObject.streamTweets;
     }
 
-    public String getIndex() {
-        return index;
+    public static void setStreamTweets(boolean streamTweets) {
+        ConfigurationObject.streamTweets = streamTweets;
     }
 
-    public void setIndex(String index) {
-        this.index = index;
+    public static String getIndexType() {
+        return ConfigurationObject.indexType;
+    }
+
+    public static void setIndexType(String index) {
+        ConfigurationObject.indexType = indexType;
     }
 
 }

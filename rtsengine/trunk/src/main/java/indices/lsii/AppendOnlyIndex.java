@@ -1,5 +1,6 @@
 package indices.lsii;
 
+import gui.ConfigurationObject;
 import indices.IRTSIndex;
 import model.TransportObject;
 import java.util.HashMap;
@@ -40,19 +41,17 @@ public class AppendOnlyIndex implements IRTSIndex {
 
                 // need to compare the top k elements in the list and find the actual result
                 //needed freshness score
-               float freshness= transportObject.getFreshness();//To Make it verify
+               float freshness= transportObject.calculateFreshness(); //To Make it verify
                 //Date dateValue=transportObject.getTimestamp();
                 // int hh=dateValue.getHours();
                 //int dd=dateValue.getMinutes();
                 //int mm=dateValue.getSeconds();
                 //String time= hh+":"+mm+":"+ dd;
-                float w1_fresh=(1/3);
-                float w1_significance=(1/3);
-                float w1_similarity=(1/3);
+                float w1_fresh = ConfigurationObject.getwFreshness();
+                float w1_significance= ConfigurationObject.getwSignificance();
+                float w1_similarity = ConfigurationObject.getwSimilarity();
                 float freshness_score;
                 freshness_score=(w1_fresh*freshness+w1_significance*0+w1_similarity*0);
-
-
             }
 
 
