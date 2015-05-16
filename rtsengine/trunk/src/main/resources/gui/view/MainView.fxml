@@ -4,7 +4,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainAppController">
    <children>
       <SplitPane dividerPositions="0.6287625418060201" layoutX="200.0" layoutY="66.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -22,7 +22,7 @@
                   <TextField layoutX="152.0" layoutY="269.0" prefHeight="16.0" prefWidth="47.0" promptText="100" />
                   <TextField layoutX="152.0" layoutY="304.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
                   <ComboBox layoutX="115.0" layoutY="24.0" prefHeight="26.0" prefWidth="82.0" promptText="Index" />
-                  <Button layoutX="86.0" layoutY="344.0" mnemonicParsing="false" text="Start" />
+                  <Button fx:id="start" layoutX="86.0" layoutY="344.0" mnemonicParsing="false" text="Start" />
                   <Label layoutX="19.0" layoutY="207.0" text="Ratio Tweets/Queries" />
                   <TextField layoutX="152.0" layoutY="202.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
                   <ToggleButton layoutX="135.0" layoutY="167.0" mnemonicParsing="false" text="Stream" />
