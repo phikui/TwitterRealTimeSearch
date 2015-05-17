@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
  */
 public class WriterMainThread extends Thread {
     private final boolean output;
-    private final Queue<Future<TransportObject>> incomingQueue = QueueContainer.getPreprocessedOutputQueue();
+    private final Queue<Future<TransportObject>> incomingQueue = QueueContainer.getWriterQueue();
     private volatile boolean isTerminated = false;
 
     public WriterMainThread() {
@@ -34,6 +34,7 @@ public class WriterMainThread extends Thread {
 
 
     public void run() {
+        System.out.println("Writer has started");
         while (!isTerminated) {
             if (!incomingQueue.isEmpty()) {
                 try {

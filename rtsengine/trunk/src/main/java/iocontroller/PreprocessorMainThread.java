@@ -13,8 +13,8 @@ import static java.lang.Runtime.getRuntime;
 public class PreprocessorMainThread extends Thread {
 
     private final ExecutorService preprocessors;
-    private final Queue<PreprocessorRawObject> incomingQueue = QueueContainer.getRawObjectQueue();
-    private final Queue<Future<TransportObject>> outputQueue = QueueContainer.getPreprocessedOutputQueue();
+    private final Queue<PreprocessorRawObject> incomingQueue = QueueContainer.getPreProcessorQueue();
+    private final Queue<Future<TransportObject>> outputQueue = QueueContainer.getWriterQueue();
     private volatile boolean isTerminated = false;
 
     public PreprocessorMainThread(int num_preprocessors) {
@@ -40,6 +40,7 @@ public class PreprocessorMainThread extends Thread {
 
 
     public void run() {
+        System.out.println("Preprocessor has started");
         while (!isTerminated) {
             if (!incomingQueue.isEmpty()) {
                 PreprocessorRawObject next = incomingQueue.remove();
@@ -55,6 +56,6 @@ public class PreprocessorMainThread extends Thread {
                 }
             }
         }
-        System.out.println("preprocessor has stopped");
+        System.out.println("Preprocessor has stopped");
     }
 }

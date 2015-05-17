@@ -48,4 +48,8 @@ public class TweetDictionary {
         return tweetID;
     }
 
+    public static int size() {
+        return tweetDictionary.size();
+    }
+
 }
