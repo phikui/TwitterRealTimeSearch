@@ -13,24 +13,30 @@ import static java.lang.Runtime.getRuntime;
 public class PreprocessorMainThread extends Thread {
 
     private final ExecutorService preprocessors;
-    private final Queue<PreprocessorRawObject> incomingQueue = QueueContainer.getPreProcessorQueue();
-    private final Queue<Future<TransportObject>> outputQueue = QueueContainer.getWriterQueue();
+    private final Queue<PreprocessorRawObject> incomingQueue;
+    private final Queue<Future<TransportObject>> outputQueue;
     private volatile boolean isTerminated = false;
 
-    public PreprocessorMainThread(int num_preprocessors) {
+    public PreprocessorMainThread(QueueContainer queueContainer, int num_preprocessors) {
         preprocessors = Executors.newFixedThreadPool(num_preprocessors);
+        incomingQueue = queueContainer.getPreProcessorQueue();
+        outputQueue = queueContainer.getWriterQueue();
     }
 
 
     //This will initialize a dynamically growing Thread pool
-    public PreprocessorMainThread(int maxPrepreprocessors, int timeOutInSeconds) {
+    public PreprocessorMainThread(QueueContainer queueContainer, int maxPrepreprocessors, int timeOutInSeconds) {
         ThreadPoolExecutor x = new ThreadPoolExecutor(0, maxPrepreprocessors, timeOutInSeconds, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         x.allowCoreThreadTimeOut(true);
         preprocessors = x;
+        incomingQueue = queueContainer.getPreProcessorQueue();
+        outputQueue = queueContainer.getWriterQueue();
     }
 
-    public PreprocessorMainThread() {
+    public PreprocessorMainThread(QueueContainer queueContainer) {
         preprocessors = Executors.newFixedThreadPool(getRuntime().availableProcessors());
+        incomingQueue = queueContainer.getPreProcessorQueue();
+        outputQueue = queueContainer.getWriterQueue();
 
     }
 

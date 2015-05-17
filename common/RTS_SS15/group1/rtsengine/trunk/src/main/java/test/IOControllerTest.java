@@ -12,8 +12,10 @@ import utilities.RandomObjectFactory;
 public class IOControllerTest {
 
     public static void main(String[] args) throws InterruptedException {
+        long now = System.currentTimeMillis();
         int num_tweets = 500000;
-        IOController ioController = new IOController(4, 4, false);
+        int num_preprocessors = 4;
+        IOController ioController = new IOController(num_preprocessors, 0, false);
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
         ioController.startAll();
 
@@ -36,6 +38,9 @@ public class IOControllerTest {
         System.out.println("Size of Term dictionary: " + TermDictionary.size());
         System.out.println("Size of Tweet dictionary: " + TweetDictionary.size());
         System.out.println("Size of AO index: " + IndexDispatcher.size());
+        long timeTaken = System.currentTimeMillis() - now;
+        System.out.println("It took a total of " + (timeTaken / 1000) + " seconds to generate and process "
+                + num_tweets + " tweets, unsing " + num_preprocessors + " preprocessors");
 
         System.exit(0);
 

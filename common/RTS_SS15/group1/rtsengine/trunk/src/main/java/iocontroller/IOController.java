@@ -10,15 +10,17 @@ import static java.lang.Runtime.getRuntime;
  * Created by phil on 17.05.15.
  */
 public class IOController {
+    protected final QueueContainer queueContainer;
     private final PreprocessorMainThread preProcessor;
     private final WriterMainThread writer;
     private final QueueObserver queueObserver;
 
 
     public IOController(int numPreProcessors, int numQueryProcessors, boolean writerOutput) {
-        preProcessor = new PreprocessorMainThread(numPreProcessors);
-        writer = new WriterMainThread(writerOutput);
-        queueObserver = new QueueObserver();
+        queueContainer = new QueueContainer();
+        preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
+        writer = new WriterMainThread(queueContainer, writerOutput);
+        queueObserver = new QueueObserver(queueContainer);
         Stemmer.init();
     }
 
@@ -59,7 +61,7 @@ public class IOController {
     }
 
     public void addRawObject(PreprocessorRawObject newRaw) {
-        QueueContainer.getPreProcessorQueue().add(newRaw);
+        queueContainer.getPreProcessorQueue().add(newRaw);
     }
 
     public void addQuery(String queryString, int k, Date timestamp) {
@@ -73,18 +75,18 @@ public class IOController {
     }
 
     public boolean hasUnprocessedItems() {
-        return !(QueueContainer.getPreProcessorQueue().isEmpty() && QueueContainer.getWriterQueue().isEmpty());
+        return !(queueContainer.getPreProcessorQueue().isEmpty() && queueContainer.getWriterQueue().isEmpty());
     }
 
     public int numUnprocessedItems() {
-        return QueueContainer.getWriterQueue().size() + QueueContainer.getPreProcessorQueue().size();
+        return queueContainer.getWriterQueue().size() + queueContainer.getPreProcessorQueue().size();
     }
 
     public int sizePreProcessorQueue() {
-        return QueueContainer.getPreProcessorQueue().size();
+        return queueContainer.getPreProcessorQueue().size();
     }
 
     public int sizeWriterQueue() {
-        return QueueContainer.getWriterQueue().size();
+        return queueContainer.getWriterQueue().size();
     }
 }
