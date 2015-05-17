@@ -1,5 +1,7 @@
 package model;
 
+import iocontroller.Stemmer;
+
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -53,19 +55,13 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
         //distinguish betweeen query and tweet
         if (!isQuery) {
             result = new TransportObject(tweet);
-            /*
-            Code for stemming
-             */
-            List<String> stems = null;
+            List<String> stems = Stemmer.stem(tweet.getText());
             result.setTerms(stems);
 
 
         } else {
             result = new TransportObject(query, timestamp, k);
-             /*
-            Code for stemming
-             */
-            List<String> stems = null;
+            List<String> stems = Stemmer.stem(query);
             result.setTerms(stems);
 
 
