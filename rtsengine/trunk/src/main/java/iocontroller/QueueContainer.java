@@ -1,5 +1,6 @@
 package iocontroller;
 
+import model.PreprocessingRawObject;
 import model.TransportObject;
 
 import java.util.Queue;
