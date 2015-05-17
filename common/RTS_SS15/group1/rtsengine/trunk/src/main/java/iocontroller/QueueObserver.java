@@ -20,7 +20,7 @@ public class QueueObserver extends Thread {
                 e.printStackTrace();
             }
         }
-        System.out.println("Queue Observer has stopped");
+        System.out.println("QueueObserver has stopped");
     }
 
     public void terminate() {

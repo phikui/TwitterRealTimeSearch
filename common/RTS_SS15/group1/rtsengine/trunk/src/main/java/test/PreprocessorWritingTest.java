@@ -30,6 +30,8 @@ public class PreprocessorWritingTest {
         System.out.println("Preprocessor and writer threads will be started in 5 seconds");
         Thread.sleep(5000);
 
+        long now = System.currentTimeMillis();
+
         System.out.println("Starting Preprocess Thread");
         PreprocessingMainThread preprocessor = new PreprocessingMainThread(num_preprocsessors);
         preprocessor.start();
@@ -51,11 +53,12 @@ public class PreprocessorWritingTest {
         System.out.println("!!!!!!          Added all new tweets. !!!!!! ");
 
         while (!(QueueContainer.getRawObjectQueue().isEmpty() && QueueContainer.getPreprocessedOutput().isEmpty())) {
-            Thread.sleep(3000);
+            Thread.sleep(1000);
         }
 
+        long timeTaken = System.currentTimeMillis() - now;
         System.out.println("Both queues empty, shutting down");
-
+        System.out.println("It took a total of " + (timeTaken / 1000) + " seeconds to process " + num_tweets * 2 + " tweets");
         //send terminate requests
         preprocessor.terminate();
         writer.terminate();
