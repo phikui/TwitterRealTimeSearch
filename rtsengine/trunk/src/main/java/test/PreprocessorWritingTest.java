@@ -21,6 +21,7 @@ public class PreprocessorWritingTest {
         for (int i = 0; i < num_tweets; i++) {
             QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
+        System.out.println("added " + num_tweets + " random tweets");
 
         for (PreprocessingRawObject x : QueueContainer.getRawObjectQueue()) {
             // System.out.println(x.getTweet().getText());
@@ -35,11 +36,11 @@ public class PreprocessorWritingTest {
         WriterMainThread writer = new WriterMainThread();
         writer.start();
 
-        //some more tweets
+        //insert some more tweets
         for (int i = 0; i < num_tweets; i++) {
             QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
-
+        System.out.println("added " + num_tweets + " more random tweets");
 
     }
 }
