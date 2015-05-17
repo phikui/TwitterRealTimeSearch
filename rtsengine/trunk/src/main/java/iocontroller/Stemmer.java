@@ -15,7 +15,6 @@ import java.util.Properties;
 public class Stemmer {
 
     public static List<String> stem(String text) {
-
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
@@ -37,5 +36,6 @@ public class Stemmer {
             }
         }
         return wordList;
+        //TODO is to remove special symbols
     }
 }
