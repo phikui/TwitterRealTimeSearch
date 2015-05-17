@@ -9,5 +9,6 @@ public class Stemmer {
 
     public static List<String> stem(String text) {
         //TODO
+        return null;
     }
 }
