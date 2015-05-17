@@ -12,8 +12,8 @@ import utilities.RandomObjectFactory;
 public class IOControllerTest {
 
     public static void main(String[] args) throws InterruptedException {
-        long now = System.currentTimeMillis();
-        int num_tweets = 500000;
+
+        int num_tweets = 2000;
 
         //creating the IOProcessor
         int num_preprocessors = 4;
@@ -22,10 +22,10 @@ public class IOControllerTest {
         IOController ioController = new IOController(num_preprocessors, num_queryProcessors, debugOutputs);
 
 
+
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
 
-        //Start the Preprocessor, Writer and QueryProcessor threads
-        ioController.startAll();
+
 
         //populate the incoming queue
 
@@ -34,6 +34,10 @@ public class IOControllerTest {
             ioController.addRawObject(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
         System.out.println(" done.");
+
+        long start = System.currentTimeMillis();
+        //Start the Preprocessor, Writer and QueryProcessor threads
+        ioController.startAll();
 
         while (ioController.hasUnprocessedItems()) {
             Thread.sleep(1000);
@@ -51,9 +55,9 @@ public class IOControllerTest {
         System.out.println("Size of Term dictionary: " + TermDictionary.size());
         System.out.println("Size of Tweet dictionary: " + TweetDictionary.size());
         System.out.println("Size of AO index: " + IndexDispatcher.size());
-        long timeTaken = System.currentTimeMillis() - now;
+        long timeTaken = System.currentTimeMillis() - start;
         System.out.println("It took a total of " + (timeTaken / 1000) + " seconds to generate and process "
-                + num_tweets + " tweets, unsing " + num_preprocessors + " preprocessors");
+                + num_tweets + " tweets, using " + num_preprocessors + " preprocessors");
 
         System.exit(0);
 

@@ -10,6 +10,7 @@ import static java.lang.Runtime.getRuntime;
  * Created by phil on 17.05.15.
  */
 public class IOController {
+    protected final static boolean useStandfordStemmer = false;
     protected final QueueContainer queueContainer;
     private final PreprocessorMainThread preProcessor;
     private final WriterMainThread writer;
@@ -21,7 +22,11 @@ public class IOController {
         preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
         writer = new WriterMainThread(queueContainer, writerOutput);
         queueObserver = new QueueObserver(queueContainer);
-        Stemmer.init();
+
+        if (useStandfordStemmer) {
+            Stemmer.init();
+        }
+
     }
 
     public IOController() {
