@@ -17,23 +17,28 @@ public class PreprocessorWritingTest {
         Stemmer.init();
 
         //populate the incoming queue
-        int num_tweets = 100;
+        int num_tweets = 10000;
         for (int i = 0; i < num_tweets; i++) {
             QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
 
         for (PreprocessingRawObject x : QueueContainer.getRawObjectQueue()) {
-            System.out.println(x.getTweet().getText());
+            // System.out.println(x.getTweet().getText());
         }
 
         System.out.println("Queue Populated");
         System.out.println("Starting Preprocess Thread");
-        PreprocessingMainThread preprocessor = new PreprocessingMainThread(5);
+        PreprocessingMainThread preprocessor = new PreprocessingMainThread(2);
         preprocessor.start();
 
         System.out.println("Starting writing Thread");
         WriterMainThread writer = new WriterMainThread();
         writer.start();
+
+        //some more tweets
+        for (int i = 0; i < num_tweets; i++) {
+            QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
+        }
 
 
     }
