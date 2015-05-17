@@ -17,8 +17,12 @@ public class QueryProcessorMainThread {
     private static final ExecutorService queryprocessors = Executors.newFixedThreadPool(getRuntime().availableProcessors());
 
 
-    public static void scheduleQuery(TransportObject query) {
-        //TODO
+    public static void scheduleQuery(TransportObject query) throws Exception {
+        if (query.isQuery()) {
+            //TODO
+        } else {
+            throw new Exception("Query expected");
+        }
     }
 }
 

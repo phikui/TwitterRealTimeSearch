@@ -10,7 +10,7 @@ public class PreprocessorWritingTest {
 
     public static void main(String[] args) throws InterruptedException {
         int num_tweets = 500000;
-        int num_preprocsessors = 2;
+        int num_preprocsessors = 4;
         boolean writerOutput = false;
 
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
