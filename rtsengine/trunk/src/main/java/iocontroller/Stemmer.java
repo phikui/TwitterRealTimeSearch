@@ -13,8 +13,8 @@ import java.util.*;
  */
 public class Stemmer {
 
-    // private static  Properties props;
-    // private static  StanfordCoreNLP pipeline;
+    // private static volatile Properties props;
+    // private static volatile StanfordCoreNLP pipeline;
 
     public static void init() {
 

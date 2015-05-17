@@ -12,12 +12,15 @@ import utilities.RandomObjectFactory;
  */
 public class PreprocessorWritingTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        int num_tweets = 10000;
+        boolean writerOutput = true;
+
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
         Stemmer.init();
 
         //populate the incoming queue
-        int num_tweets = 10000;
+
         for (int i = 0; i < num_tweets; i++) {
             QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
@@ -28,12 +31,15 @@ public class PreprocessorWritingTest {
         }
 
         System.out.println("Queue Populated");
+        System.out.println("Preprocessor and writer threads will be started in 5 seconds");
+        Thread.sleep(5000);
+
         System.out.println("Starting Preprocess Thread");
         PreprocessingMainThread preprocessor = new PreprocessingMainThread(2);
         preprocessor.start();
 
         System.out.println("Starting writing Thread");
-        WriterMainThread writer = new WriterMainThread();
+        WriterMainThread writer = new WriterMainThread(writerOutput);
         writer.start();
 
         //insert some more tweets
