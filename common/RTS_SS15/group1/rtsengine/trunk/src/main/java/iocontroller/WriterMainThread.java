@@ -16,9 +16,21 @@ import java.util.concurrent.Future;
  */
 public class WriterMainThread extends Thread {
     private volatile boolean isTerminated = false;
+    private final boolean output;
+
+    public WriterMainThread() {
+        output = false;
+    }
+
+    public WriterMainThread(boolean output) {
+        this.output = output;
+    }
+
+    public WriterMainThread(boolean output) {
+        this.output = output;
+    }
 
     private Queue<Future<TransportObject>> incomingQueue = QueueContainer.getPreprocessedOutput();
-
 
     public void terminate() {
         isTerminated = true;
@@ -50,10 +62,12 @@ public class WriterMainThread extends Thread {
                         x.setTermIDs(termIds);
 
                         IndexDispatcher.insert(x);
-                        System.out.println("Inserted tweet:");
-                        System.out.println(x.getText());
-                        System.out.println();
-                        System.out.println();
+                        if (output) {
+                            System.out.println("Inserted tweet:");
+                            System.out.println(x.getText());
+                            System.out.println();
+                            System.out.println();
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
