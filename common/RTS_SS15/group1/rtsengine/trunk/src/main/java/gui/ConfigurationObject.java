@@ -11,7 +11,7 @@ public class ConfigurationObject {
 
     private static int ratio;
     private static int numberOfThreads;
-    private static int k;
+    private static int numberOfTweets;
 
     private static boolean streamQueries;
     private static boolean streamTweets;
@@ -21,12 +21,12 @@ public class ConfigurationObject {
     /**
      * Getter and Setter
      */
-    public static int getK() {
-        return ConfigurationObject.k;
+    public static int getNumberOfTweets() {
+        return ConfigurationObject.numberOfTweets;
     }
 
-    public static void setK(int k) {
-        ConfigurationObject.k = k;
+    public static void setNumberOfTweets(int k) {
+        ConfigurationObject.numberOfTweets = k;
     }
 
     public static int getwSignificance() {
@@ -90,7 +90,7 @@ public class ConfigurationObject {
     }
 
     public static void setIndexType(String index) {
-        ConfigurationObject.indexType = indexType;
+        ConfigurationObject.indexType = index;
     }
 
 }

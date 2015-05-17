@@ -41,5 +41,10 @@
             <version>3.4</version>
         </dependency>
     </dependencies>
+    <dependency>
+        <groupId>org.controlsfx</groupId>
+        <artifactId>controlsfx</artifactId>
+        <version>8.20.8</version>
+    </dependency>
 
 </project>
