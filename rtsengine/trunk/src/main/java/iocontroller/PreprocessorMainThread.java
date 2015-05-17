@@ -1,6 +1,5 @@
 package iocontroller;
 
-import model.PreprocessingRawObject;
 import model.TransportObject;
 
 import java.util.Queue;
@@ -11,26 +10,26 @@ import static java.lang.Runtime.getRuntime;
 /**
  * Created by phil on 16.05.15.
  */
-public class PreprocessingMainThread extends Thread {
+public class PreprocessorMainThread extends Thread {
 
     private final ExecutorService preprocessors;
-    private final Queue<PreprocessingRawObject> incomingQueue = QueueContainer.getRawObjectQueue();
-    private final Queue<Future<TransportObject>> outputQueue = QueueContainer.getPreprocessedOutput();
+    private final Queue<PreprocessorRawObject> incomingQueue = QueueContainer.getRawObjectQueue();
+    private final Queue<Future<TransportObject>> outputQueue = QueueContainer.getPreprocessedOutputQueue();
     private volatile boolean isTerminated = false;
 
-    public PreprocessingMainThread(int num_preprocessors) {
+    public PreprocessorMainThread(int num_preprocessors) {
         preprocessors = Executors.newFixedThreadPool(num_preprocessors);
     }
 
 
     //This will initialize a dynamically growing Thread pool
-    public PreprocessingMainThread(int maxPrepreprocessors, int timeOutInSeconds) {
+    public PreprocessorMainThread(int maxPrepreprocessors, int timeOutInSeconds) {
         ThreadPoolExecutor x = new ThreadPoolExecutor(0, maxPrepreprocessors, timeOutInSeconds, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         x.allowCoreThreadTimeOut(true);
         preprocessors = x;
     }
 
-    public PreprocessingMainThread() {
+    public PreprocessorMainThread() {
         preprocessors = Executors.newFixedThreadPool(getRuntime().availableProcessors());
 
     }
@@ -43,7 +42,7 @@ public class PreprocessingMainThread extends Thread {
     public void run() {
         while (!isTerminated) {
             if (!incomingQueue.isEmpty()) {
-                PreprocessingRawObject next = incomingQueue.remove();
+                PreprocessorRawObject next = incomingQueue.remove();
                 Future<TransportObject> output = preprocessors.submit(next);
                 outputQueue.add(output);
             } else {

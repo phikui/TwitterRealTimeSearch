@@ -1,6 +1,7 @@
-package model;
+package iocontroller;
 
-import iocontroller.Stemmer;
+import model.TransportObject;
+import model.TweetObject;
 
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by phil on 16.05.15.
  */
-public class PreprocessingRawObject implements Callable<TransportObject> {
+public class PreprocessorRawObject implements Callable<TransportObject> {
     private final Date timestamp;
 
     private final int k;
@@ -26,7 +27,7 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
     private final String query;
 
     //Tweet constructor
-    public PreprocessingRawObject(TweetObject tweet) {
+    public PreprocessorRawObject(TweetObject tweet) {
         isQuery = false;
         this.tweet = tweet;
         timestamp = tweet.getTimestamp();
@@ -38,7 +39,7 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
     }
 
     //query constructor
-    public PreprocessingRawObject(String queryString, int k, Date timestamp) {
+    public PreprocessorRawObject(String queryString, int k, Date timestamp) {
         isQuery = true;
         query = queryString;
         this.k = k;

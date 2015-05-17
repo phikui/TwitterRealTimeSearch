@@ -16,7 +16,7 @@ import java.util.concurrent.Future;
  */
 public class WriterMainThread extends Thread {
     private final boolean output;
-    private final Queue<Future<TransportObject>> incomingQueue = QueueContainer.getPreprocessedOutput();
+    private final Queue<Future<TransportObject>> incomingQueue = QueueContainer.getPreprocessedOutputQueue();
     private volatile boolean isTerminated = false;
 
     public WriterMainThread() {
