@@ -14,9 +14,17 @@ public class IOControllerTest {
     public static void main(String[] args) throws InterruptedException {
         long now = System.currentTimeMillis();
         int num_tweets = 500000;
+
+        //creating the IOProcessor
         int num_preprocessors = 4;
-        IOController ioController = new IOController(num_preprocessors, 0, false);
+        int num_queryProcessors = 0;
+        boolean debugOutputs = false;
+        IOController ioController = new IOController(num_preprocessors, num_queryProcessors, debugOutputs);
+
+
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
+
+        //Start the Preprocessor, Writer and QueryProcessor threads
         ioController.startAll();
 
         //populate the incoming queue
@@ -31,8 +39,13 @@ public class IOControllerTest {
             Thread.sleep(1000);
         }
 
+        //request threads to stop
         ioController.stopAll();
+
+        //wait for termination of threads
         ioController.waitForTermination();
+
+
         System.out.println();
         System.out.println();
         System.out.println("Size of Term dictionary: " + TermDictionary.size());
