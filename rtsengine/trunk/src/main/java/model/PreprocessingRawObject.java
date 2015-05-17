@@ -52,17 +52,17 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
     //Code for prepossessing
     public TransportObject call() throws Exception {
         TransportObject result;
-
+        //TODO change trivial stem
         //distinguish betweeen query and tweet
         if (!isQuery) {
             result = new TransportObject(tweet);
-            List<String> stems = Stemmer.stem(tweet.getText());
+            List<String> stems = Stemmer.trivial_stem(tweet.getText());
             result.setTerms(stems);
 
 
         } else {
             result = new TransportObject(query, timestamp, k);
-            List<String> stems = Stemmer.stem(query);
+            List<String> stems = Stemmer.trivial_stem(query);
             result.setTerms(stems);
 
 

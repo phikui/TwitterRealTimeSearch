@@ -6,19 +6,27 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+
 /**
  * Created by phil on 17.05.2015.
  */
 public class Stemmer {
+
+    // private static  Properties props;
+    // private static  StanfordCoreNLP pipeline;
+
+    public static void init() {
+
+    }
+
 
     public static List<String> stem(String text) {
         // creates a StanfordCoreNLP object, with POS tagging, lemmatization, NER, parsing, and coreference resolution
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(text);
         // run all Annotators on this text
@@ -37,5 +45,17 @@ public class Stemmer {
         }
         return wordList;
         //TODO is to remove special symbols
+    }
+
+    public static List<String> trivial_stem(String text) {
+        List<String> terms = new LinkedList<String>();
+
+        StringTokenizer stringTokenizer = new StringTokenizer(text);
+        while (stringTokenizer.hasMoreTokens()) {
+            String token = stringTokenizer.nextToken();
+            terms.add(token);
+        }
+
+        return terms;
     }
 }

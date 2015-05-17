@@ -2,6 +2,7 @@ package test;
 
 import iocontroller.PreprocessingMainThread;
 import iocontroller.QueueContainer;
+import iocontroller.Stemmer;
 import iocontroller.WriterMainThread;
 import model.PreprocessingRawObject;
 import utilities.RandomObjectFactory;
@@ -13,6 +14,7 @@ public class PreprocessorWritingTest {
 
     public static void main(String[] args) {
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
+        Stemmer.init();
 
         //populate the incoming queue
         int num_tweets = 100;
@@ -26,7 +28,7 @@ public class PreprocessorWritingTest {
 
         System.out.println("Queue Populated");
         System.out.println("Starting Preprocess Thread");
-        PreprocessingMainThread preprocessor = new PreprocessingMainThread();
+        PreprocessingMainThread preprocessor = new PreprocessingMainThread(5);
         preprocessor.start();
 
         System.out.println("Starting writing Thread");
