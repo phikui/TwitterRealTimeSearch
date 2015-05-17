@@ -1,6 +1,7 @@
 package utilities;
 
 import edu.stanford.nlp.util.Sets;
+import gui.ConfigurationObject;
 import model.TweetObject;
 
 import java.util.*;
@@ -124,6 +125,25 @@ public class HelperFunctions {
             freshness = 0;
 
         return freshness;
+    }
+
+    /**
+     * calculates the ranking function f using same weights of 1/3 to get values in range [0;1]
+     *
+     * @param freshness
+     * @param significance
+     * @param similarity
+     * @return
+     */
+    public static float calculateRankingFunction(float freshness, float significance, float similarity){
+        float f;
+        float weight_fresh = ConfigurationObject.getwFreshness();
+        float weight_sig = ConfigurationObject.getwSignificance();
+        float weight_sim = ConfigurationObject.getwSimilarity();
+
+        f = weight_fresh * freshness + weight_sig * significance + weight_sim * similarity;
+
+        return f;
     }
 
 }
