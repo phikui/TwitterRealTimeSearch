@@ -146,4 +146,41 @@ public class HelperFunctions {
         return f;
     }
 
+    /**
+     * takes the previous and next index and merges them in a sorted fashion
+     * called by LSII
+     *
+     * @param prevIndex
+     * @param nextIndex
+     * @return
+     */
+    public static float[] mergeSortedIndices(float[] prevIndex, float[] nextIndex) {
+        int prevIterator = 0;
+        int nextIterator = 0;
+
+        // TODO probably need a null check here for the empty index
+        // if array empty/null then just copy prevIndex to nextIndex else do the regular merge
+
+        float[] mergedArray = new float[nextIndex.length];
+        int mergedIterator = 0;
+
+        // get greater element and insert it into mergedArray
+        while ((prevIterator < prevIndex.length) && (nextIterator < nextIndex.length))
+        {
+            if (prevIndex[prevIterator] < nextIndex[nextIterator])
+                mergedArray[mergedIterator++] = prevIndex[prevIterator++];
+            else
+                mergedArray[mergedIterator++] = nextIndex[nextIterator++];
+        }
+
+        // add remaining elements to mergedArray
+        while (prevIterator < prevIndex.length)
+            mergedArray[mergedIterator++] = prevIndex[prevIterator++];
+
+        while (nextIterator < nextIndex.length)
+            mergedArray[mergedIterator++] = nextIndex[nextIterator];
+
+        return mergedArray;
+    }
+
 }
