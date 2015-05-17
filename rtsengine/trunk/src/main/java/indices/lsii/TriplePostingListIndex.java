@@ -2,6 +2,7 @@ package indices.lsii;
 
 import indices.IRTSIndex;
 import model.TransportObject;
+import utilities.HelperFunctions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class TriplePostingListIndex implements IRTSIndex {
                 // for TA we would need to look up sim and sig for the current tweetID and then calculate f:
                 // currSignificance = TweetDictionary.getTransportObject(currentTweetID).getSignificance();
                 // currSimilarity = TweetDictionary.getTransportObject(currentTweetID).getSimilarity();
-                // fValue = calculateRankingFunction(maxFreshness, currSignificance, currSimilarity);
+                // fValue = HelperFunctions.calculateRankingFunction(maxFreshness, currSignificance, currSimilarity);
                 if(!currentTopK.contains(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
@@ -63,7 +64,7 @@ public class TriplePostingListIndex implements IRTSIndex {
                 // for TA we would need to look up fresh and sig for the current tweetID and then calculate f:
                 // currFreshness = TweetDictionary.getTransportObject(currentTweetID).getFreshness();
                 // currSimilarity = TweetDictionary.getTransportObject(currentTweetID).getSimilarity();
-                // fValue = calculateRankingFunction(currFreshness, maxSignificance, currSimilarity);
+                // fValue = HelperFunctions.calculateRankingFunction(currFreshness, maxSignificance, currSimilarity);
                 if(!currentTopK.contains(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
@@ -74,12 +75,12 @@ public class TriplePostingListIndex implements IRTSIndex {
                 // for TA we would need to look up fresh and sim for the current tweetID and then calculate f:
                 // currFreshness = TweetDictionary.getTransportObject(currentTweetID).getFreshness();
                 // currSignificance = TweetDictionary.getTransportObject(currentTweetID).getSignificance();
-                // fValue = calculateRankingFunction(currFreshness, currSignificance, maxSimilarity);
+                // fValue = HelperFunctions.calculateRankingFunction(currFreshness, currSignificance, maxSimilarity);
                 if(!currentTopK.contains(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
 
-                threshold = calculateRankingFunction(maxFreshness, maxSignificance, maxSimilarity);
+                threshold = HelperFunctions.calculateRankingFunction(maxFreshness, maxSignificance, maxSimilarity);
                 if((currentTopK.get((k-1)).getSortKey() >= threshold) && (currentTopK.get((k-1)) != null)){
                     break;
                 }
@@ -128,25 +129,6 @@ public class TriplePostingListIndex implements IRTSIndex {
             triplePostingListForTermID.getFreshnessPostingList().insertSorted(tweetID, freshness);
             triplePostingListForTermID.getTermSimilarityPostingList().insertSorted(tweetID, similarity);
         }
-    }
-
-    /**
-     * calculates the ranking function f using same weights of 1/3 to get values in range [0;1]
-     *
-     * @param freshness
-     * @param significance
-     * @param similarity
-     * @return
-     */
-    public float calculateRankingFunction(float freshness, float significance, float similarity){
-        float f;
-        float weight_fresh = (1/3);
-        float weight_sig = (1/3);
-        float weight_sim = (1/3);
-
-        f = weight_fresh * freshness + weight_sig * significance + weight_sim * similarity;
-
-        return f;
     }
 
 }
