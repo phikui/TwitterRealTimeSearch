@@ -33,7 +33,7 @@ public class PreprocessorWritingTest {
         long now = System.currentTimeMillis();
 
         System.out.println("Starting Preprocess Thread");
-        PreprocessingMainThread preprocessor = new PreprocessingMainThread(num_preprocsessors);
+        PreprocessorMainThread preprocessor = new PreprocessorMainThread(num_preprocsessors);
         preprocessor.start();
 
         System.out.println("Starting writing Thread");
@@ -52,7 +52,7 @@ public class PreprocessorWritingTest {
         }
         System.out.println("!!!!!!          Added all new tweets. !!!!!! ");
 
-        while (!(QueueContainer.getRawObjectQueue().isEmpty() && QueueContainer.getPreprocessedOutput().isEmpty())) {
+        while (!(QueueContainer.getRawObjectQueue().isEmpty() && QueueContainer.getPreprocessedOutputQueue().isEmpty())) {
             Thread.sleep(1000);
         }
 

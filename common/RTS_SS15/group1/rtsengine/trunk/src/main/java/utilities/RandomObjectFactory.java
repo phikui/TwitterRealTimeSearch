@@ -1,6 +1,10 @@
 package utilities;
 
-import model.*;
+import iocontroller.PreprocessorRawObject;
+import model.TermDictionary;
+import model.TransportObject;
+import model.TweetDictionary;
+import model.TweetObject;
 import twitter4j.GeoLocation;
 import twitter4j.Place;
 
@@ -60,9 +64,9 @@ public class RandomObjectFactory {
     }
 
 
-    public PreprocessingRawObject generateRandomRawObjecttReadyForPreprocessing() {
+    public PreprocessorRawObject generateRandomRawObjecttReadyForPreprocessing() {
         TweetObject tweetObject = this.generateRandomTweet();
-        return new PreprocessingRawObject(tweetObject);
+        return new PreprocessorRawObject(tweetObject);
     }
 
     public TransportObject generateRandomTransportObjectReadyForPreprocessing() {
