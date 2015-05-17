@@ -1,33 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.canvas.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainAppController">
    <children>
-      <SplitPane dividerPositions="0.6287625418060201" layoutX="200.0" layoutY="66.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.5836120401337793" layoutX="200.0" layoutY="66.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ScrollPane layoutX="77.0" layoutY="130.0" prefHeight="398.0" prefWidth="372.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ScrollPane layoutX="77.0" layoutY="130.0" prefHeight="398.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="200.0">
                <children>
-                  <Label layoutX="85.0" layoutY="309.0" text="Freshness:" />
-                  <Label layoutX="90.0" layoutY="274.0" text="Similarity:" />
-                  <Label layoutX="73.0" layoutY="240.0" text="Significance:" />
-                  <TextField layoutX="152.0" layoutY="235.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
-                  <TextField layoutX="152.0" layoutY="269.0" prefHeight="16.0" prefWidth="47.0" promptText="100" />
-                  <TextField layoutX="152.0" layoutY="304.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
-                  <ComboBox layoutX="115.0" layoutY="24.0" prefHeight="26.0" prefWidth="82.0" promptText="Index" />
-                  <Button fx:id="start" layoutX="86.0" layoutY="344.0" mnemonicParsing="false" text="Start" />
-                  <Label layoutX="19.0" layoutY="207.0" text="Ratio Tweets/Queries" />
-                  <TextField layoutX="152.0" layoutY="202.0" prefHeight="26.0" prefWidth="47.0" promptText="100" />
-                  <ToggleButton layoutX="135.0" layoutY="167.0" mnemonicParsing="false" text="Stream" />
-                  <TextField layoutX="152.0" layoutY="62.0" prefHeight="26.0" prefWidth="47.0" text="10" />
-                  <Label layoutX="72.0" layoutY="67.0" text="# of Threads" />
+                  <Label layoutX="101.0" layoutY="312.0" text="Freshness:" />
+                  <Label layoutX="104.0" layoutY="277.0" text="Similarity:" />
+                  <Label layoutX="90.0" layoutY="243.0" text="Significance:" />
+                  <ComboBox fx:id="indexType" layoutX="136.0" layoutY="27.0" prefHeight="26.0" prefWidth="82.0" promptText="Index">
+                       <items>
+                           <FXCollections fx:factory="observableArrayList">
+                               <String fx:value="AO" />
+                               <String fx:value="TPL" />
+                               <String fx:value="LSII" />
+                           </FXCollections>
+                       </items>
+                      <value>
+                          <String fx:value="AO" />
+                      </value>
+                  </ComboBox>
+                  <TextField fx:id="wSignificance" layoutX="173.0" layoutY="238.0" prefHeight="26.0" prefWidth="47.0" promptText="33" text="33" />
+                  <TextField fx:id="wSimilarity" layoutX="173.0" layoutY="272.0" prefHeight="16.0" prefWidth="47.0" promptText="33" text="33" />
+                  <TextField fx:id="wFreshness" layoutX="173.0" layoutY="307.0" prefHeight="26.0" prefWidth="47.0" promptText="34" text="34" />
+      
+                  <Button fx:id="start" layoutX="107.0" layoutY="347.0" mnemonicParsing="false" text="Start" />
+                  <Label layoutX="40.0" layoutY="210.0" text="Ratio Tweets/Queries:" />
+                  <TextField fx:id="ratio" layoutX="173.0" layoutY="205.0" prefHeight="26.0" prefWidth="47.0" promptText="100" text="100" />
+                  <TextField fx:id="numberOfThreads" layoutX="173.0" layoutY="65.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
+                  <Label layoutX="87.0" layoutY="70.0" text="# of Threads:" />
+                  <TextField fx:id="numberOfTweets" layoutX="173.0" layoutY="102.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
+                  <Label layoutX="92.0" layoutY="107.0" text="# of Tweets:" />
+                  <Label layoutX="116.0" layoutY="139.0" text="Tweets:" />
+                  <Label layoutX="112.0" layoutY="174.0" text="Queries:" />
+                  <ToggleButton fx:id="streamTweets" layoutX="170.0" layoutY="135.0" mnemonicParsing="false" text="Stream" />
+                  <ToggleButton fx:id="streamQueries" layoutX="170.0" layoutY="170.0" mnemonicParsing="false" text="Stream" />
+                  <Separator layoutX="81.0" layoutY="243.0" orientation="VERTICAL" prefHeight="91.0" prefWidth="3.0" />
+                  <Label layoutX="41.0" layoutY="277.0" text="100%" />
+                  <Label layoutX="223.0" layoutY="210.0" text="\%" />
+                  <Label layoutX="223.0" layoutY="241.0" text="\%" />
+                  <Label layoutX="223.0" layoutY="276.0" text="\%" />
+                  <Label layoutX="223.0" layoutY="311.0" text="\%" />
                </children>
             </AnchorPane>
         </items>
