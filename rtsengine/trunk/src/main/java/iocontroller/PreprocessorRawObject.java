@@ -59,7 +59,7 @@ public class PreprocessorRawObject implements Callable<TransportObject> {
             result = new TransportObject(tweet);
             List<String> stems;
             if (IOController.useStandfordStemmer) {
-                //
+                stems = IOController.stemmer.get().stem(tweet.getText());
             } else {
                 stems = Stemmer.trivial_stem(tweet.getText());
             }
@@ -70,7 +70,7 @@ public class PreprocessorRawObject implements Callable<TransportObject> {
             result = new TransportObject(query, timestamp, k);
             List<String> stems;
             if (IOController.useStandfordStemmer) {
-                //
+                stems = IOController.stemmer.get().stem(tweet.getText());
             } else {
                 stems = Stemmer.trivial_stem(query);
             }

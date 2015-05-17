@@ -13,7 +13,7 @@ public class IOControllerTest {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int num_tweets = 2000;
+        int num_tweets = 100000;
 
         //creating the IOProcessor
         int num_preprocessors = 4;

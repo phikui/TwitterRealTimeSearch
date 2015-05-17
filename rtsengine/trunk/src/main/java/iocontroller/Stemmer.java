@@ -6,7 +6,10 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * Created by phil on 17.05.2015.
@@ -16,9 +19,6 @@ public class Stemmer {
     // private static volatile Properties props;
     // private static volatile StanfordCoreNLP pipeline;
 
-    public static void init() {
-
-    }
     protected StanfordCoreNLP pipeline;
     public Stemmer()
     {
@@ -29,6 +29,24 @@ public class Stemmer {
         // StanfordCoreNLP loads a lot of models, so we only want to do this once per execution
         this.pipeline = new StanfordCoreNLP(props);
     }
+
+    public static void init() {
+
+    }
+
+    //TODO is to remove special symbols
+    public static List<String> trivial_stem(String text) {
+        List<String> terms = new LinkedList<String>();
+
+        StringTokenizer stringTokenizer = new StringTokenizer(text);
+        while (stringTokenizer.hasMoreTokens()) {
+            String token = stringTokenizer.nextToken();
+            terms.add(token);
+        }
+
+        return terms;
+    }
+
     public  List<String> stem(String text) {
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(text);
@@ -49,16 +67,6 @@ public class Stemmer {
 
         return wordList;
     }
-    //TODO is to remove special symbols
-    public static List<String> trivial_stem(String text) {
-        List<String> terms = new LinkedList<String>();
 
-        StringTokenizer stringTokenizer = new StringTokenizer(text);
-        while (stringTokenizer.hasMoreTokens()) {
-            String token = stringTokenizer.nextToken();
-            terms.add(token);
-        }
 
-        return terms;
-    }
 }
