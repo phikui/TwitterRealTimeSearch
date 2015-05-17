@@ -54,7 +54,7 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
         TransportObject result;
 
         //distinguish betweeen query and tweet
-        if (isQuery) {
+        if (!isQuery) {
             result = new TransportObject(tweet);
             /*
             Code for stemming
