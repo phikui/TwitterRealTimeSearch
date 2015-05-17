@@ -50,6 +50,10 @@ public class WriterMainThread extends Thread {
                         x.setTermIDs(termIds);
 
                         IndexDispatcher.insert(x);
+                        System.out.println("Inserted tweet:");
+                        System.out.println(x.getText());
+                        System.out.println();
+                        System.out.println();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
