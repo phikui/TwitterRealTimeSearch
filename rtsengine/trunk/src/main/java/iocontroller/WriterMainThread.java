@@ -33,7 +33,7 @@ public class WriterMainThread extends Thread {
                     x = incomingQueue.remove().get();
                     if (x.isQuery()) {
                         //If it is a query dispatch to query processor
-                        //TODO
+                        QueryProcessorMainThread.scheduleQuery(x);
                     } else {
                         //There should be a tweet Object be added to transport Object
                         //TODO
