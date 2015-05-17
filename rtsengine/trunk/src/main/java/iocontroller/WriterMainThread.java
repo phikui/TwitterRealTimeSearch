@@ -15,22 +15,18 @@ import java.util.concurrent.Future;
  * Created by phil on 16.05.15.
  */
 public class WriterMainThread extends Thread {
-    private volatile boolean isTerminated = false;
     private final boolean output;
+    private volatile boolean isTerminated = false;
+    private Queue<Future<TransportObject>> incomingQueue = QueueContainer.getPreprocessedOutput();
 
     public WriterMainThread() {
         output = false;
     }
 
-    public WriterMainThread(boolean output) {
-        this.output = output;
-    }
 
     public WriterMainThread(boolean output) {
         this.output = output;
     }
-
-    private Queue<Future<TransportObject>> incomingQueue = QueueContainer.getPreprocessedOutput();
 
     public void terminate() {
         isTerminated = true;
@@ -76,7 +72,7 @@ public class WriterMainThread extends Thread {
 
             } else {
                 //When output queue empty wait a bit
-                System.out.println("output queue empty");
+                //System.out.println("output queue empty");
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
@@ -84,5 +80,6 @@ public class WriterMainThread extends Thread {
                 }
             }
         }
+        System.out.println("Writer has stopped");
     }
 }
