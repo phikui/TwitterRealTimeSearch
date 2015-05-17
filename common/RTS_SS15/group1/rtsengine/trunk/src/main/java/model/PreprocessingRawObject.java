@@ -1,7 +1,4 @@
-package iocontroller;
-
-import model.TransportObject;
-import model.TweetObject;
+package model;
 
 import java.util.Date;
 import java.util.List;
