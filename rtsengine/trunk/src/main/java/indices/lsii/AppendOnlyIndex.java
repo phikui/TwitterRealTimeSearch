@@ -3,7 +3,10 @@ package indices.lsii;
 import indices.IRTSIndex;
 import model.TransportObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -16,7 +19,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class AppendOnlyIndex implements IRTSIndex {
     private HashMap<Integer, UnsortedPostingList> invertedIndex;
 
-    // TODO: Use concurrent HashMap?
+    // TODO: Use concurrent HashMap? Yes!
     public AppendOnlyIndex() {
         this.invertedIndex = new HashMap<Integer, UnsortedPostingList>();
     }
