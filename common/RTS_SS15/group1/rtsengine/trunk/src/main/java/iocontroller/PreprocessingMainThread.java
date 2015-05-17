@@ -42,7 +42,7 @@ public class PreprocessingMainThread extends Thread {
                 outputQueue.add(output);
             } else {
                 //When incoming queue empty wait a bit
-                System.out.println("Incoming queue empty");
+                //System.out.println("Incoming queue empty");
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
@@ -50,6 +50,6 @@ public class PreprocessingMainThread extends Thread {
                 }
             }
         }
-
+        System.out.println("preprocessor has stopped");
     }
 }

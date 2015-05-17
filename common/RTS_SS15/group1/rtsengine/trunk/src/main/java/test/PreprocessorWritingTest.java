@@ -1,10 +1,6 @@
 package test;
 
-import iocontroller.PreprocessingMainThread;
-import iocontroller.QueueContainer;
-import iocontroller.Stemmer;
-import iocontroller.WriterMainThread;
-import model.PreprocessingRawObject;
+import iocontroller.*;
 import utilities.RandomObjectFactory;
 
 /**
@@ -13,40 +9,59 @@ import utilities.RandomObjectFactory;
 public class PreprocessorWritingTest {
 
     public static void main(String[] args) throws InterruptedException {
-        int num_tweets = 10000;
-        boolean writerOutput = true;
+        int num_tweets = 500000;
+        int num_preprocsessors = 2;
+        boolean writerOutput = false;
 
         RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
         Stemmer.init();
 
-        //populate the incoming queue
 
+        //populate the incoming queue
+        System.out.print("adding " + num_tweets + " random tweets to the incoming queue.");
         for (int i = 0; i < num_tweets; i++) {
             QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
-        System.out.println("added " + num_tweets + " random tweets");
+        System.out.println(" done.");
 
-        for (PreprocessingRawObject x : QueueContainer.getRawObjectQueue()) {
-            // System.out.println(x.getTweet().getText());
-        }
+
 
         System.out.println("Queue Populated");
         System.out.println("Preprocessor and writer threads will be started in 5 seconds");
         Thread.sleep(5000);
 
         System.out.println("Starting Preprocess Thread");
-        PreprocessingMainThread preprocessor = new PreprocessingMainThread(2);
+        PreprocessingMainThread preprocessor = new PreprocessingMainThread(num_preprocsessors);
         preprocessor.start();
 
         System.out.println("Starting writing Thread");
         WriterMainThread writer = new WriterMainThread(writerOutput);
         writer.start();
 
+        System.out.println("Starting observer Thread");
+        QueueObserver obs = new QueueObserver();
+        obs.start();
+
+
         //insert some more tweets
+        System.out.println("adding " + num_tweets + " more random tweets to the incoming queue.");
         for (int i = 0; i < num_tweets; i++) {
             QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
-        System.out.println("added " + num_tweets + " more random tweets");
+        System.out.println("!!!!!!          Added all new tweets. !!!!!! ");
+
+        while (!(QueueContainer.getRawObjectQueue().isEmpty() && QueueContainer.getPreprocessedOutput().isEmpty())) {
+            Thread.sleep(3000);
+        }
+
+        System.out.println("Both queues empty, shutting down");
+        preprocessor.terminate();
+        writer.terminate();
+        obs.terminate();
+        preprocessor.join();
+        writer.join();
+        obs.join();
+        System.exit(0);
 
     }
 }
