@@ -1,10 +1,6 @@
 package utilities;
 
-import model.TermDictionary;
-import model.TransportObject;
-import model.TweetDictionary;
-import model.TweetObject;
-
+import model.*;
 import twitter4j.GeoLocation;
 import twitter4j.Place;
 
@@ -61,6 +57,12 @@ public class RandomObjectFactory {
         randomWordList.add("Florida");
         randomWordList.add("Disney");
         randomWordList.add("World");
+    }
+
+
+    public PreprocessingRawObject generateRandomRawObjecttReadyForPreprocessing() {
+        TweetObject tweetObject = this.generateRandomTweet();
+        return new PreprocessingRawObject(tweetObject);
     }
 
     public TransportObject generateRandomTransportObjectReadyForPreprocessing() {

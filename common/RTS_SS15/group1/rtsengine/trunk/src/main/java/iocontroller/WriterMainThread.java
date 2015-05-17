@@ -1,5 +1,6 @@
 package iocontroller;
 
+import indices.IndexDispatcher;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
@@ -35,9 +36,7 @@ public class WriterMainThread extends Thread {
                         //If it is a query dispatch to query processor
                         QueryProcessorMainThread.scheduleQuery(x);
                     } else {
-                        //There should be a tweet Object be added to transport Object
-                        //TODO
-                        TweetObject tweet = null;
+                        TweetObject tweet = x.getTweetObject();
 
                         //Update tweet and termDictionaries
                         int tweet_id = TweetDictionary.insertTweetObject(tweet);
@@ -50,8 +49,7 @@ public class WriterMainThread extends Thread {
                         }
                         x.setTermIDs(termIds);
 
-                        //Add to indices
-                        //TODO
+                        IndexDispatcher.insert(x);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

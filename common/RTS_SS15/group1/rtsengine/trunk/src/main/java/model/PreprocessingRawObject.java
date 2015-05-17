@@ -17,6 +17,7 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
     // for determining if the object is a query or not
     private final boolean isQuery;
 
+
     //The tweet Content if it is a tweet
     private final TweetObject tweet;
 
@@ -70,4 +71,9 @@ public class PreprocessingRawObject implements Callable<TransportObject> {
 
         return result;
     }
+
+    public TweetObject getTweet() {
+        return tweet;
+    }
+
 }
