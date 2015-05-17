@@ -4,9 +4,7 @@ import model.PreprocessingRawObject;
 import model.TransportObject;
 
 import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static java.lang.Runtime.getRuntime;
 
@@ -16,12 +14,20 @@ import static java.lang.Runtime.getRuntime;
 public class PreprocessingMainThread extends Thread {
 
     private final ExecutorService preprocessors;
+    private final Queue<PreprocessingRawObject> incomingQueue = QueueContainer.getRawObjectQueue();
+    private final Queue<Future<TransportObject>> outputQueue = QueueContainer.getPreprocessedOutput();
     private volatile boolean isTerminated = false;
-    private Queue<PreprocessingRawObject> incomingQueue = QueueContainer.getRawObjectQueue();
-    private Queue<Future<TransportObject>> outputQueue = QueueContainer.getPreprocessedOutput();
 
     public PreprocessingMainThread(int num_preprocessors) {
         preprocessors = Executors.newFixedThreadPool(num_preprocessors);
+    }
+
+
+    //This will initialize a dynamically growing Thread pool
+    public PreprocessingMainThread(int maxPrepreprocessors, int timeOutInSeconds) {
+        ThreadPoolExecutor x = new ThreadPoolExecutor(0, maxPrepreprocessors, timeOutInSeconds, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        x.allowCoreThreadTimeOut(true);
+        preprocessors = x;
     }
 
     public PreprocessingMainThread() {
