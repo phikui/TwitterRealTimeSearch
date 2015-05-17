@@ -6,14 +6,20 @@ package iocontroller;
 
 //This class is for outputting diagnostic information of the queues
 public class QueueObserver extends Thread {
+    private final QueueContainer queueContainer;
     private volatile boolean isTerminated = false;
+
+    public QueueObserver(QueueContainer queueContainer) {
+        this.queueContainer = queueContainer;
+
+    }
 
     public void run() {
         while (!isTerminated) {
             System.out.println("_______________________________________");
             System.out.println("");
-            System.out.println("Size of preprocessor queue: " + QueueContainer.getPreProcessorQueue().size());
-            System.out.println("Size of writer queue: " + QueueContainer.getWriterQueue().size());
+            System.out.println("Size of preprocessor queue: " + queueContainer.getPreProcessorQueue().size());
+            System.out.println("Size of writer queue: " + queueContainer.getWriterQueue().size());
             System.out.println("_______________________________________");
             try {
                 Thread.sleep(2000);

@@ -16,15 +16,17 @@ import java.util.concurrent.Future;
  */
 public class WriterMainThread extends Thread {
     private final boolean output;
-    private final Queue<Future<TransportObject>> incomingQueue = QueueContainer.getWriterQueue();
+    private final Queue<Future<TransportObject>> incomingQueue;
     private volatile boolean isTerminated = false;
 
-    public WriterMainThread() {
+    public WriterMainThread(QueueContainer queueContainer) {
+        incomingQueue = queueContainer.getWriterQueue();
         output = false;
     }
 
 
-    public WriterMainThread(boolean output) {
+    public WriterMainThread(QueueContainer queueContainer, boolean output) {
+        incomingQueue = queueContainer.getWriterQueue();
         this.output = output;
     }
 
