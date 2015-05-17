@@ -55,12 +55,17 @@ public class PreprocessorWritingTest {
         }
 
         System.out.println("Both queues empty, shutting down");
+
+        //send terminate requests
         preprocessor.terminate();
         writer.terminate();
         obs.terminate();
+
+        //wait for actual termination
         preprocessor.join();
         writer.join();
         obs.join();
+
         System.exit(0);
 
     }
