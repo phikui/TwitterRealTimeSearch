@@ -36,6 +36,9 @@ public class IOController {
     }
 
     public void stopAll() {
+        if (this.hasUnprocessedItems()) {
+            System.out.println("Warning: there are unprocessed items");
+        }
         writer.terminate();
         preProcessor.terminate();
         queueObserver.terminate();
@@ -53,11 +56,10 @@ public class IOController {
         preProcessor.join();
         writer.join();
         queueObserver.join();
-
     }
 
     public void addRawObject(PreprocessorRawObject newRaw) {
-        QueueContainer.getRawObjectQueue().add(newRaw);
+        QueueContainer.getPreProcessorQueue().add(newRaw);
     }
 
     public void addQuery(String queryString, int k, Date timestamp) {
@@ -68,5 +70,21 @@ public class IOController {
     public void addTweet(TweetObject tweet) {
         PreprocessorRawObject newRaw = new PreprocessorRawObject(tweet);
         this.addRawObject(newRaw);
+    }
+
+    public boolean hasUnprocessedItems() {
+        return !(QueueContainer.getPreProcessorQueue().isEmpty() && QueueContainer.getWriterQueue().isEmpty());
+    }
+
+    public int numUnprocessedItems() {
+        return QueueContainer.getWriterQueue().size() + QueueContainer.getPreProcessorQueue().size();
+    }
+
+    public int sizePreProcessorQueue() {
+        return QueueContainer.getPreProcessorQueue().size();
+    }
+
+    public int sizeWriterQueue() {
+        return QueueContainer.getWriterQueue().size();
     }
 }

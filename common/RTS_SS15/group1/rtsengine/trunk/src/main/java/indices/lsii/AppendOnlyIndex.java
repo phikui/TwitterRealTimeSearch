@@ -141,4 +141,9 @@ public class AppendOnlyIndex implements IRTSIndex {
             postingListForTermID.add(tweetID);
         }
     }
+
+
+    public int size() {
+        return invertedIndex.size();
+    }
 }

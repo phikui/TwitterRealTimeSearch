@@ -20,7 +20,7 @@ public class PreprocessorWritingTest {
         //populate the incoming queue
         System.out.print("adding " + num_tweets + " random tweets to the incoming queue.");
         for (int i = 0; i < num_tweets; i++) {
-            QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
+            QueueContainer.getPreProcessorQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
         System.out.println(" done.");
 
@@ -48,11 +48,11 @@ public class PreprocessorWritingTest {
         //insert some more tweets
         System.out.println("adding " + num_tweets + " more random tweets to the incoming queue.");
         for (int i = 0; i < num_tweets; i++) {
-            QueueContainer.getRawObjectQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
+            QueueContainer.getPreProcessorQueue().add(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
         }
         System.out.println("!!!!!!          Added all new tweets. !!!!!! ");
 
-        while (!(QueueContainer.getRawObjectQueue().isEmpty() && QueueContainer.getPreprocessedOutputQueue().isEmpty())) {
+        while (!(QueueContainer.getPreProcessorQueue().isEmpty() && QueueContainer.getWriterQueue().isEmpty())) {
             Thread.sleep(1000);
         }
 

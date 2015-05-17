@@ -55,4 +55,10 @@ public class TermDictionary {
         return termID;
     }
 
+
+    public static int size() {
+        return termDictionary.size();
+    }
+
+
 }
