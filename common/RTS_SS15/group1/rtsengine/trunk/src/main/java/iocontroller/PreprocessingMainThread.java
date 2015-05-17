@@ -40,6 +40,14 @@ public class PreprocessingMainThread extends Thread {
                 PreprocessingRawObject next = incomingQueue.remove();
                 Future<TransportObject> output = preprocessors.submit(next);
                 outputQueue.add(output);
+            } else {
+                //When incoming queue empty wait a bit
+                System.out.println("Incoming queue empty");
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

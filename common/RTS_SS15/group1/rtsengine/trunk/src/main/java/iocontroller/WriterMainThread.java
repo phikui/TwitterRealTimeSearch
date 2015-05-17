@@ -60,6 +60,14 @@ public class WriterMainThread extends Thread {
                     System.out.println("Could not get element from writer queue");
                 }
 
+            } else {
+                //When output queue empty wait a bit
+                System.out.println("output queue empty");
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
