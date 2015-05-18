@@ -37,7 +37,7 @@ public class TriplePostingListIndex implements IRTSIndex {
         float currSignificance = 0;
         float currSimilarity = 0;
 
-        float fValue = 0;
+        float fValue;
         float threshold;
 
 
@@ -51,10 +51,19 @@ public class TriplePostingListIndex implements IRTSIndex {
                 maxFreshness = triplePostingListForTermID.getFreshnessPostingList().get(i).getSortKey();
 
                 // for TA we would need to look up sim and sig for the current tweetID and then calculate f:
-                // currSignificance = TweetDictionary.getTransportObject(currentTweetID).getSignificance();
-                // currSimilarity = TweetDictionary.getTransportObject(currentTweetID).getSimilarity();
-                // fValue = HelperFunctions.calculateRankingFunction(maxFreshness, currSignificance, currSimilarity);
-                if(!currentTopK.contains(currentTweetID)){
+                for(int j = 0; j < triplePostingListForTermID.getSignificancePostingList().size(); j++){
+                    if (triplePostingListForTermID.getSignificancePostingList().get(j).getTweetID() == currentTweetID)
+                        currSignificance = triplePostingListForTermID.getSignificancePostingList().get(j).getSortKey();
+                }
+                for (int l = 0; l < triplePostingListForTermID.getTermSimilarityPostingList().size(); l++){
+                    if (triplePostingListForTermID.getTermSimilarityPostingList().get(l).getTweetID() == currentTweetID){
+                        currSimilarity = triplePostingListForTermID.getTermSimilarityPostingList().get(l).getSortKey();
+                    }
+                }
+                // currSignificance = HelperFunctions.calculateSignificance(TweetDictionary.getTweetObject(currentTweetID));
+                // currSimilarity = HelperFunctions.calculateTermSimilarity(termIDs, TweetDictionary.getTweetObject(currentTweetID).getText() );
+                fValue = HelperFunctions.calculateRankingFunction(maxFreshness, currSignificance, currSimilarity);
+                if(!currentTopK.containsTweetID(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
 
@@ -62,10 +71,20 @@ public class TriplePostingListIndex implements IRTSIndex {
                 maxSignificance = triplePostingListForTermID.getSignificancePostingList().get(i).getSortKey();
 
                 // for TA we would need to look up fresh and sig for the current tweetID and then calculate f:
+                for(int j = 0; j < triplePostingListForTermID.getFreshnessPostingList().size(); j++){
+                    if (triplePostingListForTermID.getFreshnessPostingList().get(j).getTweetID() == currentTweetID)
+                        currFreshness = triplePostingListForTermID.getFreshnessPostingList().get(j).getSortKey();
+                }
+                for (int l = 0; l < triplePostingListForTermID.getTermSimilarityPostingList().size(); l++){
+                    if (triplePostingListForTermID.getTermSimilarityPostingList().get(l).getTweetID() == currentTweetID){
+                        currSimilarity = triplePostingListForTermID.getTermSimilarityPostingList().get(l).getSortKey();
+                    }
+                }
+
                 // currFreshness = TweetDictionary.getTransportObject(currentTweetID).getFreshness();
                 // currSimilarity = TweetDictionary.getTransportObject(currentTweetID).getSimilarity();
-                // fValue = HelperFunctions.calculateRankingFunction(currFreshness, maxSignificance, currSimilarity);
-                if(!currentTopK.contains(currentTweetID)){
+                fValue = HelperFunctions.calculateRankingFunction(currFreshness, maxSignificance, currSimilarity);
+                if(!currentTopK.containsTweetID(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
 
@@ -73,16 +92,27 @@ public class TriplePostingListIndex implements IRTSIndex {
                 maxSimilarity = triplePostingListForTermID.getTermSimilarityPostingList().get(i).getSortKey();
 
                 // for TA we would need to look up fresh and sim for the current tweetID and then calculate f:
+                for(int j = 0; j < triplePostingListForTermID.getFreshnessPostingList().size(); j++){
+                    if (triplePostingListForTermID.getFreshnessPostingList().get(j).getTweetID() == currentTweetID)
+                        currFreshness = triplePostingListForTermID.getFreshnessPostingList().get(j).getSortKey();
+                }
+                for (int l = 0; l < triplePostingListForTermID.getSignificancePostingList().size(); l++){
+                    if (triplePostingListForTermID.getSignificancePostingList().get(l).getTweetID() == currentTweetID){
+                        currSignificance = triplePostingListForTermID.getSignificancePostingList().get(l).getSortKey();
+                    }
+                }
+
                 // currFreshness = TweetDictionary.getTransportObject(currentTweetID).getFreshness();
                 // currSignificance = TweetDictionary.getTransportObject(currentTweetID).getSignificance();
-                // fValue = HelperFunctions.calculateRankingFunction(currFreshness, currSignificance, maxSimilarity);
-                if(!currentTopK.contains(currentTweetID)){
+                fValue = HelperFunctions.calculateRankingFunction(currFreshness, currSignificance, maxSimilarity);
+                if(!currentTopK.containsTweetID(currentTweetID)){
                     currentTopK.insertSorted(currentTweetID, fValue);
                 }
 
                 threshold = HelperFunctions.calculateRankingFunction(maxFreshness, maxSignificance, maxSimilarity);
-                if((currentTopK.get((k-1)).getSortKey() >= threshold) && (currentTopK.get((k-1)) != null)){
-                    break;
+                if (currentTopK.size() >= k){
+                    if (currentTopK.get((k-1)).getSortKey() >= threshold)
+                        break;
                 }
 
             }
@@ -90,8 +120,9 @@ public class TriplePostingListIndex implements IRTSIndex {
         }
 
         // shorten to top-k elements and copy to arrayList, this may be done better as it currently is O(list.size())
-        currentTopK.subList((k-1), currentTopK.size()).clear();
-        for(int j = 0; j < k; j++){
+        if(currentTopK.size() >= k)
+            currentTopK.subList(0, (k-1)).clear();
+        for(int j = 0; j < currentTopK.size(); j++){
             topKTweetIDs.add(currentTopK.get(j).getTweetID());
         }
 

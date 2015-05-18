@@ -35,9 +35,7 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
         }
     }
 
-    /*
-    @Override
-    public boolean equals(int tweetID){
+    public boolean containsTweetID(int tweetID){
         SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, -1);
         ListIterator<SortedPostingListElement> iterator = listIterator();
         while(true){
@@ -50,6 +48,6 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
             }
         }
 
-    }*/
+    }
 
 }
