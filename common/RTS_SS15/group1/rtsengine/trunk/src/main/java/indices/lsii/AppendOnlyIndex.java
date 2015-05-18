@@ -142,7 +142,6 @@ public class AppendOnlyIndex implements IRTSIndex {
         }
     }
 
-
     public int size() {
         return invertedIndex.size();
     }

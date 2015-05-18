@@ -20,4 +20,9 @@ public class LSIIIndex implements IRTSIndex {
     public void insertTransportObject(TransportObject transportObjectInsertion) {
         // TODO: implement
     }
+
+    public int size() {
+        // TODO: implement
+        return 0;
+    }
 }

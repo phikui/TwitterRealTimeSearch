@@ -36,4 +36,11 @@ public interface IRTSIndex {
      */
     public void insertTransportObject(TransportObject transportObjectInsertion);
 
+    /**
+     * Returns the number of terms indexed
+     *
+     * @return  int
+     */
+    public int size();
+
 }
