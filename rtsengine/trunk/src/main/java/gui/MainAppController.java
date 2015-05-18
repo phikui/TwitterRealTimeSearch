@@ -6,10 +6,7 @@ import javafx.fxml.Initializable;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.beans.value.ChangeListener;
@@ -31,6 +28,9 @@ import javafx.scene.layout.AnchorPane;
 import gui.MainApp;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import model.TweetObject;
+import twitter4j.GeoLocation;
+import twitter4j.Place;
 
 /**
  * Created by Guerki on 16/5/15.
@@ -39,9 +39,7 @@ public class MainAppController implements Initializable {
     @FXML
     Button start;
     @FXML
-    ToggleButton streamTweets;
-    @FXML
-    ToggleButton streamQueries;
+    ToggleButton stream;
     @FXML
     ComboBox<String> indexType;
     @FXML
@@ -56,6 +54,8 @@ public class MainAppController implements Initializable {
     TextField wSimilarity;
     @FXML
     TextField wFreshness;
+    @FXML
+    ListView<TweetObject> list;
 
     public void initialize(URL url, ResourceBundle rsrcs) {
         start.setOnAction(new EventHandler<ActionEvent>() {
@@ -70,8 +70,7 @@ public class MainAppController implements Initializable {
                 int nWSimilarity = Integer.parseInt(wSimilarity.getCharacters().toString());
                 int nWFreshness = Integer.parseInt(wFreshness.getCharacters().toString());
                 String nIndexType = indexType.getSelectionModel().getSelectedItem().toString();
-                Boolean nStreamTweets = streamTweets.isSelected();
-                Boolean nStreamQueries = streamQueries.isSelected();
+                Boolean nStream = stream.isSelected();
 
                 /**
                  * Check if data is valid
@@ -100,11 +99,17 @@ public class MainAppController implements Initializable {
                 ConfigurationObject.setNumberOfThreads(nNumberOfThreads);
                 ConfigurationObject.setNumberOfTweets(nNumberOfTweets);
                 ConfigurationObject.setRatio(nRatio);
-                ConfigurationObject.setStreamQueries(nStreamQueries);
-                ConfigurationObject.setStreamTweets(nStreamTweets);
+                ConfigurationObject.setStream(nStream);
                 ConfigurationObject.setwFreshness(nWFreshness);
                 ConfigurationObject.setwSignificance(nWSignificance);
                 ConfigurationObject.setwSimilarity(nWSimilarity);
+                test.RTSIndexTestCase.main(null);
+                TweetObject testTweet = new TweetObject("guerki","test test test test test test");
+                ObservableList<TweetObject> tweets = FXCollections.observableArrayList(testTweet);
+
+                list.setItems(tweets);
+
+
             }
         });
     }

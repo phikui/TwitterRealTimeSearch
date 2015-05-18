@@ -13,14 +13,17 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <ScrollPane layoutX="77.0" layoutY="130.0" prefHeight="398.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ScrollPane layoutX="77.0" layoutY="130.0" prefHeight="398.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <ListView fx:id="tweetlist" prefHeight="396.0" prefWidth="344.0" />
+                     </content></ScrollPane>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="200.0">
                <children>
-                  <Label layoutX="101.0" layoutY="312.0" text="Freshness:" />
-                  <Label layoutX="104.0" layoutY="277.0" text="Similarity:" />
-                  <Label layoutX="90.0" layoutY="243.0" text="Significance:" />
+                  <Label layoutX="101.0" layoutY="274.0" text="Freshness:" />
+                  <Label layoutX="104.0" layoutY="239.0" text="Similarity:" />
+                  <Label layoutX="90.0" layoutY="205.0" text="Significance:" />
                   <ComboBox fx:id="indexType" layoutX="136.0" layoutY="27.0" prefHeight="26.0" prefWidth="82.0" promptText="Index">
                        <items>
                            <FXCollections fx:factory="observableArrayList">
@@ -33,27 +36,25 @@
                           <String fx:value="AO" />
                       </value>
                   </ComboBox>
-                  <TextField fx:id="wSignificance" layoutX="173.0" layoutY="238.0" prefHeight="26.0" prefWidth="47.0" promptText="33" text="33" />
-                  <TextField fx:id="wSimilarity" layoutX="173.0" layoutY="272.0" prefHeight="16.0" prefWidth="47.0" promptText="33" text="33" />
-                  <TextField fx:id="wFreshness" layoutX="173.0" layoutY="307.0" prefHeight="26.0" prefWidth="47.0" promptText="34" text="34" />
+                  <TextField fx:id="wSignificance" layoutX="173.0" layoutY="200.0" prefHeight="26.0" prefWidth="47.0" promptText="33" text="33" />
+                  <TextField fx:id="wSimilarity" layoutX="173.0" layoutY="234.0" prefHeight="16.0" prefWidth="47.0" promptText="33" text="33" />
+                  <TextField fx:id="wFreshness" layoutX="173.0" layoutY="269.0" prefHeight="26.0" prefWidth="47.0" promptText="34" text="34" />
       
                   <Button fx:id="start" layoutX="107.0" layoutY="347.0" mnemonicParsing="false" text="Start" />
-                  <Label layoutX="40.0" layoutY="210.0" text="Ratio Tweets/Queries:" />
-                  <TextField fx:id="ratio" layoutX="173.0" layoutY="205.0" prefHeight="26.0" prefWidth="47.0" promptText="100" text="100" />
+                  <Label layoutX="40.0" layoutY="172.0" text="Ratio Tweets/Queries:" />
+                  <TextField fx:id="ratio" layoutX="173.0" layoutY="167.0" prefHeight="26.0" prefWidth="47.0" promptText="100" text="100" />
                   <TextField fx:id="numberOfThreads" layoutX="173.0" layoutY="65.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
                   <Label layoutX="87.0" layoutY="70.0" text="# of Threads:" />
                   <TextField fx:id="numberOfTweets" layoutX="173.0" layoutY="102.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
                   <Label layoutX="92.0" layoutY="107.0" text="# of Tweets:" />
-                  <Label layoutX="116.0" layoutY="139.0" text="Tweets:" />
-                  <Label layoutX="112.0" layoutY="174.0" text="Queries:" />
-                  <ToggleButton fx:id="streamTweets" layoutX="170.0" layoutY="135.0" mnemonicParsing="false" text="Stream" />
-                  <ToggleButton fx:id="streamQueries" layoutX="170.0" layoutY="170.0" mnemonicParsing="false" text="Stream" />
-                  <Separator layoutX="81.0" layoutY="243.0" orientation="VERTICAL" prefHeight="91.0" prefWidth="3.0" />
-                  <Label layoutX="41.0" layoutY="277.0" text="100%" />
-                  <Label layoutX="223.0" layoutY="210.0" text="\%" />
-                  <Label layoutX="223.0" layoutY="241.0" text="\%" />
-                  <Label layoutX="223.0" layoutY="276.0" text="\%" />
-                  <Label layoutX="223.0" layoutY="311.0" text="\%" />
+                  <Label layoutX="116.0" layoutY="139.0" text="Stream:" />
+                  <ToggleButton fx:id="stream" layoutX="170.0" layoutY="135.0" mnemonicParsing="false" selected="true" text="On" />
+                  <Separator layoutX="81.0" layoutY="205.0" orientation="VERTICAL" prefHeight="91.0" prefWidth="3.0" />
+                  <Label layoutX="41.0" layoutY="239.0" text="100%" />
+                  <Label layoutX="223.0" layoutY="172.0" text="\%" />
+                  <Label layoutX="223.0" layoutY="203.0" text="\%" />
+                  <Label layoutX="223.0" layoutY="238.0" text="\%" />
+                  <Label layoutX="223.0" layoutY="273.0" text="\%" />
                </children>
             </AnchorPane>
         </items>

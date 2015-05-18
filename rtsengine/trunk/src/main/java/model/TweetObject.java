@@ -31,6 +31,11 @@ public class TweetObject implements Comparable, Serializable {
         this.numberOfAuthorFollowers = numberOfAuthorFollowers;
     }
 
+    public TweetObject(String username, String text){
+        this.username = username;
+        this.text = text;
+    }
+
     public String getUsername() {
         return this.username;
     }
