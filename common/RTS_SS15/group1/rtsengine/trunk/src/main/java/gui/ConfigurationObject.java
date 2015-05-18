@@ -13,8 +13,7 @@ public class ConfigurationObject {
     private static int numberOfThreads;
     private static int numberOfTweets;
 
-    private static boolean streamQueries;
-    private static boolean streamTweets;
+    private static boolean stream;
     private static String indexType;
 
 
@@ -69,20 +68,12 @@ public class ConfigurationObject {
         ConfigurationObject.numberOfThreads = numberOfThreads;
     }
 
-    public static boolean isStreamQueries() {
-        return ConfigurationObject.streamQueries;
+    public static boolean isStream() {
+        return ConfigurationObject.stream;
     }
 
-    public static void setStreamQueries(boolean streamQueries) {
-        ConfigurationObject.streamQueries = streamQueries;
-    }
-
-    public static boolean isStreamTweets() {
-        return ConfigurationObject.streamTweets;
-    }
-
-    public static void setStreamTweets(boolean streamTweets) {
-        ConfigurationObject.streamTweets = streamTweets;
+    public static void setStream(boolean stream) {
+        ConfigurationObject.stream = stream;
     }
 
     public static String getIndexType() {
