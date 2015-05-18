@@ -60,7 +60,7 @@ public class WriterMainThread extends Thread {
                         }
                         x.setTermIDs(termIds);
 
-                        IndexDispatcher.insert(x);
+                        IndexDispatcher.insertTransportObject(x);
                         if (output) {
                             System.out.println("Inserted tweet:");
                             System.out.println(x.getText());

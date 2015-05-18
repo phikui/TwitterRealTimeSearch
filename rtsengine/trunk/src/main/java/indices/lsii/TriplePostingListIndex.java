@@ -162,4 +162,8 @@ public class TriplePostingListIndex implements IRTSIndex {
         }
     }
 
+    public int size() {
+        return this.invertedIndex.size();
+    }
+
 }
