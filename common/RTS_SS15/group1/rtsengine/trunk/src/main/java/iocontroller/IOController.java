@@ -17,10 +17,14 @@ public class IOController {
             return new Stemmer();
         }
     };
+
+
+    //protected static final Stemmer stemmer = new Stemmer();
     protected final QueueContainer queueContainer;
     private final PreprocessorMainThread preProcessor;
     private final WriterMainThread writer;
     private final QueueObserver queueObserver;
+    //private final QueryProcessorMainThread queryProcessor;
 
 
     public IOController(int numPreProcessors, int numQueryProcessors, boolean writerOutput) {
@@ -28,6 +32,7 @@ public class IOController {
         preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
         writer = new WriterMainThread(queueContainer, writerOutput);
         queueObserver = new QueueObserver(queueContainer);
+        //queryProcessor = new QueryProcessorMainThread(numQueryProcessors);
     }
 
     public IOController() {

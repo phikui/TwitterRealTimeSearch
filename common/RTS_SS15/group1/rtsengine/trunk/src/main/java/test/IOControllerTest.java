@@ -1,5 +1,6 @@
 package test;
 
+import gui.ConfigurationObject;
 import indices.IndexDispatcher;
 import iocontroller.IOController;
 import model.TermDictionary;
@@ -13,12 +14,13 @@ public class IOControllerTest {
 
     public static void main(String[] args) throws InterruptedException {
 
-        int num_tweets = 1000000;
+        int num_tweets = 100000;
 
         //creating the IOProcessor
-        int num_preprocessors = 4;
+        int num_preprocessors = 1;
         int num_queryProcessors = 0;
         boolean debugOutputs = false;
+        ConfigurationObject.setIndexType("aoi");
         IOController ioController = new IOController(num_preprocessors, num_queryProcessors, debugOutputs);
 
 
@@ -41,6 +43,7 @@ public class IOControllerTest {
 
         while (ioController.hasUnprocessedItems()) {
             Thread.sleep(1000);
+            System.out.println(ioController.numUnprocessedItems());
         }
 
         //request threads to stop
