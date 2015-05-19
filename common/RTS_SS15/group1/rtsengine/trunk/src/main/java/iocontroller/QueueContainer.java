@@ -1,5 +1,7 @@
 package iocontroller;
 
+import iocontroller.preprocessor.PreprocessorRawObject;
+import model.QueryReturnObject;
 import model.TransportObject;
 
 import java.util.Queue;
@@ -20,15 +22,15 @@ public class QueueContainer {
         queryOutputQueue = new LinkedBlockingQueue<>();
     }
 
-    protected Queue<Future<TransportObject>> getWriterQueue() {
+    public Queue<Future<TransportObject>> getWriterQueue() {
         return writerQueue;
     }
 
-    protected Queue<PreprocessorRawObject> getPreProcessorQueue() {
+    public Queue<PreprocessorRawObject> getPreProcessorQueue() {
         return preProcessorQueue;
     }
 
-    protected Queue<Future<QueryReturnObject>> getQueryOutputQueue() {
+    public Queue<Future<QueryReturnObject>> getQueryOutputQueue() {
         return queryOutputQueue;
     }
 

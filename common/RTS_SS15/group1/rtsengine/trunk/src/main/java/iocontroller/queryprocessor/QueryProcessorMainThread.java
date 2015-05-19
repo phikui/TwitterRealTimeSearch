@@ -1,4 +1,4 @@
-package iocontroller;
+package iocontroller.queryprocessor;
 
 import model.TransportObject;
 

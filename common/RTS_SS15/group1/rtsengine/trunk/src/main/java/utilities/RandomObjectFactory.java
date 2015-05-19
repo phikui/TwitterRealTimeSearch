@@ -1,6 +1,6 @@
 package utilities;
 
-import iocontroller.PreprocessorRawObject;
+import iocontroller.preprocessor.PreprocessorRawObject;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
