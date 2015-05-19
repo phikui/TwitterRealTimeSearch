@@ -16,7 +16,7 @@ public class RTSIndexTestCase {
 
     private static RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
 
-    public static void main(String[] args) {
+    public static IRTSIndex main(String[] args) {
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForPreprocessing());
 //
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForWriting());
@@ -25,9 +25,11 @@ public class RTSIndexTestCase {
         // TODOL TriplePostingListIndex throws java.lang.IndexOutOfBoundsException
 //        IRTSIndex index = new TriplePostingListIndex();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             insertAndPerformSimpleQueryOnTransportObject(index);
         }
+
+        return index;
     }
 
     private static void insertAndPerformSimpleQueryOnTransportObject(IRTSIndex index) {
@@ -59,6 +61,7 @@ public class RTSIndexTestCase {
         List<Integer> tweetIDsAccordingToIndex = index.searchTweetIDs(transportObjectQuery);
         System.out.println("Found TweetIDs according to Index:");
         System.out.println(tweetIDsAccordingToIndex);
+
 
         // TODO: validate result
         // TODO: Also make sure to verify that the top-k (for example top-k with

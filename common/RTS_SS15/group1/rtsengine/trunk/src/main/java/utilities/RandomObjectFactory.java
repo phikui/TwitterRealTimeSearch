@@ -127,7 +127,7 @@ public class RandomObjectFactory {
 
     public TweetObject generateRandomTweet() {
         String username = this.generateRandomWord(15);
-        String text = this.generateRandomSentence(10);
+        String text = this.generateRandomSentence(10) + " testterm";
         GeoLocation geoLocation = new GeoLocation(50, 55);
         Place place = null; // TODO
         Date timestamp = new Date();
