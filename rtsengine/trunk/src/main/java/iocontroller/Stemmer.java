@@ -23,11 +23,9 @@ public class Stemmer {
     public Stemmer()
     {
         // Create StanfordCoreNLP object properties, with POS tagging(required for lemmatization), and lemmatization
-        Properties props = new Properties();
-        //props.put("annotators", "tokenize, ssplit, pos, lemma");
-        //props.setProperty("annotators", "tokenize, ssplit, pos, lemma");
-        props.setProperty("tokenize.options", "untokenizable=noneDelete");
-        //this.pipeline = new edu.stanford.nlp.pipeline.StanfordCoreNLP(props);
+        Properties props;
+        props = new Properties();
+        props.put("annotators", "tokenize, ssplit, pos, lemma");
         // StanfordCoreNLP loads a lot of models, so we only want to do this once per execution
         this.pipeline = new StanfordCoreNLP(props);
     }
@@ -62,23 +60,17 @@ public class Stemmer {
         for (CoreMap sentence : sentences) {
             // Iterate over all tokens in a sentence
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
+                if (lemma.length() <= 2 || lemma.startsWith("http") || lemma.startsWith("@")) {
+                    continue;
+                }
+
                 // Retrieve and add the lemma for each word into the list of lemmas
-                wordList.add(token.get(CoreAnnotations.LemmaAnnotation.class));
+                wordList.add(lemma);
             }
         }
 
-        //converting  list into string
-        String[] terms = new String[wordList.size()];
-        wordList.toArray(terms);
-        //String[] terms = (String[]) lemmas.toArray();
-        List<String> lemma = new LinkedList<String>();
-
-        for (int i = 0; i < terms.length; i++) {
-            terms[i] = terms[i].replaceAll("[,?.#@$ ~]"," ");
-            wordList.add(terms[i]);
-        }
-        return lemma;
-
+        return wordList;
     }
 
 
