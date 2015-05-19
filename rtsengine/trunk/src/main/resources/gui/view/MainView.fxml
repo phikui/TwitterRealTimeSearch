@@ -7,19 +7,27 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.collections.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainAppController">
+<AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.MainAppController">
    <children>
-      <SplitPane dividerPositions="0.5836120401337793" layoutX="200.0" layoutY="66.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.7" layoutX="200.0" layoutY="66.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <AnchorPane>
                <children>
-                  <ScrollPane layoutX="77.0" layoutY="130.0" prefHeight="398.0" prefWidth="296.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
-                        <ListView fx:id="tweetlist" prefHeight="396.0" prefWidth="344.0" />
-                     </content></ScrollPane>
+                        <TableView fx:id="tweetTable">
+                          <columns>
+                            <TableColumn fx:id="usernameCol" prefWidth="102.0" text="Username" />
+                            <TableColumn fx:id="contentCol" prefWidth="357.0" text="Content" />
+                            <TableColumn fx:id="timestampCol" minWidth="0.0" prefWidth="92.0" text="Timestamp" />
+                            <TableColumn fx:id="followersCol" prefWidth="81.0" text="Followers" />
+                          </columns>
+                        </TableView>
+                     </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="398.0" prefWidth="200.0">
+          <AnchorPane maxWidth="260.0" minWidth="260.0" prefWidth="260.0">
                <children>
                   <Label layoutX="101.0" layoutY="274.0" text="Freshness:" />
                   <Label layoutX="104.0" layoutY="239.0" text="Similarity:" />

@@ -1,5 +1,8 @@
 package model;
 
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import twitter4j.GeoLocation;
 import twitter4j.Place;
 
@@ -10,10 +13,10 @@ import java.util.Date;
  * Created by Phil on 27.04.2015.
  */
 public class TweetObject implements Comparable, Serializable {
-    private String username;
-    private String text;
-    private Date timestamp;
-    private float numberOfAuthorFollowers;
+    private SimpleStringProperty username;
+    private SimpleStringProperty text;
+    private SimpleObjectProperty<Date> timestamp;
+    private SimpleFloatProperty numberOfAuthorFollowers;
 
     public GeoLocation getGeoLocation() { return geoLocation; }
 
@@ -23,38 +26,33 @@ public class TweetObject implements Comparable, Serializable {
     private Place place;
 
     public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers) {
-        this.username = username;
-        this.text = text;
+        this.username =  new SimpleStringProperty(username);
+        this.text = new SimpleStringProperty(text);
         this.geoLocation = geoLocation;
         this.place = place;
-        this.timestamp = timestamp;
-        this.numberOfAuthorFollowers = numberOfAuthorFollowers;
-    }
-
-    public TweetObject(String username, String text){
-        this.username = username;
-        this.text = text;
+        this.timestamp = new SimpleObjectProperty<Date>(timestamp);
+        this.numberOfAuthorFollowers = new SimpleFloatProperty(numberOfAuthorFollowers);
     }
 
     public String getUsername() {
-        return this.username;
+        return username.get();
     }
 
     public String getText() {
-        return this.text;
+        return text.get();
     }
 
     public Date getTimestamp() {
-        return this.timestamp;
+        return timestamp.get();
     }
 
     public float getNumberOfAuthorFollowers() {
-        return this.numberOfAuthorFollowers;
+        return numberOfAuthorFollowers.get();
     }
 
     public int compareTo(Object o) {
         if (!(o instanceof TweetObject))
             throw new ClassCastException("A Tweet object expected.");
-        return this.username.compareTo( ((TweetObject) o).username);
+        return this.username.toString().compareTo(((TweetObject) o).username.toString());
     }
 }
