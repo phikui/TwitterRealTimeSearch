@@ -64,8 +64,17 @@ public class Stemmer {
                 wordList.add(token.get(CoreAnnotations.LemmaAnnotation.class));
             }
         }
+        String[] terms = new String[wordList.size()];
+        wordList.toArray(terms);
+        //String[] terms = (String[]) lemmas.toArray();
+        List<String> lemma = new LinkedList<String>();
 
-        return wordList;
+        for (int i = 0; i < terms.length; i++) {
+            terms[i] = terms[i].replaceAll("[,?.#@$ ~]"," ");
+            wordList.add(terms[i]);
+        }
+        return lemma;
+
     }
 
 
