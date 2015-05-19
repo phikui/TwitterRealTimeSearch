@@ -1,6 +1,4 @@
-package iocontroller;
-
-import model.TweetObject;
+package model;
 
 import java.util.List;
 

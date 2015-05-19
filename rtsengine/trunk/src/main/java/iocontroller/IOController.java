@@ -1,5 +1,9 @@
 package iocontroller;
 
+import iocontroller.preprocessor.PreprocessorMainThread;
+import iocontroller.preprocessor.PreprocessorRawObject;
+import iocontroller.preprocessor.Stemmer;
+import iocontroller.writer.WriterMainThread;
 import model.TweetObject;
 
 import java.util.Date;

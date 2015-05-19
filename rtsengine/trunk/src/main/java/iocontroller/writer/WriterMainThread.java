@@ -1,6 +1,8 @@
-package iocontroller;
+package iocontroller.writer;
 
 import indices.IndexDispatcher;
+import iocontroller.QueueContainer;
+import iocontroller.queryprocessor.QueryProcessorMainThread;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;

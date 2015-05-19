@@ -1,4 +1,6 @@
-package iocontroller;
+package iocontroller.queryprocessor;
+
+import model.QueryReturnObject;
 
 import java.util.Date;
 import java.util.List;
