@@ -128,9 +128,12 @@ public class TransportObject {
     /*
      * Helper functions
      */
+
+    /*
+    CalcFreshness not needed anymore in transport object. Will be calculated directly using the query
     public float calculateFreshness() {
         return HelperFunctions.calculateFreshness(this.timestamp);
-    }
+    }*/
 
     public float calculateTermSimilarity(List<Integer> otherTermIDs) {
         return HelperFunctions.calculateTermSimilarity(this.termIDs, otherTermIDs);

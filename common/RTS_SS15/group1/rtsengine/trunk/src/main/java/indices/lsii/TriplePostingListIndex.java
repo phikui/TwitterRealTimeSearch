@@ -1,29 +1,34 @@
 package indices.lsii;
 
 import indices.IRTSIndex;
+import indices.postinglists.ConcurrentSortedDateListElement;
+import indices.postinglists.ConcurrentSortedPostingListElement;
 import model.TransportObject;
 import utilities.HelperFunctions;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
+import indices.postinglists.ConcurrentTriplePostingList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by chans on 5/14/15.
  */
 public class TriplePostingListIndex implements IRTSIndex {
 
-    private HashMap<Integer, TriplePostingList> invertedIndex;
+    private ConcurrentHashMap<Integer, ConcurrentTriplePostingList> invertedIndex;
 
     public TriplePostingListIndex() {
-        this.invertedIndex = new HashMap<Integer, TriplePostingList>();
+        this.invertedIndex = new ConcurrentHashMap<Integer, ConcurrentTriplePostingList>();
     }
 
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
         int k = transportObjectQuery.getk();
+        List<Integer> topKTweetIDs = new ArrayList<Integer>();
 
         // TODO
-        List<Integer> topKTweetIDs = new ArrayList<Integer>();
+        /*
         SortedPostingList currentTopK = new SortedPostingList();
         List<Integer> termIDs = transportObjectQuery.getTermIDs();
         int currentTweetID;
@@ -42,7 +47,7 @@ public class TriplePostingListIndex implements IRTSIndex {
 
 
         for (int termID: termIDs){
-            TriplePostingList triplePostingListForTermID = this.invertedIndex.get(termID);
+            ConcurrentTriplePostingList triplePostingListForTermID = this.invertedIndex.get(termID);
 
             // perform Threshold Algorithm
             // list-size of freshness = similarity = significance for the same term
@@ -125,10 +130,11 @@ public class TriplePostingListIndex implements IRTSIndex {
         for(int j = 0; j < currentTopK.size(); j++){
             topKTweetIDs.add(currentTopK.get(j).getTweetID());
         }
-
+        */
         return topKTweetIDs;
     }
 
+    /*
     public void insertTransportObject(TransportObject transportObjectInsertion) {
 
         // extract the important information from the transport object
@@ -136,7 +142,7 @@ public class TriplePostingListIndex implements IRTSIndex {
 
         // Obtain significance and freshness from the transportObject
         float significance = transportObjectInsertion.getSignificance();
-        float freshness = transportObjectInsertion.calculateFreshness();
+        Date freshness = transportObjectInsertion.getTimestamp();
 
         List<Integer> termIDs = transportObjectInsertion.getTermIDs();
 
@@ -159,6 +165,39 @@ public class TriplePostingListIndex implements IRTSIndex {
             triplePostingListForTermID.getSignificancePostingList().insertSorted(tweetID, significance);
             triplePostingListForTermID.getFreshnessPostingList().insertSorted(tweetID, freshness);
             triplePostingListForTermID.getTermSimilarityPostingList().insertSorted(tweetID, similarity);
+        }
+    }*/
+
+    public void insertTransportObject(TransportObject transportObjectInsertion) {
+
+        // extract the important information from the transport object
+        int tweetID = transportObjectInsertion.getTweetID();
+
+        // Obtain significance and freshness from the transportObject
+        float significance = transportObjectInsertion.getSignificance();
+        Date freshness = transportObjectInsertion.getTimestamp();
+
+        List<Integer> termIDs = transportObjectInsertion.getTermIDs();
+
+        for (int termID: termIDs) {
+            ConcurrentTriplePostingList triplePostingListForTermID = this.invertedIndex.get(termID);
+
+            // Create PostingList for this termID if necessary
+            if (triplePostingListForTermID == null) {
+                triplePostingListForTermID = new ConcurrentTriplePostingList();
+                this.invertedIndex.put(termID, triplePostingListForTermID);
+            }
+
+            // Calculate term similarity between this current term and
+            // transportObject's termIDs
+            List<Integer> singleTermIDList = new ArrayList<Integer>(1);
+            singleTermIDList.add(termID);
+            float similarity = transportObjectInsertion.calculateTermSimilarity(singleTermIDList);
+
+            // Insert tweetID into posting lists for this term sorted on the key
+            triplePostingListForTermID.getSignificancePostingList().add(new ConcurrentSortedPostingListElement(tweetID, significance));
+            triplePostingListForTermID.getFreshnessPostingList().add(new ConcurrentSortedDateListElement(tweetID, freshness));
+            triplePostingListForTermID.getTermSimilarityPostingList().add(new ConcurrentSortedPostingListElement(tweetID, similarity));
         }
     }
 
