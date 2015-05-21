@@ -112,17 +112,17 @@ public class HelperFunctions {
      * 259 200 000 = 3 days
      * 604 800 000 = 1 week
      *
-     * freshness based on used granularity, if timeStamp is older than granularity freshness is 0
+     * freshness based on used granularity given in the constant
      *
-     * @param timestamp
+     * @param timestampData
+     * @param timestampQuery
+     *
      * @return
      */
-    public static float calculateFreshness(Date timestamp) {
-        // TODO: Improve such that a non-linear decay is used
-        Date now = new Date();
-        float freshness = (1 - ((now.getTime() - timestamp.getTime()) / ONE_HOUR));
-        if (freshness < 0)
-            freshness = 0;
+    public static float calculateFreshness(Date timestampData, Date timestampQuery) {
+        float difference = timestampData.getTime() - timestampQuery.getTime();
+        float constant = 1 / ONE_HOUR;
+        float freshness = (float)Math.pow(Math.E, (double)(constant * difference));
 
         return freshness;
     }
