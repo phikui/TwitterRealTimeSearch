@@ -70,7 +70,7 @@ public class TransportObjectCreator {
 
         // print information
         System.out.println("TweetID: " + to.getTweetID());
-        System.out.println("Freshness: " + to.calculateFreshness());
+        System.out.println("Freshness: ");
         System.out.println("--------------------------");
 
         return to;
