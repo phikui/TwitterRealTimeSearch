@@ -4,9 +4,9 @@ import indices.IRTSIndex;
 import model.TransportObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -17,15 +17,12 @@ import java.util.concurrent.LinkedBlockingQueue;
  * significance/timestamp.
  */
 public class AppendOnlyIndex implements IRTSIndex {
-    private HashMap<Integer, UnsortedPostingList> invertedIndex;
+    private ConcurrentHashMap<Integer, UnsortedPostingList> invertedIndex;
 
-    // TODO: Use concurrent HashMap? Yes!
     public AppendOnlyIndex() {
-        this.invertedIndex = new HashMap<Integer, UnsortedPostingList>();
+        this.invertedIndex = new ConcurrentHashMap<Integer, UnsortedPostingList>();
     }
 
-    // TODO: currently it returns the tweetIDs sorted by ascending timestamp
-    // TODO: clarify how result tweetID lists should be sorted (ascending or descending)
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
         int k = transportObjectQuery.getk();
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
@@ -138,7 +135,7 @@ public class AppendOnlyIndex implements IRTSIndex {
             // Insert tweetID into posting list for this term at the last position
             // of the posting list, since this is the latest arriving tweet with the
             // highest freshness value. Insertion done in O(1) here.
-            postingListForTermID.add(tweetID);
+            postingListForTermID.addFirst(tweetID);
         }
     }
 
