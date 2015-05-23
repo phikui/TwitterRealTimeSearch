@@ -4,6 +4,7 @@ import gui.ConfigurationObject;
 import indices.IndexDispatcher;
 import iocontroller.IOController;
 import model.TermDictionary;
+import model.TransportObject;
 import model.TweetDictionary;
 import utilities.RandomObjectFactory;
 
@@ -33,7 +34,8 @@ public class IOControllerTest {
 
         System.out.print("adding " + num_tweets + " random tweets to the incoming queue.");
         for (int i = 0; i < num_tweets; i++) {
-            ioController.addRawObject(randomObjectFactory.generateRandomRawObjecttReadyForPreprocessing());
+            TransportObject transportObject = randomObjectFactory.generateRandomTransportObjectReadyForPreprocessing();
+            ioController.addTransportObject(transportObject);
         }
         System.out.println(" done.");
 

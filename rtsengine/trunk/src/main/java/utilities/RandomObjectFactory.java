@@ -63,10 +63,9 @@ public class RandomObjectFactory {
         randomWordList.add("World");
     }
 
-
-    public PreprocessorRawObject generateRandomRawObjecttReadyForPreprocessing() {
-        TweetObject tweetObject = this.generateRandomTweet();
-        return new PreprocessorRawObject(tweetObject);
+    public PreprocessorRawObject generateRandomRawObjectReadyForPreprocessing() {
+        TransportObject transportObject = this.generateRandomTransportObjectReadyForPreprocessing();
+        return new PreprocessorRawObject(transportObject);
     }
 
     public TransportObject generateRandomTransportObjectReadyForPreprocessing() {

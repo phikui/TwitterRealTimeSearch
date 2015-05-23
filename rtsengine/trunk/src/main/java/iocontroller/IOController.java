@@ -4,6 +4,7 @@ import iocontroller.preprocessor.PreprocessorMainThread;
 import iocontroller.preprocessor.PreprocessorRawObject;
 import iocontroller.preprocessor.Stemmer;
 import iocontroller.writer.WriterMainThread;
+import model.TransportObject;
 import model.TweetObject;
 
 import java.util.Date;
@@ -75,18 +76,13 @@ public class IOController {
         queueObserver.join();
     }
 
-    public void addRawObject(PreprocessorRawObject newRaw) {
+    private void addRawObject(PreprocessorRawObject newRaw) {
         queueContainer.getPreProcessorQueue().add(newRaw);
     }
 
-    public void addQuery(String queryString, int k, Date timestamp) {
-        PreprocessorRawObject newRaw = new PreprocessorRawObject(queryString, k, timestamp);
-        this.addRawObject(newRaw);
-    }
-
-    public void addTweet(TweetObject tweet) {
-        PreprocessorRawObject newRaw = new PreprocessorRawObject(tweet);
-        this.addRawObject(newRaw);
+    public void addTransportObject(TransportObject transportObject) {
+        PreprocessorRawObject rawObject = new PreprocessorRawObject(transportObject);
+        this.addRawObject(rawObject);
     }
 
     public boolean hasUnprocessedItems() {
