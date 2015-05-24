@@ -19,7 +19,7 @@ public class IOControllerTest {
 
         //creating the IOProcessor
         int num_preprocessors = 1;
-        int num_queryProcessors = 0;
+        int num_queryProcessors = 1;
         boolean debugOutputs = false;
         ConfigurationObject.setIndexType("aoi");
         IOController ioController = new IOController(num_preprocessors, num_queryProcessors, debugOutputs);

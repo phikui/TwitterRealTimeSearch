@@ -1,6 +1,7 @@
 package iocontroller.queryprocessor;
 
 import model.QueryReturnObject;
+import model.TransportObject;
 
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,13 @@ public class QueryWorker implements Callable<QueryReturnObject> {
         this.terms = terms;
         this.k = k;
         this.timestamp = timestamp;
+    }
+
+    public QueryWorker(TransportObject query) {
+        this.query = query.getText();
+        this.terms = query.getTerms();
+        this.k = query.getk();
+        this.timestamp = query.getTimestamp();
     }
 
     public QueryReturnObject call() throws Exception {

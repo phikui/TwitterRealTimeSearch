@@ -3,11 +3,9 @@ package iocontroller;
 import iocontroller.preprocessor.PreprocessorMainThread;
 import iocontroller.preprocessor.PreprocessorRawObject;
 import iocontroller.preprocessor.Stemmer;
+import iocontroller.queryprocessor.QueryProcessorMainThread;
 import iocontroller.writer.WriterMainThread;
 import model.TransportObject;
-import model.TweetObject;
-
-import java.util.Date;
 
 import static java.lang.Runtime.getRuntime;
 
@@ -29,7 +27,7 @@ public class IOController {
     private final PreprocessorMainThread preProcessor;
     private final WriterMainThread writer;
     private final QueueObserver queueObserver;
-    //private final QueryProcessorMainThread queryProcessor;
+    private final QueryProcessorMainThread queryProcessor;
 
 
     public IOController(int numPreProcessors, int numQueryProcessors, boolean writerOutput) {
@@ -37,7 +35,8 @@ public class IOController {
         preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
         writer = new WriterMainThread(queueContainer, writerOutput);
         queueObserver = new QueueObserver(queueContainer);
-        //queryProcessor = new QueryProcessorMainThread(numQueryProcessors);
+        queryProcessor = new QueryProcessorMainThread(numQueryProcessors, queueContainer.getQueryOutputQueue());
+        writer.setQueryProcessor(queryProcessor);
     }
 
     public IOController() {
@@ -90,7 +89,7 @@ public class IOController {
     }
 
     public int numUnprocessedItems() {
-        return queueContainer.getWriterQueue().size() + queueContainer.getPreProcessorQueue().size();
+        return queueContainer.getWriterQueue().size() + queueContainer.getPreProcessorQueue().size() + queueContainer.getQueryOutputQueue().size();
     }
 
     public int sizePreProcessorQueue() {
@@ -99,5 +98,9 @@ public class IOController {
 
     public int sizeWriterQueue() {
         return queueContainer.getWriterQueue().size();
+    }
+
+    public int sizeQueryQueue() {
+        return queueContainer.getQueryOutputQueue().size();
     }
 }
