@@ -20,16 +20,20 @@ public class WriterMainThread extends Thread {
     private final boolean output;
     private final Queue<Future<TransportObject>> incomingQueue;
     private volatile boolean isTerminated = false;
+    private QueryProcessorMainThread queryProcessor;
 
     public WriterMainThread(QueueContainer queueContainer) {
         incomingQueue = queueContainer.getWriterQueue();
         output = false;
     }
 
-
     public WriterMainThread(QueueContainer queueContainer, boolean output) {
         incomingQueue = queueContainer.getWriterQueue();
         this.output = output;
+    }
+
+    public void setQueryProcessor(QueryProcessorMainThread processor) {
+        queryProcessor = processor;
     }
 
     public void terminate() {
@@ -47,7 +51,7 @@ public class WriterMainThread extends Thread {
                     x = incomingQueue.remove().get();
                     if (x.isQuery()) {
                         //If it is a query dispatch to query processor
-                        QueryProcessorMainThread.scheduleQuery(x);
+                        queryProcessor.scheduleQuery(x);
                     } else {
                         TweetObject tweet = x.getTweetObject();
 
