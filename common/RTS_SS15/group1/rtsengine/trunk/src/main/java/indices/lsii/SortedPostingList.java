@@ -35,15 +35,15 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
         }
     }
 
-    public boolean containsTweetID(int tweetID){
-        SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, -1);
+    public boolean containsTweetID(int tweetID, float sortKey){
+        SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
         ListIterator<SortedPostingListElement> iterator = listIterator();
         while(true){
             if (iterator.hasNext() == false) {
                 return false;
             }
             SortedPostingListElement elementInList = iterator.next();
-            if (elementInList.getTweetID() == sortElement.getTweetID()) {
+            if ((elementInList.getTweetID() == sortElement.getTweetID()) && (elementInList.getSortKey() > sortElement.getSortKey())) {
                 return true;
             }
         }
