@@ -32,13 +32,15 @@ public class RTSIndexTestCase {
         return index;
     }
 
+
     private static void insertAndPerformSimpleQueryOnTransportObject(IRTSIndex index) {
+
         // Generate and insert and random object
         TransportObject transportObjectInsertion = randomObjectFactory.generateRandomTransportObjectReadyForIndexInsertion();
         index.insertTransportObject(transportObjectInsertion);
 
         // Print insertion TransportObject
-        System.out.println("Inserted TransportObject:");
+        System.out.println("Inserted TransportObject:"+ " #"+transportObjectInsertion.getTweetID());
         System.out.println(transportObjectInsertion);
         System.out.println();
 
@@ -58,6 +60,7 @@ public class RTSIndexTestCase {
         System.out.println();
 
         // Print query result
+
         List<Integer> tweetIDsAccordingToIndex = index.searchTweetIDs(transportObjectQuery);
         System.out.println("Found TweetIDs according to Index:");
         System.out.println(tweetIDsAccordingToIndex);

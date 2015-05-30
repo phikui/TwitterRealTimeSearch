@@ -21,7 +21,7 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
         SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
         ListIterator<SortedPostingListElement> iterator = listIterator();
         while(true) {
-            if (iterator.hasNext() == false) {
+            if (!iterator.hasNext()) {
                 iterator.add(sortElement);
                 return;
             }
@@ -35,15 +35,35 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
         }
     }
 
+
+    /**
+     *
+     * @param tweetID
+     * @param sortKey
+     */
+    public void removeFirstDuplicate(int tweetID, float sortKey){
+        SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
+        ListIterator<SortedPostingListElement> iterator = listIterator();
+        while(true){
+            if (!iterator.hasNext()) {
+                return;
+            }
+            SortedPostingListElement elementInList = iterator.next();
+            if ((elementInList.getTweetID() == sortElement.getTweetID()) && (elementInList.getSortKey() < sortElement.getSortKey())) {
+                this.remove(elementInList);
+            }
+        }
+    }
+
     public boolean containsTweetID(int tweetID, float sortKey){
         SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
         ListIterator<SortedPostingListElement> iterator = listIterator();
         while(true){
-            if (iterator.hasNext() == false) {
+            if (!iterator.hasNext()) {
                 return false;
             }
             SortedPostingListElement elementInList = iterator.next();
-            if ((elementInList.getTweetID() == sortElement.getTweetID()) && (elementInList.getSortKey() > sortElement.getSortKey())) {
+            if ((elementInList.getTweetID() == sortElement.getTweetID())/* && (elementInList.getSortKey() > sortElement.getSortKey())*/) {
                 return true;
             }
         }
