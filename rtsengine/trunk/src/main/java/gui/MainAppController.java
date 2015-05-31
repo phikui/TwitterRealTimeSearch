@@ -2,47 +2,27 @@ package gui;
 
 import indices.IRTSIndex;
 import indices.lsii.AppendOnlyIndex;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
+import indices.lsii.LSIIIndex;
+import indices.lsii.TriplePostingListIndex;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ListChangeListener.Change;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import gui.MainApp;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
 import model.TweetObject;
-import twitter4j.GeoLocation;
-import twitter4j.Place;
-import utilities.RandomObjectFactory;
-import test.RTSIndexTestCase;
 
 /**
  * Created by Guerki on 16/5/15.
@@ -78,17 +58,48 @@ public class MainAppController implements Initializable {
     TableView<TweetObject> tweetTable;
     @FXML
     ScrollPane scroll;
+    @FXML
+    TextField queryfield;
 
     final static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
 
-    public static void fillTable() {
+    // Attach a listener to the index combobox so the indices get filled before anything is searched
+    private void indexChanged(ActionEvent event) {
+        ConfigurationObject.setIndexType(indexType.getSelectionModel().getSelectedItem().toString());
+    }
+
+    // gets tweets from the database according to the queries and displays them in the gui
+    public static void fillTable(String queries) {
         displaysTweets.clear();
-        IRTSIndex index = RTSIndexTestCase.main(null);
-        TransportObject transportObjectQuery = new TransportObject("testterm", new Date(), ConfigurationObject.getNumberOfTweets());
+        String chosenIndex = ConfigurationObject.getIndexType();
+        IRTSIndex index;
+        switch (chosenIndex){
+            case "AO": index  = new AppendOnlyIndex();
+                break;
+            case "TPL": index = new TriplePostingListIndex();
+                break;
+            case "LSII": index = new LSIIIndex();
+                break;
+            default: index  = new AppendOnlyIndex();
+                break;
+        }
+
+        TransportObject transportObjectQuery = new TransportObject(queries, new Date(), ConfigurationObject.getNumberOfTweets());
         List<String> terms = new LinkedList<String>();
         List<Integer> termIDs = new LinkedList<Integer>();
-        terms.add("testterm");
-        termIDs.add(TermDictionary.getTermID("testterm"));
+
+        //split the query terms into an array of invidual terms
+        List<String> individual_queries = Arrays.asList(queries.split("\\s*,\\s*"));
+        for (String item : individual_queries){
+            terms.add(item);
+            try {
+                termIDs.add(TermDictionary.getTermID(item));
+            }
+            catch(NullPointerException e){
+                System.err.println("No Tweets matching your Queries found!");
+            }
+        }
+
         transportObjectQuery.setTerms(terms);
         transportObjectQuery.setTermIDs(termIDs);
         List<Integer> tweetIdList = index.searchTweetIDs(transportObjectQuery);
@@ -112,16 +123,28 @@ public class MainAppController implements Initializable {
         // start button pushed
         start.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
-                begin();
+                startButtonPushed();
 
             }
         });
+
+        // Listen for changes to the indexType
+        indexType.setOnAction(this::indexChanged);
+
         // Enter Key is Pressed while in a textfield
         numberOfTweets.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    begin();
+                    startButtonPushed();
+                }
+            }
+        });
+        queryfield.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent keyEvent) {
+                if (keyEvent.getCode() == KeyCode.ENTER)  {
+                    startButtonPushed();
                 }
             }
         });
@@ -129,7 +152,7 @@ public class MainAppController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    begin();
+                    startButtonPushed();
                 }
             }
         });
@@ -137,7 +160,7 @@ public class MainAppController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    begin();
+                    startButtonPushed();
                 }
             }
         });
@@ -145,7 +168,7 @@ public class MainAppController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    begin();
+                    startButtonPushed();
                 }
             }
         });
@@ -153,7 +176,7 @@ public class MainAppController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    begin();
+                    startButtonPushed();
                 }
             }
         });
@@ -161,14 +184,14 @@ public class MainAppController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    begin();
+                    startButtonPushed();
                 }
             }
         });
 
     }
 
-    private void begin() {
+    private void startButtonPushed() {
         /**
          * Get all the information from the GUI
          */
@@ -179,6 +202,7 @@ public class MainAppController implements Initializable {
         int nWSimilarity = Integer.parseInt(wSimilarity.getCharacters().toString());
         int nWFreshness = Integer.parseInt(wFreshness.getCharacters().toString());
         String nIndexType = indexType.getSelectionModel().getSelectedItem().toString();
+        String queries = queryfield.getPromptText().toString();
         Boolean nStream = stream.isSelected();
 
         /**
@@ -213,6 +237,6 @@ public class MainAppController implements Initializable {
         ConfigurationObject.setwSignificance(nWSignificance);
         ConfigurationObject.setwSimilarity(nWSimilarity);
 
-        fillTable();
+        fillTable(queries);
     }
 }
