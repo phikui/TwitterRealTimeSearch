@@ -12,9 +12,6 @@ import model.TweetDictionary;
 public class NewIOTest {
 
     public static void main(String[] args) throws InterruptedException {
-
-        int num_tweets = 100000;
-
         //creating the IOProcessor
         int num_preprocessors = 2;
         int num_queryProcessors = 1;
