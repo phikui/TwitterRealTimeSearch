@@ -23,7 +23,7 @@ public class ConcurrentSortDateArrayList extends CopyOnWriteArrayList<Concurrent
             }
 
             ConcurrentSortedDateListElement elementInList = iterator.next();
-            if (elementInList.getDate().getTime() > sortElement.getDate().getTime()) {
+            if (elementInList.getTimestamp().getTime() > sortElement.getTimestamp().getTime()) {
                 iterator.previous();
                 iterator.add(sortElement);
                 return;

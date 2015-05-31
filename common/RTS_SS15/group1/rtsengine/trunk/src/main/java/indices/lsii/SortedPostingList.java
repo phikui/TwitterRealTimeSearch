@@ -1,6 +1,8 @@
 package indices.lsii;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 /**
@@ -41,6 +43,7 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
      * @param tweetID
      * @param sortKey
      */
+    // TODO: Method is never used
     public void removeFirstDuplicate(int tweetID, float sortKey){
         SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
         ListIterator<SortedPostingListElement> iterator = listIterator();
@@ -55,19 +58,56 @@ public class SortedPostingList extends LinkedList<SortedPostingListElement> {
         }
     }
 
-    public boolean containsTweetID(int tweetID, float sortKey){
-        SortedPostingListElement sortElement = new SortedPostingListElement(tweetID, sortKey);
+    public boolean containsTweetID(int tweetID) {
         ListIterator<SortedPostingListElement> iterator = listIterator();
-        while(true){
+
+        while (true){
             if (!iterator.hasNext()) {
                 return false;
             }
+
             SortedPostingListElement elementInList = iterator.next();
-            if ((elementInList.getTweetID() == sortElement.getTweetID())/* && (elementInList.getSortKey() > sortElement.getSortKey())*/) {
+
+            if (elementInList.getTweetID() == tweetID) {
                 return true;
             }
         }
+    }
 
+    public SortedPostingListElement getSortedPostingListElement(int tweetID) {
+        ListIterator<SortedPostingListElement> iterator = listIterator();
+
+        while (true){
+            if (!iterator.hasNext()) {
+                return null;
+            }
+
+            SortedPostingListElement elementInList = iterator.next();
+
+            if (elementInList.getTweetID() == tweetID) {
+                return elementInList;
+            }
+        }
+    }
+
+    /**
+     * Returns TweetIDs stored in this PostingList as ArrayList (in same order)
+     */
+    public List<Integer> getTweetIDs() {
+        List<Integer> tweetIDList = new ArrayList<Integer>(this.size());
+
+        ListIterator<SortedPostingListElement> iterator = listIterator();
+
+        while(true){
+            if (!iterator.hasNext()) {
+                break;
+            }
+
+            SortedPostingListElement elementInList = iterator.next();
+            tweetIDList.add(elementInList.getTweetID());
+        }
+
+        return tweetIDList;
     }
 
 }
