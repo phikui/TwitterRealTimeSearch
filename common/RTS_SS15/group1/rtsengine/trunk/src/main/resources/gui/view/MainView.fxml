@@ -29,10 +29,10 @@
             </AnchorPane>
           <AnchorPane maxWidth="260.0" minWidth="260.0" prefWidth="260.0">
                <children>
-                  <Label layoutX="101.0" layoutY="274.0" text="Freshness:" />
-                  <Label layoutX="104.0" layoutY="239.0" text="Similarity:" />
-                  <Label layoutX="90.0" layoutY="205.0" text="Significance:" />
-                  <ComboBox fx:id="indexType" layoutX="136.0" layoutY="27.0" prefHeight="26.0" prefWidth="82.0" promptText="Index">
+                  <Label layoutX="93.0" layoutY="309.0" text="Freshness:" />
+                  <Label layoutX="96.0" layoutY="274.0" text="Similarity:" />
+                  <Label layoutX="82.0" layoutY="240.0" text="Significance:" />
+                  <ComboBox fx:id="indexType" layoutX="128.0" layoutY="62.0" prefHeight="26.0" prefWidth="82.0" promptText="Index">
                        <items>
                            <FXCollections fx:factory="observableArrayList">
                                <String fx:value="AO" />
@@ -44,25 +44,27 @@
                           <String fx:value="AO" />
                       </value>
                   </ComboBox>
-                  <TextField fx:id="wSignificance" layoutX="173.0" layoutY="200.0" prefHeight="26.0" prefWidth="47.0" promptText="33" text="33" />
-                  <TextField fx:id="wSimilarity" layoutX="173.0" layoutY="234.0" prefHeight="16.0" prefWidth="47.0" promptText="33" text="33" />
-                  <TextField fx:id="wFreshness" layoutX="173.0" layoutY="269.0" prefHeight="26.0" prefWidth="47.0" promptText="34" text="34" />
+                  <TextField fx:id="wSignificance" layoutX="165.0" layoutY="235.0" prefHeight="26.0" prefWidth="47.0" promptText="33" text="33" />
+                  <TextField fx:id="wSimilarity" layoutX="165.0" layoutY="269.0" prefHeight="16.0" prefWidth="47.0" promptText="33" text="33" />
+                  <TextField fx:id="wFreshness" layoutX="165.0" layoutY="304.0" prefHeight="26.0" prefWidth="47.0" promptText="34" text="34" />
       
-                  <Button fx:id="start" layoutX="107.0" layoutY="347.0" mnemonicParsing="false" text="Start" />
-                  <Label layoutX="40.0" layoutY="172.0" text="Ratio Tweets/Queries:" />
-                  <TextField fx:id="ratio" layoutX="173.0" layoutY="167.0" prefHeight="26.0" prefWidth="47.0" promptText="100" text="100" />
-                  <TextField fx:id="numberOfThreads" layoutX="173.0" layoutY="65.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
-                  <Label layoutX="87.0" layoutY="70.0" text="# of Threads:" />
-                  <TextField fx:id="numberOfTweets" layoutX="173.0" layoutY="102.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
-                  <Label layoutX="92.0" layoutY="107.0" text="# of Tweets:" />
-                  <Label layoutX="116.0" layoutY="139.0" text="Stream:" />
-                  <ToggleButton fx:id="stream" layoutX="170.0" layoutY="135.0" mnemonicParsing="false" selected="true" text="On" />
-                  <Separator layoutX="81.0" layoutY="205.0" orientation="VERTICAL" prefHeight="91.0" prefWidth="3.0" />
-                  <Label layoutX="41.0" layoutY="239.0" text="100%" />
-                  <Label layoutX="223.0" layoutY="172.0" text="\%" />
-                  <Label layoutX="223.0" layoutY="203.0" text="\%" />
-                  <Label layoutX="223.0" layoutY="238.0" text="\%" />
-                  <Label layoutX="223.0" layoutY="273.0" text="\%" />
+                  <Button fx:id="start" layoutX="107.0" layoutY="369.0" mnemonicParsing="false" text="Start" />
+                  <Label layoutX="32.0" layoutY="207.0" text="Ratio Tweets/Queries:" />
+                  <TextField fx:id="ratio" layoutX="165.0" layoutY="202.0" prefHeight="26.0" prefWidth="47.0" promptText="100" text="100" />
+                  <TextField fx:id="numberOfThreads" layoutX="165.0" layoutY="100.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
+                  <Label layoutX="79.0" layoutY="105.0" text="# of Threads:" />
+                  <TextField fx:id="numberOfTweets" layoutX="165.0" layoutY="137.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
+                  <Label layoutX="84.0" layoutY="142.0" text="# of Tweets:" />
+                  <Label layoutX="108.0" layoutY="174.0" text="Stream:" />
+                  <ToggleButton fx:id="stream" layoutX="162.0" layoutY="170.0" mnemonicParsing="false" selected="true" text="On" />
+                  <Separator layoutX="73.0" layoutY="240.0" orientation="VERTICAL" prefHeight="91.0" prefWidth="3.0" />
+                  <Label layoutX="33.0" layoutY="274.0" text="100%" />
+                  <Label layoutX="215.0" layoutY="207.0" text="\%" />
+                  <Label layoutX="215.0" layoutY="238.0" text="\%" />
+                  <Label layoutX="215.0" layoutY="273.0" text="\%" />
+                  <Label layoutX="215.0" layoutY="308.0" text="\%" />
+                  <TextField fx:id="queryfield" layoutX="83.0" layoutY="22.0" prefHeight="26.0" prefWidth="167.0" />
+                  <Label layoutX="35.0" layoutY="27.0" text="Query:" />
                </children>
             </AnchorPane>
         </items>
