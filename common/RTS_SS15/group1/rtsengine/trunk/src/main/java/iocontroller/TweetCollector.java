@@ -11,7 +11,6 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class TweetCollector {
     private final IOController parent;
-    private volatile boolean isTerminated = false;
     private StatusListener listener;
     private TwitterStream twitterStream;
 
@@ -80,9 +79,6 @@ public class TweetCollector {
         twitterStream.clearListeners();
     }
 
-    public void terminate() {
-        isTerminated = true;
-    }
 
 
 }
