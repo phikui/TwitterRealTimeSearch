@@ -20,6 +20,7 @@ public class QueueObserver extends Thread {
             System.out.println("");
             System.out.println("Size of preprocessor queue: " + queueContainer.getPreProcessorQueue().size());
             System.out.println("Size of writer queue: " + queueContainer.getWriterQueue().size());
+            System.out.println("Size of output queue: " + queueContainer.getQueryOutputQueue().size());
             System.out.println("_______________________________________");
             try {
                 Thread.sleep(2000);

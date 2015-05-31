@@ -1,19 +1,18 @@
 package tweetcollector;
 
 import model.TweetObject;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import twitter4j.*;
+import twitter4j.conf.ConfigurationBuilder;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentNavigableMap;
 
-import twitter4j.*;
-import twitter4j.conf.ConfigurationBuilder;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-
 /**
  * Created by chans on 5/12/15.
  */
-public class TweetCollector {
+public class TweetCollectorDeprecated {
 
     public static void collectTweets() throws TwitterException {
         // The factory instance is re-useable and thread safe.

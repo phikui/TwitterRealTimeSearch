@@ -5,7 +5,12 @@ import iocontroller.preprocessor.PreprocessorRawObject;
 import iocontroller.preprocessor.Stemmer;
 import iocontroller.queryprocessor.QueryProcessorMainThread;
 import iocontroller.writer.WriterMainThread;
+import model.QueryReturnObject;
 import model.TransportObject;
+
+import java.util.Queue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import static java.lang.Runtime.getRuntime;
 
@@ -28,7 +33,8 @@ public class IOController {
     private final WriterMainThread writer;
     private final QueueObserver queueObserver;
     private final QueryProcessorMainThread queryProcessor;
-
+    private final OutputToGUIThread guiThread;
+    private final TweetCollector tweetcollector;
 
     public IOController(int numPreProcessors, int numQueryProcessors, boolean writerOutput) {
         queueContainer = new QueueContainer();
@@ -37,6 +43,12 @@ public class IOController {
         queueObserver = new QueueObserver(queueContainer);
         queryProcessor = new QueryProcessorMainThread(numQueryProcessors, queueContainer.getQueryOutputQueue());
         writer.setQueryProcessor(queryProcessor);
+        guiThread = new OutputToGUIThread(this);
+        tweetcollector = new TweetCollector(this);
+    }
+
+    public IOController(int numPreProcessors, int numQueryProcessors) {
+        this(numPreProcessors, numQueryProcessors, false);
     }
 
     public IOController() {
@@ -46,6 +58,7 @@ public class IOController {
     public void startAll() {
         preProcessor.start();
         writer.start();
+        guiThread.start();
     }
 
     public void activateQueueObserver() {
@@ -59,6 +72,16 @@ public class IOController {
         writer.terminate();
         preProcessor.terminate();
         queueObserver.terminate();
+        guiThread.terminate();
+        tweetcollector.stopCollecting();
+    }
+
+    public void collectTweets() {
+        tweetcollector.startCollecting();
+    }
+
+    public void stopcollectingTweets() {
+        tweetcollector.stopCollecting();
     }
 
     public void stopPreprocessor() {
@@ -103,4 +126,19 @@ public class IOController {
     public int sizeQueryQueue() {
         return queueContainer.getQueryOutputQueue().size();
     }
+
+    public Queue<Future<QueryReturnObject>> getOutputQueue() {
+        return queueContainer.getQueryOutputQueue();
+    }
+
+
+    public boolean hasNextOutputElement() {
+        return queueContainer.getQueryOutputQueue().size() > 0;
+    }
+
+    public QueryReturnObject getNextOutputElement() throws ExecutionException, InterruptedException {
+        return queueContainer.getQueryOutputQueue().poll().get();
+    }
+
+
 }
