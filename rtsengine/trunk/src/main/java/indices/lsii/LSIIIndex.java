@@ -3,7 +3,6 @@ package indices.lsii;
 import indices.IRTSIndex;
 import indices.postingarraylists.ConcurrentTPLArrayList;
 import indices.postinglists.*;
-import javafx.collections.transformation.SortedList;
 import model.TransportObject;
 import utilities.HelperFunctions;
 
@@ -73,6 +72,7 @@ public class LSIIIndex implements IRTSIndex {
         int k = transportObjectQuery.getk();
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
 
+        // TODO: refactor to own method
         // AO iteration based on LSII-paper. First find k microblogs in I_0 with the largest score
         for (int termID : termIDsInQuery) {
             UnsortedPostingList index_zero_iterator = this.index_zero.get(termID);
@@ -83,8 +83,9 @@ public class LSIIIndex implements IRTSIndex {
 
             // iterate through I_0
             for (int i = 0; i < index_zero_iterator.size(); i++) {
+                // TODO: should we use an real iterator instead of get() method? (CH)
                 tweetID = index_zero_iterator.get(i);
-                termDate = tripletHashMap.get(i).get(tweetID).getDate();
+                termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
 
                 // stop if the date of the microblog equals the largest timestamp (prevent reader/writer conflict)
                 if (termDate == tsMax) break;
@@ -98,7 +99,7 @@ public class LSIIIndex implements IRTSIndex {
                 queryTermSimilarity = queryTermSimilarity * termTermSimilarity;
 
                 fValue = HelperFunctions.calculateRankingFunction(queryFreshness, querySignificance, queryTermSimilarity);
-                if (!candidatePool.containsTweetID(tweetID, fValue)) {
+                if (!candidatePool.containsTweetID(tweetID)) {
                     candidatePool.insertSorted(tweetID, fValue);
                 }
 
@@ -106,6 +107,7 @@ public class LSIIIndex implements IRTSIndex {
         }
 
         // set d to smallest value in top-k
+        // TODO: Why can the candidate pool contain more than k entries?
         if (candidatePool.size() >= k) {
             d = candidatePool.get(k).getSortKey();
         } else {
@@ -121,6 +123,11 @@ public class LSIIIndex implements IRTSIndex {
         // perform TPL/TA
         while (maxThreshold > d) {
 
+            // Iterate over TPL indices 1 to m
+            // TODO: List position j is incremented after all indices i_1, ..., i_m have been scanned
+            //       Shouldn't we traverse one index after another?
+            //       I.e. first scan index i_1 completely, then index i_2 completely and so on
+            //       Because index i_2 for example always contains older entries compared to index i_1
             for (int i : invertedIndex2.keySet()) {
 
                 if ((upperBounds.get(i)) > d) {
@@ -136,17 +143,20 @@ public class LSIIIndex implements IRTSIndex {
                          */
                         tweetID = invertedIndex2.get(i).get(termID).getFreshnessPostingList().get(j).getTweetID();
 
+                        // TODO: refactor fValue computations
                         // fValue computation
-                        termDate = tripletHashMap.get(i).get(tweetID).getDate();
+                        termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
                         termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
                         queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                         querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
                         queryTermSimilarity = HelperFunctions.calculateTermSimilarity(singleTermIDList, termIDsInQuery);
+                        // TODO: Why do we do this? is this the correct way of determining the term similarity between
+                        //       query terms and term in index?
                         queryTermSimilarity = queryTermSimilarity * termTermSimilarity;
 
                         fValue = HelperFunctions.calculateRankingFunction(queryFreshness, querySignificance, queryTermSimilarity);
                         threshFreshness = queryFreshness;
-                        if (!candidatePool.containsTweetID(tweetID, fValue)) {
+                        if (!candidatePool.containsTweetID(tweetID)) {
                             candidatePool.insertSorted(tweetID, fValue);
                         }
 
@@ -156,16 +166,18 @@ public class LSIIIndex implements IRTSIndex {
                         tweetID = invertedIndex2.get(i).get(termID).getSignificancePostingList().get(j).getTweetID();
 
                         // fValue computation
-                        termDate = tripletHashMap.get(i).get(tweetID).getDate();
+                        // TODO: would it make sense to store tripletHashMap.get(i).get(tweetID) in variable?
+                        termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
                         termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
                         queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                         querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
+                        // TODO: code duplication with above
                         queryTermSimilarity = HelperFunctions.calculateTermSimilarity(singleTermIDList, termIDsInQuery);
                         queryTermSimilarity = queryTermSimilarity * termTermSimilarity;
 
                         fValue = HelperFunctions.calculateRankingFunction(queryFreshness, querySignificance, queryTermSimilarity);
                         threshSignificance = querySignificance;
-                        if (!candidatePool.containsTweetID(tweetID, fValue)) {
+                        if (!candidatePool.containsTweetID(tweetID)) {
                             candidatePool.insertSorted(tweetID, fValue);
                         }
 
@@ -175,7 +187,7 @@ public class LSIIIndex implements IRTSIndex {
                         tweetID = invertedIndex2.get(i).get(termID).getTermSimilarityPostingList().get(j).getTweetID();
 
                         // fValue computation
-                        termDate = tripletHashMap.get(i).get(tweetID).getDate();
+                        termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
                         termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
                         queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                         querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
@@ -184,11 +196,12 @@ public class LSIIIndex implements IRTSIndex {
 
                         fValue = HelperFunctions.calculateRankingFunction(queryFreshness, querySignificance, queryTermSimilarity);
                         threshSimilarity = queryTermSimilarity;
-                        if (!candidatePool.containsTweetID(tweetID, fValue)) {
+                        if (!candidatePool.containsTweetID(tweetID)) {
                             candidatePool.insertSorted(tweetID, fValue);
                         }
 
                         // get smallest element in top-k elements
+                        // TODO: refactor with code above
                         if (candidatePool.size() >= k) {
                             d = candidatePool.get(k).getSortKey();
                         } else {
@@ -255,7 +268,7 @@ public class LSIIIndex implements IRTSIndex {
                 // add information for merging/sorting
                 List<Integer> singleTermIDList = new ArrayList<Integer>(1);
                 singleTermIDList.add(termID);
-                LSIITriplet triplet = new LSIITriplet(freshness, significance, transportObjectInsertion.calculateTermSimilarity(singleTermIDList));
+                LSIITriplet triplet = new LSIITriplet(freshness, significance, transportObjectInsertion.calculateTermSimilarity(singleTermIDList), termIDs);
 
                 // create Triplet Hash Table for I_i if necessary
                 if (tripletHashMap.get(currentIndex) == null) {
@@ -301,7 +314,7 @@ public class LSIIIndex implements IRTSIndex {
                 // add information for merging/sorting
                 List<Integer> singleTermIDList = new ArrayList<Integer>(1);
                 singleTermIDList.add(termID);
-                LSIITriplet triplet = new LSIITriplet(freshness, significance, transportObjectInsertion.calculateTermSimilarity(singleTermIDList));
+                LSIITriplet triplet = new LSIITriplet(freshness, significance, transportObjectInsertion.calculateTermSimilarity(singleTermIDList), termIDs);
 
                 // create Triplet Hash Table for I_i if necessary
                 if (tripletHashMap.get(currentIndex) == null) {
