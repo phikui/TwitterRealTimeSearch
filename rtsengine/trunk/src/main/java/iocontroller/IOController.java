@@ -31,7 +31,6 @@ public class IOController {
     protected final QueueContainer queueContainer;
     private final PreprocessorMainThread preProcessor;
     private final WriterMainThread writer;
-    private final QueueObserver queueObserver;
     private final QueryProcessorMainThread queryProcessor;
     private final OutputToGUIThread guiThread;
     private final TweetCollector tweetcollector;
@@ -40,7 +39,6 @@ public class IOController {
         queueContainer = new QueueContainer();
         preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
         writer = new WriterMainThread(queueContainer, writerOutput);
-        queueObserver = new QueueObserver(queueContainer);
         queryProcessor = new QueryProcessorMainThread(numQueryProcessors, queueContainer.getQueryOutputQueue());
         writer.setQueryProcessor(queryProcessor);
         guiThread = new OutputToGUIThread(this);
@@ -61,9 +59,7 @@ public class IOController {
         guiThread.start();
     }
 
-    public void activateQueueObserver() {
-        queueObserver.start();
-    }
+
 
     public void stopAll() {
         if (this.hasUnprocessedItems()) {
@@ -71,7 +67,6 @@ public class IOController {
         }
         writer.terminate();
         preProcessor.terminate();
-        queueObserver.terminate();
         guiThread.terminate();
         tweetcollector.stopCollecting();
     }
@@ -95,7 +90,7 @@ public class IOController {
     public void waitForTermination() throws InterruptedException {
         preProcessor.join();
         writer.join();
-        queueObserver.join();
+        guiThread.join();
     }
 
     private void addRawObject(PreprocessorRawObject newRaw) {
