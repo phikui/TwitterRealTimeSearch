@@ -1,4 +1,4 @@
-import tweetcollector.TweetCollector;
+import tweetcollector.TweetCollectorDeprecated;
 import twitter4j.TwitterException;
 
 /**
@@ -11,7 +11,7 @@ public class RTSEngineRunner {
 
         // For now just collect Tweets
         try {
-            TweetCollector.collectTweets();
+            TweetCollectorDeprecated.collectTweets();
         } catch (TwitterException e) {
             e.printStackTrace();
         }
