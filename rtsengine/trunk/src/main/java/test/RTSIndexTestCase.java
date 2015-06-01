@@ -3,6 +3,7 @@ package test;
 import indices.IRTSIndex;
 import indices.aoi.AOIIndex;
 import indices.lsii.LSIIIndex;
+import indices.tpl.TPLIndex;
 import model.TransportObject;
 import utilities.RandomObjectFactory;
 
