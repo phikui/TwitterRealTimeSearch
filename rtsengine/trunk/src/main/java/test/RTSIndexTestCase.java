@@ -17,7 +17,7 @@ public class RTSIndexTestCase {
 
     private static RandomObjectFactory randomObjectFactory = new RandomObjectFactory();
 
-    public static IRTSIndex main(String[] args) {
+    public static void main(String[] args) {
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForPreprocessing());
 //
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForWriting());
@@ -29,8 +29,6 @@ public class RTSIndexTestCase {
         for (int i = 0; i < 50; i++) {
             insertAndPerformSimpleQueryOnTransportObject(index);
         }
-
-        return index;
     }
 
 
