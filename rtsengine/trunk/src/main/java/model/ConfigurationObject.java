@@ -1,4 +1,4 @@
-package gui;
+package model;
 
 /**
  * Created by smea on 15/5/15.

@@ -1,5 +1,6 @@
-package indices.lsii;
+package utilities;
 
+import indices.aoi.AOIIndex;
 import model.TransportObject;
 import model.TweetObject;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -32,7 +33,7 @@ public class TransportObjectCreator {
      */
     public void createTransportObjects(int n){
         // change index here
-        AppendOnlyIndex ao = new AppendOnlyIndex();
+        AOIIndex ao = new AOIIndex();
 
         for(int i = 0; i < n; i++){
             ao.insertTransportObject(createRandomTransportObject(i+1));

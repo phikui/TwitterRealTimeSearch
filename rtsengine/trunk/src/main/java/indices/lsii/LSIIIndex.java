@@ -91,7 +91,8 @@ public class LSIIIndex implements IRTSIndex {
                 if (termDate == tsMax) break;
 
                 // f-Value calculations
-                termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
+                // TODO: fixme
+                termTermSimilarity = 0;//tripletHashMap.get(i).get(tweetID).getTermSimilarity();
 
                 queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                 querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
@@ -146,7 +147,8 @@ public class LSIIIndex implements IRTSIndex {
                         // TODO: refactor fValue computations
                         // fValue computation
                         termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
-                        termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
+                        // TODO: fixme
+                        termTermSimilarity = 0;//tripletHashMap.get(i).get(tweetID).getTermSimilarity();
                         queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                         querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
                         queryTermSimilarity = HelperFunctions.calculateTermSimilarity(singleTermIDList, termIDsInQuery);
@@ -168,7 +170,8 @@ public class LSIIIndex implements IRTSIndex {
                         // fValue computation
                         // TODO: would it make sense to store tripletHashMap.get(i).get(tweetID) in variable?
                         termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
-                        termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
+                        // TODO: fixme
+                        termTermSimilarity = 0;//tripletHashMap.get(i).get(tweetID).getTermSimilarity();
                         queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                         querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
                         // TODO: code duplication with above
@@ -188,7 +191,8 @@ public class LSIIIndex implements IRTSIndex {
 
                         // fValue computation
                         termDate = tripletHashMap.get(i).get(tweetID).getTimestamp();
-                        termTermSimilarity = tripletHashMap.get(i).get(tweetID).getTermSimilarity();
+                        // TODO: fixme
+                        termTermSimilarity = 0;//tripletHashMap.get(i).get(tweetID).getTermSimilarity();
                         queryFreshness = HelperFunctions.calculateFreshness(termDate, queryDate);
                         querySignificance = tripletHashMap.get(i).get(tweetID).getSignificance();
                         queryTermSimilarity = HelperFunctions.calculateTermSimilarity(singleTermIDList, termIDsInQuery);
@@ -268,7 +272,7 @@ public class LSIIIndex implements IRTSIndex {
                 // add information for merging/sorting
                 List<Integer> singleTermIDList = new ArrayList<Integer>(1);
                 singleTermIDList.add(termID);
-                LSIITriplet triplet = new LSIITriplet(freshness, significance, transportObjectInsertion.calculateTermSimilarity(singleTermIDList), termIDs);
+                LSIITriplet triplet = new LSIITriplet(freshness, significance, termIDs);
 
                 // create Triplet Hash Table for I_i if necessary
                 if (tripletHashMap.get(currentIndex) == null) {
@@ -314,7 +318,7 @@ public class LSIIIndex implements IRTSIndex {
                 // add information for merging/sorting
                 List<Integer> singleTermIDList = new ArrayList<Integer>(1);
                 singleTermIDList.add(termID);
-                LSIITriplet triplet = new LSIITriplet(freshness, significance, transportObjectInsertion.calculateTermSimilarity(singleTermIDList), termIDs);
+                LSIITriplet triplet = new LSIITriplet(freshness, significance, termIDs);
 
                 // create Triplet Hash Table for I_i if necessary
                 if (tripletHashMap.get(currentIndex) == null) {

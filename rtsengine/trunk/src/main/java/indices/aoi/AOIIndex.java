@@ -1,6 +1,7 @@
-package indices.lsii;
+package indices.aoi;
 
 import indices.IRTSIndex;
+import indices.postinglists.UnsortedPostingList;
 import model.TransportObject;
 
 import java.util.ArrayList;
@@ -16,10 +17,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * posting list will automatically be sorted by ascending
  * significance/timestamp.
  */
-public class AppendOnlyIndex implements IRTSIndex {
+public class AOIIndex implements IRTSIndex {
     private ConcurrentHashMap<Integer, UnsortedPostingList> invertedIndex;
 
-    public AppendOnlyIndex() {
+    public AOIIndex() {
         this.invertedIndex = new ConcurrentHashMap<Integer, UnsortedPostingList>();
     }
 

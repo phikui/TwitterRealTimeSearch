@@ -1,4 +1,4 @@
-package indices.lsii;
+package indices.postinglists;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

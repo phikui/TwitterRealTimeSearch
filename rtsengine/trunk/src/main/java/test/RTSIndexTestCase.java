@@ -1,8 +1,7 @@
 package test;
 
 import indices.IRTSIndex;
-import indices.lsii.AppendOnlyIndex;
-import indices.lsii.TriplePostingListIndex;
+import indices.aoi.AOIIndex;
 import model.TransportObject;
 import utilities.RandomObjectFactory;
 
@@ -21,9 +20,9 @@ public class RTSIndexTestCase {
 //
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForWriting());
 
-        IRTSIndex index = new AppendOnlyIndex();
-        // TODOL TriplePostingListIndex throws java.lang.IndexOutOfBoundsException
-//        IRTSIndex index = new TriplePostingListIndex();
+        IRTSIndex index = new AOIIndex();
+        // TODOL TPLIndex throws java.lang.IndexOutOfBoundsException
+//        IRTSIndex index = new TPLIndex();
 
         for (int i = 0; i < 50; i++) {
             insertAndPerformSimpleQueryOnTransportObject(index);

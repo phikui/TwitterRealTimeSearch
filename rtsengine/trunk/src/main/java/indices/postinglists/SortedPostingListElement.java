@@ -1,4 +1,4 @@
-package indices.lsii;
+package indices.postinglists;
 
 /**
  * Created by chans on 5/14/15.
