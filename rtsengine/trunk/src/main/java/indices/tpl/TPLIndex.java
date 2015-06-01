@@ -34,7 +34,7 @@ public class TPLIndex implements IRTSIndex {
         /*
             Testing purpose only
          */
-        this.invertedIndex2 = new ConcurrentHashMap<>();
+        this.invertedIndex2 = new ConcurrentHashMap<Integer, ConcurrentTPLArrayList>();
     }
 
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
@@ -48,7 +48,7 @@ public class TPLIndex implements IRTSIndex {
             // Abort search when i exceeds posting lists' size
             // TODO: is this the correct stop condition?
             try {
-                upperBoundScore = examineTPLIndexAtPosition(this.invertedIndex2, this.tripletHashMap, i, transportObjectQuery, resultList);
+                upperBoundScore = TPLHelper.examineTPLIndexAtPosition(this.invertedIndex2, this.tripletHashMap, i, transportObjectQuery, resultList);
             } catch (IndexOutOfBoundsException e) {
                 break;
             }
@@ -66,196 +66,50 @@ public class TPLIndex implements IRTSIndex {
     }
 
     /**
-     * Scans PostingList of TPL Index at position, inserts results into resultList and returns
-     * ScoreUpperBound
+     *  Works with new list structure using Concurrent Array lists / CopyOnWriteArrayList
      *
-     * @return  float  Highest possible score that any unseen tweet could have in this Index after
-     *                 position i ("Score Upper Bound")
+     * @param transportObjectInsertion
      */
-    public static float examineTPLIndexAtPosition(
-            ConcurrentHashMap<Integer, ConcurrentTPLArrayList> tplInvertedIndex,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap,
-            int position,
-            TransportObject transportObjectQuery,
-            SortedPostingList resultList
-    ) throws IndexOutOfBoundsException {
-        // Initialize three sets for found Tweets at position i
-        // Used to gather Tweets for insertion into resultList
-        // and for calculation of score upper bound
-        HashSet<ConcurrentSortedDateListElement> setFreshness = new HashSet<ConcurrentSortedDateListElement>();
-        HashSet<ConcurrentSortedPostingListElement> setSignificance = new HashSet<ConcurrentSortedPostingListElement>();
-        HashSet<ConcurrentSortedPostingListElement> setTermSimilarity = new HashSet<ConcurrentSortedPostingListElement>();
+    public void insertTransportObject(TransportObject transportObjectInsertion) {
+        // Obtain transportObject properties
+        int tweetID = transportObjectInsertion.getTweetID();
+        float significance = transportObjectInsertion.getSignificance();
+        Date timestamp = transportObjectInsertion.getTimestamp();
+        List<Integer> termIDs = transportObjectInsertion.getTermIDs();
 
-        List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
+        for (int termID : termIDs) {
+            ConcurrentTPLArrayList triplePostingListForTermID = this.invertedIndex2.get(termID);
 
-        for (int termID : termIDsInQuery) {
-            ConcurrentTPLArrayList tplArrayList =  tplInvertedIndex.get(termID);
-
-            // Make sure all PostingLists have enough entries
-            if (tplArrayList.getFreshnessPostingList().size() <= position
-                    || tplArrayList.getSignificancePostingList().size() <= position
-                    || tplArrayList.getTermSimilarityPostingList().size() <= position) {
-                throw new IndexOutOfBoundsException();
+            // Create PostingList for this termID if necessary
+            if (triplePostingListForTermID == null) {
+                triplePostingListForTermID = new ConcurrentTPLArrayList();
+                this.invertedIndex2.put(termID, triplePostingListForTermID);
             }
 
-            // Fetch posting list elements at position
-            ConcurrentSortedDateListElement freshnessPostingListElement = tplArrayList.getFreshnessPostingList().get(position);
-            ConcurrentSortedPostingListElement significancePostingListElement = tplArrayList.getSignificancePostingList().get(position);
-            ConcurrentSortedPostingListElement termSimilarityPostingListElement = tplArrayList.getTermSimilarityPostingList().get(position);
+            // insert into tripletHashmap
+            tripletHashMap.put(tweetID, new LSIITriplet(timestamp, significance, termIDs));
 
-            // Add fetched posting list elements to sets
-            setFreshness.add(freshnessPostingListElement);
-            setSignificance.add(significancePostingListElement);
-            setTermSimilarity.add(termSimilarityPostingListElement);
-        }
+            // Calculate term similarity between term used as key and terms in inserted TransportObject
+            float termSimilarity = transportObjectInsertion.calculateTermSimilarity(termIDs);
 
-        insertPostingListElementSetsIntoResultList(resultList, transportObjectQuery, tripletHashMap, setFreshness, setSignificance, setTermSimilarity);
-
-        return calculateUpperBoundScoreF(transportObjectQuery, tripletHashMap, setFreshness, setSignificance, setTermSimilarity);
-    }
-
-    private static void insertPostingListElementSetsIntoResultList(
-            SortedPostingList resultList,
-            TransportObject transportObjectQuery,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap,
-            HashSet<ConcurrentSortedDateListElement> setFreshness,
-            HashSet<ConcurrentSortedPostingListElement> setSignificance,
-            HashSet<ConcurrentSortedPostingListElement> setTermSimilarity
-    ) {
-        Iterator<ConcurrentSortedDateListElement> setFreshnessIterator = setFreshness.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setSignificanceIterator = setSignificance.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setTermSimilarityIterator = setTermSimilarity.iterator();
-
-        while (setFreshnessIterator.hasNext()) {
-            ConcurrentSortedDateListElement freshnessPostingListElement = setFreshnessIterator.next();
-            int tweetID = freshnessPostingListElement.getTweetID();
-            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery, tripletHashMap);
-        }
-
-        while (setSignificanceIterator.hasNext()) {
-            ConcurrentSortedPostingListElement significancePostingListElement = setSignificanceIterator.next();
-            int tweetID = significancePostingListElement.getTweetID();
-            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery, tripletHashMap);
-        }
-
-        while (setTermSimilarityIterator.hasNext()) {
-            ConcurrentSortedPostingListElement termSimilarityPostingListElement = setTermSimilarityIterator.next();
-            int tweetID = termSimilarityPostingListElement.getTweetID();
-            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery, tripletHashMap);
+            // insert tweetID sorted on float values into index posting lists
+            HelperFunctions.insertSorted(triplePostingListForTermID.getFreshnessPostingList(), new ConcurrentSortedDateListElement(tweetID, timestamp));
+            HelperFunctions.insertSorted(triplePostingListForTermID.getSignificancePostingList(), new ConcurrentSortedPostingListElement(tweetID, significance));
+            HelperFunctions.insertSorted(triplePostingListForTermID.getTermSimilarityPostingList(), new ConcurrentSortedPostingListElement(tweetID, termSimilarity));
+            //triplePostingListForTermID.getTermSimilarityPostingList().insertSorted(tweetID, termSimilarity);
         }
     }
 
-    private static void insertTweetIDIntoResultList(
-            int tweetID,
-            SortedPostingList resultList,
-            TransportObject transportObjectQuery,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap
-    ) {
-        // Fetch LSIITriplet for this tweetID
-        LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
-
-        // Query variables
-        int k = transportObjectQuery.getk();
-        List<Integer> termIDsQuery = transportObjectQuery.getTermIDs();
-        Date timestampQuery = transportObjectQuery.getTimestamp();
-
-        // Calculate ranking function for this triplet
-        List<Integer> termIDsInPost = lsiiTriplet.getTermIDs();
-        Date timestampPost = lsiiTriplet.getTimestamp();
-
-        float freshness = HelperFunctions.calculateFreshness(timestampPost, timestampQuery);
-        float significance = lsiiTriplet.getSignificance();
-        float similarity = HelperFunctions.calculateTermSimilarity(termIDsQuery, termIDsInPost);
-
-        float fValue = HelperFunctions.calculateRankingFunction(freshness, significance, similarity);
-
-        // Check if to be inserted tweet ID is already in result list
-        // Remove and reinsert element if it is already contained and has a lower ranking value
-        SortedPostingListElement elementInResultList = resultList.getSortedPostingListElement(tweetID);
-        if (elementInResultList != null && elementInResultList.getSortKey() < fValue) {
-            resultList.remove(elementInResultList);
-        }
-
-        // Insert directly in case ResultList has less than k entries
-        // In case ResultList already contains k entries, check whether the last entry
-        // (with the smallest ranking value) has a smaller ranking value
-        if (resultList.size() < k) {
-            resultList.insertSorted(tweetID, fValue);
-        } else {
-            SortedPostingListElement lastEntryInResultList = resultList.getLast();
-
-            if (lastEntryInResultList.getSortKey() < fValue) {
-                resultList.remove(lastEntryInResultList);
-                resultList.insertSorted(tweetID, fValue);
-            }
-        }
+    public int size() {
+        return this.invertedIndex.size();
     }
 
-    private static float calculateUpperBoundScoreF(
-            TransportObject transportObjectQuery,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap,
-            HashSet<ConcurrentSortedDateListElement> setFreshness,
-            HashSet<ConcurrentSortedPostingListElement> setSignificance,
-            HashSet<ConcurrentSortedPostingListElement> setTermSimilarity)
-    {
-        Iterator<ConcurrentSortedDateListElement> setFreshnessIterator = setFreshness.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setSignificanceIterator = setSignificance.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setTermSimilarityIterator = setTermSimilarity.iterator();
 
-        List<Integer> termIDsQuery = transportObjectQuery.getTermIDs();
-        Date timestampQuery = transportObjectQuery.getTimestamp();
+    /*
 
-        List<Integer> allTermIDs = new LinkedList<Integer>();
+        Deprecated code below
 
-        // Determine maximum freshness value from setFreshness
-        float maxFreshnessValue = 0;
-        while (setFreshnessIterator.hasNext()) {
-            ConcurrentSortedDateListElement freshnessPostingListElement = setFreshnessIterator.next();
-            int tweetID = freshnessPostingListElement.getTweetID();
-            LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
-
-            // Calculate freshness value for this post
-            // TODO: Rename getTimestamp() to getTimestamp()
-            Date timestampPost = lsiiTriplet.getTimestamp();
-            float freshnessValue = HelperFunctions.calculateFreshness(timestampPost, timestampQuery);
-
-            if (freshnessValue > maxFreshnessValue) {
-                maxFreshnessValue = freshnessValue;
-            }
-
-            allTermIDs.addAll(lsiiTriplet.getTermIDs());
-        }
-
-        // Determine maximum significance value from setSignificance
-        float maxSignificanceValue = 0;
-        while (setSignificanceIterator.hasNext()) {
-            ConcurrentSortedPostingListElement significancePostingListElement = setSignificanceIterator.next();
-            int tweetID = significancePostingListElement.getTweetID();
-            LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
-
-            float significanceValue = lsiiTriplet.getSignificance();
-
-            if (significanceValue > maxSignificanceValue) {
-                maxSignificanceValue = significanceValue;
-            }
-
-            allTermIDs.addAll(lsiiTriplet.getTermIDs());
-        }
-
-        // Collect termIDs from setTermSimilarity
-        while (setTermSimilarityIterator.hasNext()) {
-            ConcurrentSortedPostingListElement termSimilarityPostingListElement = setTermSimilarityIterator.next();
-            int tweetID = termSimilarityPostingListElement.getTweetID();
-            LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
-
-            allTermIDs.addAll(lsiiTriplet.getTermIDs());
-        }
-
-        // Calculate overallTermSimilarity
-        float overallTermSimilarity = HelperFunctions.calculateTermSimilarity(termIDsQuery, allTermIDs);
-
-        return HelperFunctions.calculateRankingFunction(maxFreshnessValue, maxSignificanceValue, overallTermSimilarity);
-    }
+     */
 
     /* Approach using IteratorQueue - complicated... we should rather use normal get(i) approach
        in combination with B-Tree for the PostingLists
@@ -585,44 +439,4 @@ public class TPLIndex implements IRTSIndex {
         }
     }
     */
-
-    /**
-     *  Works with new list structure using Concurrent Array lists / CopyOnWriteArrayList
-     *
-     * @param transportObjectInsertion
-     */
-    public void insertTransportObject(TransportObject transportObjectInsertion) {
-        // Obtain transportObject properties
-        int tweetID = transportObjectInsertion.getTweetID();
-        float significance = transportObjectInsertion.getSignificance();
-        Date timestamp = transportObjectInsertion.getTimestamp();
-        List<Integer> termIDs = transportObjectInsertion.getTermIDs();
-
-        for (int termID : termIDs) {
-            ConcurrentTPLArrayList triplePostingListForTermID = this.invertedIndex2.get(termID);
-
-            // Create PostingList for this termID if necessary
-            if (triplePostingListForTermID == null) {
-                triplePostingListForTermID = new ConcurrentTPLArrayList();
-                this.invertedIndex2.put(termID, triplePostingListForTermID);
-            }
-
-            // insert into tripletHashmap
-            tripletHashMap.put(tweetID, new LSIITriplet(timestamp, significance, termIDs));
-
-            // Calculate term similarity between term used as key and terms in inserted TransportObject
-            float termSimilarity = transportObjectInsertion.calculateTermSimilarity(termIDs);
-
-            // insert tweetID sorted on float values into index posting lists
-            HelperFunctions.insertSorted(triplePostingListForTermID.getFreshnessPostingList(), new ConcurrentSortedDateListElement(tweetID, timestamp));
-            HelperFunctions.insertSorted(triplePostingListForTermID.getSignificancePostingList(), new ConcurrentSortedPostingListElement(tweetID, significance));
-            HelperFunctions.insertSorted(triplePostingListForTermID.getTermSimilarityPostingList(), new ConcurrentSortedPostingListElement(tweetID, termSimilarity));
-            //triplePostingListForTermID.getTermSimilarityPostingList().insertSorted(tweetID, termSimilarity);
-        }
-    }
-
-    public int size() {
-        return this.invertedIndex.size();
-    }
-
 }
