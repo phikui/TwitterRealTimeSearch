@@ -49,6 +49,7 @@ public class TPLIndex implements IRTSIndex {
             // TODO: is this the correct stop condition?
             try {
                 upperBoundScore = TPLHelper.examineTPLIndexAtPosition(this.invertedIndex2, this.tripletHashMap, i, transportObjectQuery, resultList);
+                System.out.println("Upper bound score: " + upperBoundScore);
             } catch (IndexOutOfBoundsException e) {
                 break;
             }
@@ -60,6 +61,8 @@ public class TPLIndex implements IRTSIndex {
                     break;
                 }
             }
+
+            i++;
         }
 
         return resultList.getTweetIDs();
