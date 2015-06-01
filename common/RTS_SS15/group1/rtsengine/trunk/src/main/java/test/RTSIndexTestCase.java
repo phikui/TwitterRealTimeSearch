@@ -2,6 +2,7 @@ package test;
 
 import indices.IRTSIndex;
 import indices.aoi.AOIIndex;
+import indices.lsii.LSIIIndex;
 import model.TransportObject;
 import utilities.RandomObjectFactory;
 
@@ -20,9 +21,9 @@ public class RTSIndexTestCase {
 //
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForWriting());
 
-        IRTSIndex index = new AOIIndex();
-        // TODOL TPLIndex throws java.lang.IndexOutOfBoundsException
-//        IRTSIndex index = new TPLIndex();
+//        IRTSIndex index = new AOIIndex();
+        IRTSIndex index = new TPLIndex();
+//        IRTSIndex index = new LSIIIndex();
 
         for (int i = 0; i < 50; i++) {
             insertAndPerformSimpleQueryOnTransportObject(index);
