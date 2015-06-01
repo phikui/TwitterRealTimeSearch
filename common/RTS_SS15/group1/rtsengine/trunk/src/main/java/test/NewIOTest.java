@@ -1,6 +1,6 @@
 package test;
 
-import gui.ConfigurationObject;
+import model.ConfigurationObject;
 import indices.IndexDispatcher;
 import iocontroller.IOController;
 import model.TermDictionary;

@@ -1,9 +1,9 @@
 package gui;
 
 import indices.IRTSIndex;
-import indices.lsii.AppendOnlyIndex;
+import indices.aoi.AOIIndex;
 import indices.lsii.LSIIIndex;
-import indices.lsii.TriplePostingListIndex;
+import indices.tpl.TPLIndex;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 
@@ -19,10 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import model.TermDictionary;
-import model.TransportObject;
-import model.TweetDictionary;
-import model.TweetObject;
+import model.*;
 
 /**
  * Created by Guerki on 16/5/15.
@@ -74,13 +71,13 @@ public class MainAppController implements Initializable {
         String chosenIndex = ConfigurationObject.getIndexType();
         IRTSIndex index;
         switch (chosenIndex){
-            case "AO": index  = new AppendOnlyIndex();
+            case "AO": index  = new AOIIndex();
                 break;
-            case "TPL": index = new TriplePostingListIndex();
+            case "TPL": index = new TPLIndex();
                 break;
             case "LSII": index = new LSIIIndex();
                 break;
-            default: index  = new AppendOnlyIndex();
+            default: index  = new AOIIndex();
                 break;
         }
 

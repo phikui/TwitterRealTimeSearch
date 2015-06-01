@@ -1,10 +1,9 @@
 package indices;
 
-import gui.ConfigurationObject;
-import indices.lsii.AppendOnlyIndex;
+import model.ConfigurationObject;
+import indices.aoi.AOIIndex;
 import indices.lsii.LSIIIndex;
-import indices.lsii.TriplePostingList;
-import indices.lsii.TriplePostingListIndex;
+import indices.tpl.TPLIndex;
 import model.TransportObject;
 
 import java.util.List;
@@ -14,8 +13,8 @@ import java.util.List;
  */
 public class IndexDispatcher {
 
-    private static final AppendOnlyIndex aoi_index = new AppendOnlyIndex();
-    private static final TriplePostingListIndex tpl_index = new TriplePostingListIndex();
+    private static final AOIIndex aoi_index = new AOIIndex();
+    private static final TPLIndex tpl_index = new TPLIndex();
     private static final LSIIIndex lsii_index = new LSIIIndex();
 
     public static List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {

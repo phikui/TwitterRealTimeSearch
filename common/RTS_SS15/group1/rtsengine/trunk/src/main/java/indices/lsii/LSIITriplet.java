@@ -1,4 +1,4 @@
-package indices.postinglists;
+package indices.lsii;
 
 import java.util.Date;
 import java.util.List;
@@ -10,16 +10,11 @@ public class LSIITriplet {
 
     private Date timestamp;
     private float significance;
-    // TODO: is this really needed? termIDs is probably required which makes storing
-    //       termSimilarity obsolete
-    private float termSimilarity;
-
     private List<Integer> termIDs;
 
-    public LSIITriplet(Date timestamp, float significance, float termSimilarity, List<Integer> termIDs) {
+    public LSIITriplet(Date timestamp, float significance, List<Integer> termIDs) {
         this.timestamp = timestamp;
         this.significance = significance;
-        this.termSimilarity = termSimilarity;
         this.termIDs = termIDs;
     }
 
@@ -37,14 +32,6 @@ public class LSIITriplet {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public float getTermSimilarity() {
-        return termSimilarity;
-    }
-
-    public void setTermSimilarity(float termSimilarity) {
-        this.termSimilarity = termSimilarity;
     }
 
     public List<Integer> getTermIDs() {

@@ -1,4 +1,6 @@
-package indices.lsii;
+package indices.postinglists;
+
+import indices.postinglists.SortedPostingList;
 
 /**
  * Linking class for the three linked posting lists in LSII

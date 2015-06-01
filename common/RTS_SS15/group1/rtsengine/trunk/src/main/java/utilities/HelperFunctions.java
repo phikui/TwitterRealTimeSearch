@@ -1,7 +1,6 @@
 package utilities;
 
-import edu.stanford.nlp.util.Sets;
-import gui.ConfigurationObject;
+import model.ConfigurationObject;
 import model.TweetObject;
 
 import java.util.*;
