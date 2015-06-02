@@ -124,7 +124,7 @@ public class TPLHelper {
         // Check if to be inserted tweet ID is already in result list
         // Remove and reinsert element if it is already contained and has a lower ranking value
         SortedPostingListElement elementInResultList = resultList.getSortedPostingListElement(tweetID);
-        if (elementInResultList != null && elementInResultList.getSortKey() < fValue) {
+        if (elementInResultList != null && elementInResultList.getSortKey() <= fValue) {
             resultList.remove(elementInResultList);
         }
 
