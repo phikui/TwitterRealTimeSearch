@@ -1,7 +1,7 @@
 package indices.aoi;
 
 import indices.IRTSIndex;
-import indices.postinglists.UnsortedPostingList;
+import indices.deprecated.UnsortedPostingList;
 import model.TransportObject;
 
 import java.util.ArrayList;

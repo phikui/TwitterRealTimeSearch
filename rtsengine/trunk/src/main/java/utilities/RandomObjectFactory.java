@@ -108,8 +108,7 @@ public class RandomObjectFactory {
 
         // Write tweetObject for non-queries
         if (!transportObject.isQuery()) {
-            TweetObject tweetObject = transportObject.getTweetObject();
-            int tweetID = TweetDictionary.insertTweetObject(tweetObject);
+            int tweetID = TweetDictionary.insertTransportObject(transportObject);
             transportObject.setTweetID(tweetID);
         }
 

@@ -102,7 +102,7 @@ public class MainAppController implements Initializable {
         List<Integer> tweetIdList = index.searchTweetIDs(transportObjectQuery);
         List<TweetObject> tweetlist = new ArrayList<TweetObject>();
         for (Integer id : tweetIdList) {
-            TweetObject tweet = TweetDictionary.getTweetObject(id);
+            TweetObject tweet = TweetDictionary.getTransportObject(id).getTweetObject();
             tweetlist.add(tweet);
             System.out.println(tweet.getText());
         }

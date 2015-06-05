@@ -53,10 +53,8 @@ public class WriterMainThread extends Thread {
                         //If it is a query dispatch to query processor
                         queryProcessor.scheduleQuery(x);
                     } else {
-                        TweetObject tweet = x.getTweetObject();
-
                         //Update tweet and termDictionaries
-                        int tweet_id = TweetDictionary.insertTweetObject(tweet);
+                        int tweet_id = TweetDictionary.insertTransportObject(x);
                         x.setTweetID(tweet_id);
                         List<Integer> termIds = new ArrayList<Integer>();
                         for (String term : x.getTerms()) {
