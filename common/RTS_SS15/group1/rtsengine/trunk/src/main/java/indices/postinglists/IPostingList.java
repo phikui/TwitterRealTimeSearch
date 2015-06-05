@@ -1,5 +1,7 @@
 package indices.postinglists;
 
+import java.util.Iterator;
+
 /**
  * Created by chans on 6/5/15.
  */
@@ -25,5 +27,9 @@ public interface IPostingList {
      * @param  tweetID  TweetID to be inserted
      */
     void insertSortedByTermSimilarity(int insertTweetID);
+
+    Iterator<Integer> iterator();
+
+    int size();
 
 }

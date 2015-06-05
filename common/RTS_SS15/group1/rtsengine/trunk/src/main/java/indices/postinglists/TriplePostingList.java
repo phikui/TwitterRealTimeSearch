@@ -5,10 +5,10 @@ public class TriplePostingList implements ITriplePostingList {
     private IPostingList significancePostingList;
     private IPostingList termSimilarityPostingList;
 
-    public TriplePostingList() {
+    public TriplePostingList(int referenceTermID) {
         this.freshnessPostingList = new PostingList();
         this.significancePostingList = new PostingList();
-        this.termSimilarityPostingList = new PostingList();
+        this.termSimilarityPostingList = new PostingList(referenceTermID);
     }
 
     public IPostingList getFreshnessPostingList() {
