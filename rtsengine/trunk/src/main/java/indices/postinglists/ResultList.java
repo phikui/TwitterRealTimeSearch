@@ -27,7 +27,7 @@ public class ResultList extends LinkedList<ResultListElement> {
             }
 
             ResultListElement elementInList = iterator.next();
-            if (elementInList.getSortKey() > sortElement.getSortKey()) {
+            if (elementInList.getSortKey() < sortElement.getSortKey()) {
                 iterator.previous();
                 iterator.add(sortElement);
                 return;
