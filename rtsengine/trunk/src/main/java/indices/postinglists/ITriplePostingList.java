@@ -5,8 +5,10 @@ package indices.postinglists;
  */
 public interface ITriplePostingList {
 
+    IPostingList getFreshnessPostingList();
 
+    IPostingList getSignificancePostingList();
 
-
+    IPostingList getTermSimilarityPostingList();
 
 }
