@@ -1,49 +1,42 @@
 package indices.tpl;
 
 import indices.IRTSIndex;
-import indices.deprecated.ConcurrentSortedDateListElement;
-import indices.deprecated.ConcurrentSortedPostingListElement;
-import indices.deprecated.ConcurrentTriplePostingList;
-import indices.deprecated.SortedPostingList;
-import indices.deprecated.ConcurrentTPLArrayList;
+import indices.postinglists.IPostingList;
+import indices.postinglists.ITriplePostingList;
+import indices.postinglists.ResultList;
+import indices.postinglists.TriplePostingList;
 import model.TransportObject;
 import utilities.HelperFunctions;
 
 import java.util.*;
-
-
 import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * Created by chans on 5/14/15.
  */
 public class TPLIndex implements IRTSIndex {
 
-    private ConcurrentHashMap<Integer, ConcurrentTriplePostingList> invertedIndex;
-    // Testing purpose only
-    private ConcurrentHashMap<Integer, ConcurrentTPLArrayList> invertedIndex2;
+    private ConcurrentHashMap<Integer, ITriplePostingList> invertedIndex;
 
     public TPLIndex() {
-        this.invertedIndex = new ConcurrentHashMap<Integer, ConcurrentTriplePostingList>();
-
-        /*
-            Testing purpose only
-         */
-        this.invertedIndex2 = new ConcurrentHashMap<Integer, ConcurrentTPLArrayList>();
+        this.invertedIndex = new ConcurrentHashMap<Integer, ITriplePostingList>();
     }
 
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
-        SortedPostingList resultList = new SortedPostingList();
+        // Stores result tweetIDs along with their calculated f score value
+        ResultList resultList = new ResultList();
+
+        // Stores Iterator for each PostingList that has already been examined
+        HashMap<IPostingList, Iterator<Integer>> postingListIteratorMap = new HashMap<IPostingList, Iterator<Integer>>();
 
         float upperBoundScore;
 
         // Threshold algorithm main loop
-        int i = 0;
         while (true) {
-            // Abort search when i exceeds posting lists' size
-            // TODO: is this the correct stop condition?
+            // Abort search when all involved PostingLists have reached the end
             try {
-                upperBoundScore = TPLHelper.examineTPLIndexAtPosition(this.invertedIndex2, i, transportObjectQuery, resultList);
+                upperBoundScore = TPLHelper.examineTPLIndex(this.invertedIndex, postingListIteratorMap, transportObjectQuery, resultList);
                 System.out.println("Upper Bound Score: " + upperBoundScore);
             } catch (IndexOutOfBoundsException e) {
                 break;
@@ -56,8 +49,6 @@ public class TPLIndex implements IRTSIndex {
                     break;
                 }
             }
-
-            i++;
         }
 
         return resultList.getTweetIDs();
@@ -71,27 +62,23 @@ public class TPLIndex implements IRTSIndex {
     public void insertTransportObject(TransportObject transportObjectInsertion) {
         // Obtain transportObject properties
         int tweetID = transportObjectInsertion.getTweetID();
-        float significance = transportObjectInsertion.getSignificance();
-        Date timestamp = transportObjectInsertion.getTimestamp();
         List<Integer> termIDs = transportObjectInsertion.getTermIDs();
 
-        for (int termID : termIDs) {
-            ConcurrentTPLArrayList triplePostingListForTermID = this.invertedIndex2.get(termID);
+        for (int referenceTermID : termIDs) {
+            ITriplePostingList triplePostingListForTermID = this.invertedIndex.get(referenceTermID);
 
             // Create PostingList for this termID if necessary
             if (triplePostingListForTermID == null) {
-                triplePostingListForTermID = new ConcurrentTPLArrayList();
-                this.invertedIndex2.put(termID, triplePostingListForTermID);
+                // Pass reference termID to TriplePostingList, which in turn
+                // passes it to the PostingList for term similarity
+                triplePostingListForTermID = new TriplePostingList(referenceTermID);
+                this.invertedIndex.put(referenceTermID, triplePostingListForTermID);
             }
 
-            // Calculate term similarity between term used as key and terms in inserted TransportObject
-            float termSimilarity = transportObjectInsertion.calculateTermSimilarity(termIDs);
-
             // insert tweetID sorted on float values into index posting lists
-            HelperFunctions.insertSorted(triplePostingListForTermID.getFreshnessPostingList(), new ConcurrentSortedDateListElement(tweetID, timestamp));
-            HelperFunctions.insertSorted(triplePostingListForTermID.getSignificancePostingList(), new ConcurrentSortedPostingListElement(tweetID, significance));
-            HelperFunctions.insertSorted(triplePostingListForTermID.getTermSimilarityPostingList(), new ConcurrentSortedPostingListElement(tweetID, termSimilarity));
-            //triplePostingListForTermID.getTermSimilarityPostingList().insertSorted(tweetID, termSimilarity);
+            triplePostingListForTermID.getFreshnessPostingList().insertSortedByTimestamp(tweetID);
+            triplePostingListForTermID.getSignificancePostingList().insertSortedBySignificance(tweetID);
+            triplePostingListForTermID.getTermSimilarityPostingList().insertSortedByTermSimilarity(tweetID);
         }
     }
 
@@ -114,7 +101,7 @@ public class TPLIndex implements IRTSIndex {
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
 
         // This list has to be explicitly limited to result size k
-        SortedPostingList resultList = new SortedPostingList();
+        ResultList resultList = new ResultList();
 
         // Maintain three queues of iterators.
         // One for freshness posting list iterators,

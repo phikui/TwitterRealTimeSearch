@@ -1,29 +1,31 @@
 package indices.deprecated;
 
+import indices.postinglists.ResultList;
+
 /**
  * Linking class for the three linked posting lists in LSII
  */
 public class TriplePostingList {
 
-    private SortedPostingList freshnessPostingList;
-    private SortedPostingList significancePostingList;
-    private SortedPostingList termSimilarityPostingList;
+    private ResultList freshnessPostingList;
+    private ResultList significancePostingList;
+    private ResultList termSimilarityPostingList;
 
     public TriplePostingList() {
-        this.freshnessPostingList = new SortedPostingList();
-        this.significancePostingList = new SortedPostingList();
-        this.termSimilarityPostingList = new SortedPostingList();
+        this.freshnessPostingList = new ResultList();
+        this.significancePostingList = new ResultList();
+        this.termSimilarityPostingList = new ResultList();
     }
 
-    public SortedPostingList getFreshnessPostingList() {
+    public ResultList getFreshnessPostingList() {
         return freshnessPostingList;
     }
 
-    public SortedPostingList getSignificancePostingList() {
+    public ResultList getSignificancePostingList() {
         return significancePostingList;
     }
 
-    public SortedPostingList getTermSimilarityPostingList() {
+    public ResultList getTermSimilarityPostingList() {
         return termSimilarityPostingList;
     }
 

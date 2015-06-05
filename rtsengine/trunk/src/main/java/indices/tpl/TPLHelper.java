@@ -1,10 +1,6 @@
 package indices.tpl;
 
-import indices.deprecated.ConcurrentTPLArrayList;
-import indices.deprecated.ConcurrentSortedDateListElement;
-import indices.deprecated.ConcurrentSortedPostingListElement;
-import indices.deprecated.SortedPostingList;
-import indices.deprecated.SortedPostingListElement;
+import indices.postinglists.*;
 import model.TransportObject;
 import model.TweetDictionary;
 import utilities.HelperFunctions;
@@ -18,46 +14,79 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TPLHelper {
 
     /**
-     * Scans PostingList of TPL Index at position, inserts results into resultList and returns
-     * ScoreUpperBound
+     * Scans PostingList of TPL Index, inserts results into resultList and returns ScoreUpperBound.
+     * Uses postingListIteratorMap to fetch next elements from involved PostingLists.
      *
      * @return  float  Highest possible score that any unseen tweet could have in this Index after
      *                 position i ("Score Upper Bound")
+     *
+     * @throws  IndexOutOfBoundsException  In case all involved PostingLists have reached their end
      */
-    public static float examineTPLIndexAtPosition(
-            ConcurrentHashMap<Integer, ConcurrentTPLArrayList> tplInvertedIndex,
-            int position,
+    public static float examineTPLIndex(
+            ConcurrentHashMap<Integer, ITriplePostingList> tplInvertedIndex,
+            HashMap<IPostingList, Iterator<Integer>> postingListIteratorMap,
             TransportObject transportObjectQuery,
-            SortedPostingList resultList
+            ResultList resultList
     ) throws IndexOutOfBoundsException {
-        // Initialize three sets for found Tweets at position i
+        // Initialize three sets for found Tweets in this iteration.
         // Used to gather Tweets for insertion into resultList
-        // and for calculation of score upper bound
-        HashSet<ConcurrentSortedDateListElement> setFreshness = new HashSet<ConcurrentSortedDateListElement>();
-        HashSet<ConcurrentSortedPostingListElement> setSignificance = new HashSet<ConcurrentSortedPostingListElement>();
-        HashSet<ConcurrentSortedPostingListElement> setTermSimilarity = new HashSet<ConcurrentSortedPostingListElement>();
+        // and for calculation of score upper bound.
+        HashSet<Integer> setFreshness = new HashSet<Integer>();
+        HashSet<Integer> setSignificance = new HashSet<Integer>();
+        HashSet<Integer> setTermSimilarity = new HashSet<Integer>();
 
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
 
-        for (int termID : termIDsInQuery) {
-            ConcurrentTPLArrayList tplArrayList =  tplInvertedIndex.get(termID);
+        // Throw IndexOutOfBoundsException if all PostingLists have reached their end
+        boolean allPostingListsHaveReachedEnd = true;
 
-            // Make sure all PostingLists have enough entries
-            if (tplArrayList.getFreshnessPostingList().size() <= position
-                    || tplArrayList.getSignificancePostingList().size() <= position
-                    || tplArrayList.getTermSimilarityPostingList().size() <= position) {
-                throw new IndexOutOfBoundsException();
+        for (int termID : termIDsInQuery) {
+            ITriplePostingList tplArrayList = tplInvertedIndex.get(termID);
+
+            // Fetch posting lists for this termID
+            IPostingList freshnessPostingList = tplArrayList.getFreshnessPostingList();
+            IPostingList significancePostingList = tplArrayList.getSignificancePostingList();
+            IPostingList termSimilarityPostingList = tplArrayList.getTermSimilarityPostingList();
+
+            // Check for all fetched PostingLists whether Iterator already exists in postingListIteratorMap
+            Iterator<Integer> freshnessPostingListIterator = postingListIteratorMap.get(freshnessPostingList);
+            Iterator<Integer> significancePostingListIterator = postingListIteratorMap.get(significancePostingList);
+            Iterator<Integer> termSimilarityPostingListIterator = postingListIteratorMap.get(termSimilarityPostingList);
+
+            // Create iterators and put into postingListIteratorMap if non-existent
+            if (freshnessPostingList == null) {
+                freshnessPostingListIterator = freshnessPostingList.iterator();
+                postingListIteratorMap.put(freshnessPostingList, freshnessPostingListIterator);
+            }
+            if (significancePostingList == null) {
+                significancePostingListIterator = significancePostingList.iterator();
+                postingListIteratorMap.put(significancePostingList, significancePostingListIterator);
+            }
+            if (termSimilarityPostingList == null) {
+                termSimilarityPostingListIterator = termSimilarityPostingList.iterator();
+                postingListIteratorMap.put(termSimilarityPostingList, termSimilarityPostingListIterator);
             }
 
-            // Fetch posting list elements at position
-            ConcurrentSortedDateListElement freshnessPostingListElement = tplArrayList.getFreshnessPostingList().get(position);
-            ConcurrentSortedPostingListElement significancePostingListElement = tplArrayList.getSignificancePostingList().get(position);
-            ConcurrentSortedPostingListElement termSimilarityPostingListElement = tplArrayList.getTermSimilarityPostingList().get(position);
+            // Fetch next tweetID from each PostingList Iterator and insert into sets
+            if (freshnessPostingListIterator.hasNext()) {
+                allPostingListsHaveReachedEnd = false;
+                int freshnessTweetID = freshnessPostingListIterator.next();
+                setFreshness.add(freshnessTweetID);
+            }
+            if (significancePostingListIterator.hasNext()) {
+                allPostingListsHaveReachedEnd = false;
+                int significanceTweetID = significancePostingListIterator.next();
+                setSignificance.add(significanceTweetID);
+            }
+            if (termSimilarityPostingListIterator.hasNext()) {
+                allPostingListsHaveReachedEnd = false;
+                int termSimilarityTweetID = termSimilarityPostingListIterator.next();
+                setTermSimilarity.add(termSimilarityTweetID);
+            }
+        }
 
-            // Add fetched posting list elements to sets
-            setFreshness.add(freshnessPostingListElement);
-            setSignificance.add(significancePostingListElement);
-            setTermSimilarity.add(termSimilarityPostingListElement);
+        if (allPostingListsHaveReachedEnd) {
+            throw new IndexOutOfBoundsException();
         }
 
         insertPostingListElementSetsIntoResultList(resultList, transportObjectQuery, setFreshness, setSignificance, setTermSimilarity);
@@ -66,38 +95,35 @@ public class TPLHelper {
     }
 
     private static void insertPostingListElementSetsIntoResultList(
-            SortedPostingList resultList,
+            ResultList resultList,
             TransportObject transportObjectQuery,
-            HashSet<ConcurrentSortedDateListElement> setFreshness,
-            HashSet<ConcurrentSortedPostingListElement> setSignificance,
-            HashSet<ConcurrentSortedPostingListElement> setTermSimilarity
+            HashSet<Integer> setFreshness,
+            HashSet<Integer> setSignificance,
+            HashSet<Integer> setTermSimilarity
     ) {
-        Iterator<ConcurrentSortedDateListElement> setFreshnessIterator = setFreshness.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setSignificanceIterator = setSignificance.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setTermSimilarityIterator = setTermSimilarity.iterator();
+        Iterator<Integer> setFreshnessIterator = setFreshness.iterator();
+        Iterator<Integer> setSignificanceIterator = setSignificance.iterator();
+        Iterator<Integer> setTermSimilarityIterator = setTermSimilarity.iterator();
 
         while (setFreshnessIterator.hasNext()) {
-            ConcurrentSortedDateListElement freshnessPostingListElement = setFreshnessIterator.next();
-            int tweetID = freshnessPostingListElement.getTweetID();
+            int tweetID = setFreshnessIterator.next();
             insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery);
         }
 
         while (setSignificanceIterator.hasNext()) {
-            ConcurrentSortedPostingListElement significancePostingListElement = setSignificanceIterator.next();
-            int tweetID = significancePostingListElement.getTweetID();
+            int tweetID = setSignificanceIterator.next();
             insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery);
         }
 
         while (setTermSimilarityIterator.hasNext()) {
-            ConcurrentSortedPostingListElement termSimilarityPostingListElement = setTermSimilarityIterator.next();
-            int tweetID = termSimilarityPostingListElement.getTweetID();
+            int tweetID = setTermSimilarityIterator.next();
             insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery);
         }
     }
 
     private static void insertTweetIDIntoResultList(
             int tweetID,
-            SortedPostingList resultList,
+            ResultList resultList,
             TransportObject transportObjectQuery
     ) {
         // Fetch TransportObject for this tweetID
@@ -120,7 +146,7 @@ public class TPLHelper {
 
         // Check if to be inserted tweet ID is already in result list
         // Remove and reinsert element if it is already contained and has a lower ranking value
-        SortedPostingListElement elementInResultList = resultList.getSortedPostingListElement(tweetID);
+        ResultListElement elementInResultList = resultList.getResultListElement(tweetID);
         if (elementInResultList != null && elementInResultList.getSortKey() <= fValue) {
             resultList.remove(elementInResultList);
         }
@@ -131,7 +157,7 @@ public class TPLHelper {
         if (resultList.size() < k) {
             resultList.insertSorted(tweetID, fValue);
         } else {
-            SortedPostingListElement lastEntryInResultList = resultList.getLast();
+            ResultListElement lastEntryInResultList = resultList.getLast();
 
             if (lastEntryInResultList.getSortKey() < fValue) {
                 resultList.remove(lastEntryInResultList);
@@ -142,13 +168,13 @@ public class TPLHelper {
 
     private static float calculateUpperBoundScoreF(
             TransportObject transportObjectQuery,
-            HashSet<ConcurrentSortedDateListElement> setFreshness,
-            HashSet<ConcurrentSortedPostingListElement> setSignificance,
-            HashSet<ConcurrentSortedPostingListElement> setTermSimilarity)
+            HashSet<Integer> setFreshness,
+            HashSet<Integer> setSignificance,
+            HashSet<Integer> setTermSimilarity)
     {
-        Iterator<ConcurrentSortedDateListElement> setFreshnessIterator = setFreshness.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setSignificanceIterator = setSignificance.iterator();
-        Iterator<ConcurrentSortedPostingListElement> setTermSimilarityIterator = setTermSimilarity.iterator();
+        Iterator<Integer> setFreshnessIterator = setFreshness.iterator();
+        Iterator<Integer> setSignificanceIterator = setSignificance.iterator();
+        Iterator<Integer> setTermSimilarityIterator = setTermSimilarity.iterator();
 
         List<Integer> termIDsQuery = transportObjectQuery.getTermIDs();
         Date timestampQuery = transportObjectQuery.getTimestamp();
@@ -158,12 +184,10 @@ public class TPLHelper {
         // Determine maximum freshness value from setFreshness
         float maxFreshnessValue = 0;
         while (setFreshnessIterator.hasNext()) {
-            ConcurrentSortedDateListElement freshnessPostingListElement = setFreshnessIterator.next();
-            int tweetID = freshnessPostingListElement.getTweetID();
+            Integer tweetID = setFreshnessIterator.next();
             TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
             // Calculate freshness value for this post
-            // TODO: Rename getTimestamp() to getTimestamp()
             Date timestampPost = transportObject.getTimestamp();
             float freshnessValue = HelperFunctions.calculateFreshness(timestampPost, timestampQuery);
 
@@ -177,8 +201,7 @@ public class TPLHelper {
         // Determine maximum significance value from setSignificance
         float maxSignificanceValue = 0;
         while (setSignificanceIterator.hasNext()) {
-            ConcurrentSortedPostingListElement significancePostingListElement = setSignificanceIterator.next();
-            int tweetID = significancePostingListElement.getTweetID();
+            int tweetID = setSignificanceIterator.next();
             TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
             float significanceValue = transportObject.getSignificance();
@@ -192,8 +215,7 @@ public class TPLHelper {
 
         // Collect termIDs from setTermSimilarity
         while (setTermSimilarityIterator.hasNext()) {
-            ConcurrentSortedPostingListElement termSimilarityPostingListElement = setTermSimilarityIterator.next();
-            int tweetID = termSimilarityPostingListElement.getTweetID();
+            int tweetID = setTermSimilarityIterator.next();
             TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
             allTermIDs.addAll(transportObject.getTermIDs());

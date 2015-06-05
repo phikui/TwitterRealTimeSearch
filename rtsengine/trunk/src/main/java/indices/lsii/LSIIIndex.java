@@ -2,7 +2,7 @@ package indices.lsii;
 
 import indices.IRTSIndex;
 import indices.deprecated.ConcurrentTriplePostingList;
-import indices.deprecated.SortedPostingList;
+import indices.postinglists.ResultList;
 import indices.deprecated.UnsortedPostingList;
 import indices.deprecated.ConcurrentTPLArrayList;
 import model.TransportObject;
@@ -70,7 +70,7 @@ public class LSIIIndex implements IRTSIndex {
         float queryTermSimilarity;
         float fValue;
 
-        SortedPostingList candidatePool = new SortedPostingList();
+        ResultList candidatePool = new ResultList();
         int k = transportObjectQuery.getk();
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
 
