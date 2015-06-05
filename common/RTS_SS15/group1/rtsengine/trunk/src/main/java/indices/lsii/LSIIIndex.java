@@ -1,8 +1,10 @@
 package indices.lsii;
 
 import indices.IRTSIndex;
-import indices.postingarraylists.ConcurrentTPLArrayList;
-import indices.postinglists.*;
+import indices.deprecated.ConcurrentTriplePostingList;
+import indices.deprecated.SortedPostingList;
+import indices.deprecated.UnsortedPostingList;
+import indices.deprecated.ConcurrentTPLArrayList;
 import model.TransportObject;
 import utilities.HelperFunctions;
 

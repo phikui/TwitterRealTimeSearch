@@ -1,49 +1,51 @@
 package model;
 
+import sun.plugin2.message.transport.Transport;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Maps tweetIDs to actual tweetObjects
+ * Maps tweetIDs to transportObjects
  */
 public class TweetDictionary {
 
-    private static Map<Integer, TweetObject> tweetDictionary;
+    private static Map<Integer, TransportObject> tweetDictionary;
 
     private static int tweetIDCounter;
 
     static {
         tweetIDCounter = 0;
-        tweetDictionary = new ConcurrentHashMap<Integer, TweetObject>();
+        tweetDictionary = new ConcurrentHashMap<Integer, TransportObject>();
     }
 
     /**
-     * Returns the stored tweetObject for tweetID
+     * Returns the stored transportObject for tweetID
      *
      * @param   tweetID
      *
-     * @return  TweetObject
+     * @return  TransportObject
      */
-    public static TweetObject getTweetObject(int tweetID) {
+    public static TransportObject getTransportObject(int tweetID) {
         return tweetDictionary.get(tweetID);
     }
 
     /**
-     * Inserts tweetObject into the dictionary.
+     * Inserts transportObject into the dictionary.
      * A tweetID is chosen automatically and returned.
      *
-     * Does not check whether a tweetObject has already been inserted,
+     * Does not check whether a transportObject has already been inserted,
      * it will always insert tweets.
      *
-     * @param  tweetObject
+     * @param  transportObject
      *
      * @return tweetID
      */
-    public static int insertTweetObject(TweetObject tweetObject) {
+    public static int insertTransportObject(TransportObject transportObject) {
         int tweetID = tweetIDCounter;
         tweetIDCounter++;
 
-        tweetDictionary.put(tweetID, tweetObject);
+        tweetDictionary.put(tweetID, transportObject);
 
         return tweetID;
     }

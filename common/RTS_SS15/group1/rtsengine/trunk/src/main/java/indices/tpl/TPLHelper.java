@@ -1,12 +1,12 @@
 package indices.tpl;
 
-import indices.lsii.LSIITriplet;
-import indices.postingarraylists.ConcurrentTPLArrayList;
-import indices.postinglists.ConcurrentSortedDateListElement;
-import indices.postinglists.ConcurrentSortedPostingListElement;
-import indices.postinglists.SortedPostingList;
-import indices.postinglists.SortedPostingListElement;
+import indices.deprecated.ConcurrentTPLArrayList;
+import indices.deprecated.ConcurrentSortedDateListElement;
+import indices.deprecated.ConcurrentSortedPostingListElement;
+import indices.deprecated.SortedPostingList;
+import indices.deprecated.SortedPostingListElement;
 import model.TransportObject;
+import model.TweetDictionary;
 import utilities.HelperFunctions;
 
 import java.util.*;
@@ -26,7 +26,6 @@ public class TPLHelper {
      */
     public static float examineTPLIndexAtPosition(
             ConcurrentHashMap<Integer, ConcurrentTPLArrayList> tplInvertedIndex,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap,
             int position,
             TransportObject transportObjectQuery,
             SortedPostingList resultList
@@ -61,15 +60,14 @@ public class TPLHelper {
             setTermSimilarity.add(termSimilarityPostingListElement);
         }
 
-        insertPostingListElementSetsIntoResultList(resultList, transportObjectQuery, tripletHashMap, setFreshness, setSignificance, setTermSimilarity);
+        insertPostingListElementSetsIntoResultList(resultList, transportObjectQuery, setFreshness, setSignificance, setTermSimilarity);
 
-        return calculateUpperBoundScoreF(transportObjectQuery, tripletHashMap, setFreshness, setSignificance, setTermSimilarity);
+        return calculateUpperBoundScoreF(transportObjectQuery, setFreshness, setSignificance, setTermSimilarity);
     }
 
     private static void insertPostingListElementSetsIntoResultList(
             SortedPostingList resultList,
             TransportObject transportObjectQuery,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap,
             HashSet<ConcurrentSortedDateListElement> setFreshness,
             HashSet<ConcurrentSortedPostingListElement> setSignificance,
             HashSet<ConcurrentSortedPostingListElement> setTermSimilarity
@@ -81,42 +79,41 @@ public class TPLHelper {
         while (setFreshnessIterator.hasNext()) {
             ConcurrentSortedDateListElement freshnessPostingListElement = setFreshnessIterator.next();
             int tweetID = freshnessPostingListElement.getTweetID();
-            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery, tripletHashMap);
+            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery);
         }
 
         while (setSignificanceIterator.hasNext()) {
             ConcurrentSortedPostingListElement significancePostingListElement = setSignificanceIterator.next();
             int tweetID = significancePostingListElement.getTweetID();
-            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery, tripletHashMap);
+            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery);
         }
 
         while (setTermSimilarityIterator.hasNext()) {
             ConcurrentSortedPostingListElement termSimilarityPostingListElement = setTermSimilarityIterator.next();
             int tweetID = termSimilarityPostingListElement.getTweetID();
-            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery, tripletHashMap);
+            insertTweetIDIntoResultList(tweetID, resultList, transportObjectQuery);
         }
     }
 
     private static void insertTweetIDIntoResultList(
             int tweetID,
             SortedPostingList resultList,
-            TransportObject transportObjectQuery,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap
+            TransportObject transportObjectQuery
     ) {
-        // Fetch LSIITriplet for this tweetID
-        LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
+        // Fetch TransportObject for this tweetID
+        TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
         // Query variables
         int k = transportObjectQuery.getk();
         List<Integer> termIDsQuery = transportObjectQuery.getTermIDs();
         Date timestampQuery = transportObjectQuery.getTimestamp();
 
-        // Calculate ranking function for this triplet
-        List<Integer> termIDsInPost = lsiiTriplet.getTermIDs();
-        Date timestampPost = lsiiTriplet.getTimestamp();
+        // Calculate ranking function for this transportObject
+        List<Integer> termIDsInPost = transportObject.getTermIDs();
+        Date timestampPost = transportObject.getTimestamp();
 
         float freshness = HelperFunctions.calculateFreshness(timestampPost, timestampQuery);
-        float significance = lsiiTriplet.getSignificance();
+        float significance = transportObject.getSignificance();
         float similarity = HelperFunctions.calculateTermSimilarity(termIDsQuery, termIDsInPost);
 
         float fValue = HelperFunctions.calculateRankingFunction(freshness, significance, similarity);
@@ -145,7 +142,6 @@ public class TPLHelper {
 
     private static float calculateUpperBoundScoreF(
             TransportObject transportObjectQuery,
-            ConcurrentHashMap<Integer, LSIITriplet> tripletHashMap,
             HashSet<ConcurrentSortedDateListElement> setFreshness,
             HashSet<ConcurrentSortedPostingListElement> setSignificance,
             HashSet<ConcurrentSortedPostingListElement> setTermSimilarity)
@@ -164,18 +160,18 @@ public class TPLHelper {
         while (setFreshnessIterator.hasNext()) {
             ConcurrentSortedDateListElement freshnessPostingListElement = setFreshnessIterator.next();
             int tweetID = freshnessPostingListElement.getTweetID();
-            LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
+            TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
             // Calculate freshness value for this post
             // TODO: Rename getTimestamp() to getTimestamp()
-            Date timestampPost = lsiiTriplet.getTimestamp();
+            Date timestampPost = transportObject.getTimestamp();
             float freshnessValue = HelperFunctions.calculateFreshness(timestampPost, timestampQuery);
 
             if (freshnessValue > maxFreshnessValue) {
                 maxFreshnessValue = freshnessValue;
             }
 
-            allTermIDs.addAll(lsiiTriplet.getTermIDs());
+            allTermIDs.addAll(transportObject.getTermIDs());
         }
 
         // Determine maximum significance value from setSignificance
@@ -183,24 +179,24 @@ public class TPLHelper {
         while (setSignificanceIterator.hasNext()) {
             ConcurrentSortedPostingListElement significancePostingListElement = setSignificanceIterator.next();
             int tweetID = significancePostingListElement.getTweetID();
-            LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
+            TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
-            float significanceValue = lsiiTriplet.getSignificance();
+            float significanceValue = transportObject.getSignificance();
 
             if (significanceValue > maxSignificanceValue) {
                 maxSignificanceValue = significanceValue;
             }
 
-            allTermIDs.addAll(lsiiTriplet.getTermIDs());
+            allTermIDs.addAll(transportObject.getTermIDs());
         }
 
         // Collect termIDs from setTermSimilarity
         while (setTermSimilarityIterator.hasNext()) {
             ConcurrentSortedPostingListElement termSimilarityPostingListElement = setTermSimilarityIterator.next();
             int tweetID = termSimilarityPostingListElement.getTweetID();
-            LSIITriplet lsiiTriplet = tripletHashMap.get(tweetID);
+            TransportObject transportObject = TweetDictionary.getTransportObject(tweetID);
 
-            allTermIDs.addAll(lsiiTriplet.getTermIDs());
+            allTermIDs.addAll(transportObject.getTermIDs());
         }
 
         // Calculate overallTermSimilarity

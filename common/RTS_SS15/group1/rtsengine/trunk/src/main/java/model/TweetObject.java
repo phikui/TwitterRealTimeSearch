@@ -25,6 +25,8 @@ public class TweetObject implements Comparable, Serializable {
     private GeoLocation geoLocation;
     private Place place;
 
+    private TransportObject transportObject;
+
     public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers) {
         this.username =  new SimpleStringProperty(username);
         this.text = new SimpleStringProperty(text);
@@ -54,5 +56,13 @@ public class TweetObject implements Comparable, Serializable {
         if (!(o instanceof TweetObject))
             throw new ClassCastException("A Tweet object expected.");
         return this.username.toString().compareTo(((TweetObject) o).username.toString());
+    }
+
+    public TransportObject getTransportObject() {
+        return transportObject;
+    }
+
+    public void setTransportObject(TransportObject transportObject) {
+        this.transportObject = transportObject;
     }
 }

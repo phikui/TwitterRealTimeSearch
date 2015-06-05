@@ -45,7 +45,7 @@ public class QueryWorker implements Callable<QueryReturnObject> {
 
         List<TweetObject> results = new ArrayList<>();
         for (int index : resultsIndex) {
-            results.add(TweetDictionary.getTweetObject(index));
+            results.add(TweetDictionary.getTransportObject(index).getTweetObject());
         }
 
 

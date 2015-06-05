@@ -24,7 +24,7 @@ public interface IRTSIndex {
      *
      * @return  ArrayList<Integer>
      */
-    public List<Integer> searchTweetIDs(TransportObject transportObjectQuery);
+    List<Integer> searchTweetIDs(TransportObject transportObjectQuery);
 
     /**
      * Inserts the tweetID transported in transportObject into the index.
@@ -34,13 +34,13 @@ public interface IRTSIndex {
      *
      * @param tweetID
      */
-    public void insertTransportObject(TransportObject transportObjectInsertion);
+    void insertTransportObject(TransportObject transportObjectInsertion);
 
     /**
      * Returns the number of terms indexed
      *
      * @return  int
      */
-    public int size();
+    int size();
 
 }
