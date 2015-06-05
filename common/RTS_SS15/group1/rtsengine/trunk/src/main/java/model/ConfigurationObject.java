@@ -5,9 +5,9 @@ package model;
  */
 public class ConfigurationObject {
 
-    private static int wSignificance = (1/3);
-    private static int wSimilarity = (1/3);
-    private static int wFreshness = (1/3);
+    private static float wSignificance = ((float)1/3);
+    private static float wSimilarity = ((float)1/3);
+    private static float wFreshness = ((float)1/3);
 
     private static int ratio;
     private static int numberOfThreads;
@@ -28,27 +28,27 @@ public class ConfigurationObject {
         ConfigurationObject.numberOfTweets = k;
     }
 
-    public static int getwSignificance() {
+    public static float getwSignificance() {
         return ConfigurationObject.wSignificance;
     }
 
-    public static void setwSignificance(int wSignificance) {
+    public static void setwSignificance(float wSignificance) {
         ConfigurationObject.wSignificance = wSignificance;
     }
 
-    public static int getwSimilarity() {
+    public static float getwSimilarity() {
         return ConfigurationObject.wSimilarity;
     }
 
-    public static void setwSimilarity(int wSimilarity) {
+    public static void setwSimilarity(float wSimilarity) {
         ConfigurationObject.wSimilarity = wSimilarity;
     }
 
-    public static int getwFreshness() {
+    public static float getwFreshness() {
         return ConfigurationObject.wFreshness;
     }
 
-    public static void setwFreshness(int wFreshness) {
+    public static void setwFreshness(float wFreshness) {
         ConfigurationObject.wFreshness = wFreshness;
     }
 
