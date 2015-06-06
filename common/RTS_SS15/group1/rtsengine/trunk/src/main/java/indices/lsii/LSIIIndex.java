@@ -5,14 +5,14 @@ import indices.deprecated.ConcurrentTriplePostingList;
 import indices.deprecated.UnsortedPostingList;
 import indices.deprecated.ConcurrentTPLArrayList;
 import indices.postinglists.IPostingList;
+import indices.postinglists.IPostingListElement;
+import indices.postinglists.ITriplePostingList;
 import indices.postinglists.PostingList;
+import indices.tpl.TPLHelper;
 import model.TransportObject;
 import utilities.HelperFunctions;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -37,13 +37,91 @@ public class LSIIIndex implements IRTSIndex {
     testing purpose only
      */
     private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ConcurrentTPLArrayList>> invertedIndex2;
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex3;
+    private ConcurrentHashMap<Integer, IPostingList> index_zero2;
 
     public LSIIIndex() {
         this.index_zero = new ConcurrentHashMap<Integer, UnsortedPostingList>();
         this.invertedIndex = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ConcurrentTriplePostingList>>();
         this.tripletHashMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, LSIITriplet>>();
+
+        this.invertedIndex3 = new ConcurrentHashMap<>();
     }
 
+
+    public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
+
+        // needed for concurrency in AO Index
+        Date tsMax = latestTimestamp;
+
+        // values for stop condition in TPL/TA
+        float d;
+        float maxThreshold;
+        float newUpperBound;
+
+        IPostingList resultList = new PostingList();
+
+
+        // Stores Iterator for each PostingList that has already been examined
+        HashMap<Integer, Iterator<IPostingListElement>> postingListIteratorMapAO = new HashMap<Integer, Iterator<IPostingListElement>>();
+
+        // AO iteration based on LSII-paper. First find k microblogs in I_0 with the largest score
+        while (true) {
+            try {
+                LSIIHelper.examineAOIndexAtPosition(this.index_zero2, postingListIteratorMapAO, transportObjectQuery, resultList, tsMax);
+
+            } catch (IndexOutOfBoundsException e) {
+                break;
+            }
+        }
+
+        // set d as lowest value in our current candidate pool of k elements
+        d = resultList.getLast().getSortKey();
+
+        // initialize m upperbounds with "infinity" (> 1), one upperbound for each index i element of [1,m]
+        HashMap<Integer, Float> upperBoundMap = new HashMap<>();
+        for (int key_index : invertedIndex3.keySet()) {
+            upperBoundMap.put(key_index, (float) 1.01);
+        }
+        // maximum threshold of all m thresholds, initialize as I_1 upperbound (value = 1.01)
+        maxThreshold = upperBoundMap.get(1);
+
+        // TODO does this suffice? We can have the same termID in different Indices, probably need Hashmap of Hashmaps similar to invertedIndex structure
+        HashMap<Integer, Iterator<IPostingListElement>> postingListIteratorMapTPL = new HashMap<Integer, Iterator<IPostingListElement>>();
+
+        // TPL/TA iteration based on LSII-paper
+        while (maxThreshold > d) {
+
+            // for each index i get the next element and calculate fValues and thresholds
+            for (int i : invertedIndex3.keySet()) {
+
+                if ((upperBoundMap.get(i)) > d) {
+
+                    try {
+                        newUpperBound = TPLHelper.examineTPLIndex(this.invertedIndex3.get(i), postingListIteratorMapTPL, transportObjectQuery, resultList);
+                        upperBoundMap.put(i, newUpperBound);
+                    } catch (IndexOutOfBoundsException e) {
+                        break;
+                    }
+
+                    d = resultList.getLast().getSortKey();
+                }
+            }
+
+            // get the maximum threshold of all the thresholds just calculated to see if we continue the next step
+            // reset max threshold beforehand as it is initially defined as > 1
+            maxThreshold = 0;
+            for (int bound : upperBoundMap.keySet()) {
+                if (upperBoundMap.get(bound) > maxThreshold)
+                    maxThreshold = upperBoundMap.get(bound);
+            }
+
+        }
+
+        return resultList.getTweetIDs();
+    }
+
+    /*
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
         Date tsMax = latestTimestamp;
         List<Integer> topKTweetIDs = new ArrayList<Integer>();
@@ -142,9 +220,8 @@ public class LSIIIndex implements IRTSIndex {
                         singleTermIDList.clear();
                         singleTermIDList.add(termID);
 
-                        /*
-                            FValue computation for TweetID in FreshnessList
-                         */
+                                                   // FValue computation for TweetID in FreshnessList
+
                         tweetID = invertedIndex2.get(i).get(termID).getFreshnessPostingList().get(j).getTweetID();
 
                         // TODO: refactor fValue computations
@@ -165,9 +242,8 @@ public class LSIIIndex implements IRTSIndex {
                             candidatePool.insertSorted(tweetID, fValue);
                         }
 
-                        /*
-                            FValue computation for TweetID in SignificanceList
-                         */
+                                               //     FValue computation for TweetID in SignificanceList
+
                         tweetID = invertedIndex2.get(i).get(termID).getSignificancePostingList().get(j).getTweetID();
 
                         // fValue computation
@@ -187,9 +263,9 @@ public class LSIIIndex implements IRTSIndex {
                             candidatePool.insertSorted(tweetID, fValue);
                         }
 
-                        /*
-                            FValue computation for TweetID in TermSimilarityList
-                         */
+
+                          //  FValue computation for TweetID in TermSimilarityList
+
                         tweetID = invertedIndex2.get(i).get(termID).getTermSimilarityPostingList().get(j).getTweetID();
 
                         // fValue computation
@@ -246,7 +322,7 @@ public class LSIIIndex implements IRTSIndex {
         }
 
         return topKTweetIDs;
-    }
+    }*/
 
     public void insertTransportObject(TransportObject transportObjectInsertion) {
         // TODO: implement the rest, make performance better
