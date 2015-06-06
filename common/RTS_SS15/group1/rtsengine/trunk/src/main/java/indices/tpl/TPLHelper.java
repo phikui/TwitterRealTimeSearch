@@ -41,12 +41,12 @@ public class TPLHelper {
         boolean allPostingListsHaveReachedEnd = true;
 
         for (int termID : termIDsInQuery) {
-            ITriplePostingList tplArrayList = tplInvertedIndex.get(termID);
+            ITriplePostingList tplPostingList = tplInvertedIndex.get(termID);
 
             // Fetch posting lists for this termID
-            IPostingList freshnessPostingList = tplArrayList.getFreshnessPostingList();
-            IPostingList significancePostingList = tplArrayList.getSignificancePostingList();
-            IPostingList termSimilarityPostingList = tplArrayList.getTermSimilarityPostingList();
+            IPostingList freshnessPostingList = tplPostingList.getFreshnessPostingList();
+            IPostingList significancePostingList = tplPostingList.getSignificancePostingList();
+            IPostingList termSimilarityPostingList = tplPostingList.getTermSimilarityPostingList();
 
             // Check for all fetched PostingLists whether Iterator already exists in postingListIteratorMap
             Iterator<IPostingListElement> freshnessPostingListIterator = postingListIteratorMap.get(freshnessPostingList.getPostingListID());
@@ -54,15 +54,15 @@ public class TPLHelper {
             Iterator<IPostingListElement> termSimilarityPostingListIterator = postingListIteratorMap.get(termSimilarityPostingList.getPostingListID());
 
             // Create iterators and put into postingListIteratorMap if non-existent
-            if (freshnessPostingList == null) {
+            if (freshnessPostingListIterator == null) {
                 freshnessPostingListIterator = freshnessPostingList.iterator();
                 postingListIteratorMap.put(freshnessPostingList.getPostingListID(), freshnessPostingListIterator);
             }
-            if (significancePostingList == null) {
+            if (significancePostingListIterator == null) {
                 significancePostingListIterator = significancePostingList.iterator();
                 postingListIteratorMap.put(significancePostingList.getPostingListID(), significancePostingListIterator);
             }
-            if (termSimilarityPostingList == null) {
+            if (termSimilarityPostingListIterator == null) {
                 termSimilarityPostingListIterator = termSimilarityPostingList.iterator();
                 postingListIteratorMap.put(termSimilarityPostingList.getPostingListID(), termSimilarityPostingListIterator);
             }
