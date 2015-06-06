@@ -33,7 +33,7 @@ public class TPLIndex implements IRTSIndex {
             // Abort search when all involved PostingLists have reached the end
             try {
                 upperBoundScore = TPLHelper.examineTPLIndex(this.invertedIndex, postingListIteratorMap, transportObjectQuery, resultList);
-                System.out.println("Upper Bound Score: " + upperBoundScore);
+//                System.out.println("Upper Bound Score: " + upperBoundScore);
             } catch (IndexOutOfBoundsException e) {
                 break;
             }

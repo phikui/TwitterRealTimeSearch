@@ -16,10 +16,14 @@ public class PostingList extends LinkedList<IPostingListElement> implements IPos
 
     private static int postingListIDCounter = 0;
 
+    private int postingListID;
+
     /**
      * Constructor used in case this is a PostingList sorted by timestamp or significance
      */
-    public PostingList() {}
+    public PostingList() {
+        this.initPostingListID();
+    }
 
     /**
      * Constructor used in case this is a PostingList sorted by term similarity
@@ -27,15 +31,22 @@ public class PostingList extends LinkedList<IPostingListElement> implements IPos
     public PostingList(int referenceTermID) {
         this.referenceTermIDs = new ArrayList<Integer>(1);
         this.referenceTermIDs.add(referenceTermID);
+        this.initPostingListID();
+    }
+
+    /**
+     * Initialize postingListIDCounter used by getPostingListID()
+     */
+    private void initPostingListID() {
+        this.postingListID = postingListIDCounter;
+        postingListIDCounter++;
     }
 
     /**
      * Returns a unique ID for this PostingList
      */
     public int getPostingListID() {
-        int postingListID = postingListIDCounter;
-        postingListIDCounter++;
-        return postingListID;
+        return this.postingListID;
     }
 
     /**
