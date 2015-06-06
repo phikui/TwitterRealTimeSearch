@@ -24,9 +24,9 @@ public class TPLHelper {
      */
     public static float examineTPLIndex(
             ConcurrentHashMap<Integer, ITriplePostingList> tplInvertedIndex,
-            HashMap<IPostingList, Iterator<Integer>> postingListIteratorMap,
+            HashMap<Integer, Iterator<IPostingListElement>> postingListIteratorMap,
             TransportObject transportObjectQuery,
-            ResultList resultList
+            IPostingList resultList
     ) throws IndexOutOfBoundsException {
         // Initialize three sets for found Tweets in this iteration.
         // Used to gather Tweets for insertion into resultList
@@ -49,38 +49,41 @@ public class TPLHelper {
             IPostingList termSimilarityPostingList = tplArrayList.getTermSimilarityPostingList();
 
             // Check for all fetched PostingLists whether Iterator already exists in postingListIteratorMap
-            Iterator<Integer> freshnessPostingListIterator = postingListIteratorMap.get(freshnessPostingList);
-            Iterator<Integer> significancePostingListIterator = postingListIteratorMap.get(significancePostingList);
-            Iterator<Integer> termSimilarityPostingListIterator = postingListIteratorMap.get(termSimilarityPostingList);
+            Iterator<IPostingListElement> freshnessPostingListIterator = postingListIteratorMap.get(freshnessPostingList.getPostingListID());
+            Iterator<IPostingListElement> significancePostingListIterator = postingListIteratorMap.get(significancePostingList.getPostingListID());
+            Iterator<IPostingListElement> termSimilarityPostingListIterator = postingListIteratorMap.get(termSimilarityPostingList.getPostingListID());
 
             // Create iterators and put into postingListIteratorMap if non-existent
             if (freshnessPostingList == null) {
                 freshnessPostingListIterator = freshnessPostingList.iterator();
-                postingListIteratorMap.put(freshnessPostingList, freshnessPostingListIterator);
+                postingListIteratorMap.put(freshnessPostingList.getPostingListID(), freshnessPostingListIterator);
             }
             if (significancePostingList == null) {
                 significancePostingListIterator = significancePostingList.iterator();
-                postingListIteratorMap.put(significancePostingList, significancePostingListIterator);
+                postingListIteratorMap.put(significancePostingList.getPostingListID(), significancePostingListIterator);
             }
             if (termSimilarityPostingList == null) {
                 termSimilarityPostingListIterator = termSimilarityPostingList.iterator();
-                postingListIteratorMap.put(termSimilarityPostingList, termSimilarityPostingListIterator);
+                postingListIteratorMap.put(termSimilarityPostingList.getPostingListID(), termSimilarityPostingListIterator);
             }
 
             // Fetch next tweetID from each PostingList Iterator and insert into sets
             if (freshnessPostingListIterator.hasNext()) {
                 allPostingListsHaveReachedEnd = false;
-                int freshnessTweetID = freshnessPostingListIterator.next();
+                IPostingListElement freshnessPostingListElement = freshnessPostingListIterator.next();
+                int freshnessTweetID = freshnessPostingListElement.getTweetID();
                 setFreshness.add(freshnessTweetID);
             }
             if (significancePostingListIterator.hasNext()) {
                 allPostingListsHaveReachedEnd = false;
-                int significanceTweetID = significancePostingListIterator.next();
+                IPostingListElement significancePostingListElement = significancePostingListIterator.next();
+                int significanceTweetID = significancePostingListElement.getTweetID();
                 setSignificance.add(significanceTweetID);
             }
             if (termSimilarityPostingListIterator.hasNext()) {
                 allPostingListsHaveReachedEnd = false;
-                int termSimilarityTweetID = termSimilarityPostingListIterator.next();
+                IPostingListElement termSimilarityPostingListElement = termSimilarityPostingListIterator.next();
+                int termSimilarityTweetID = termSimilarityPostingListElement.getTweetID();
                 setTermSimilarity.add(termSimilarityTweetID);
             }
         }
@@ -95,7 +98,7 @@ public class TPLHelper {
     }
 
     private static void insertPostingListElementSetsIntoResultList(
-            ResultList resultList,
+            IPostingList resultList,
             TransportObject transportObjectQuery,
             HashSet<Integer> setFreshness,
             HashSet<Integer> setSignificance,
@@ -123,7 +126,7 @@ public class TPLHelper {
 
     private static void insertTweetIDIntoResultList(
             int tweetID,
-            ResultList resultList,
+            IPostingList resultList,
             TransportObject transportObjectQuery
     ) {
         // Fetch TransportObject for this tweetID
@@ -146,7 +149,7 @@ public class TPLHelper {
 
         // Check if to be inserted tweet ID is already in result list
         // Remove and reinsert element if it is already contained and has a lower ranking value
-        ResultListElement elementInResultList = resultList.getResultListElement(tweetID);
+        IPostingListElement elementInResultList = resultList.getPostingListElement(tweetID);
         if (elementInResultList != null && elementInResultList.getSortKey() <= fValue) {
             resultList.remove(elementInResultList);
         }
@@ -157,7 +160,7 @@ public class TPLHelper {
         if (resultList.size() < k) {
             resultList.insertSorted(tweetID, fValue);
         } else {
-            ResultListElement lastEntryInResultList = resultList.getLast();
+            IPostingListElement lastEntryInResultList = resultList.getLast();
 
             if (lastEntryInResultList.getSortKey() < fValue) {
                 resultList.remove(lastEntryInResultList);

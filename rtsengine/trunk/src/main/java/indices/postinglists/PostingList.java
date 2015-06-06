@@ -8,12 +8,13 @@ import java.util.*;
 /**
  * Created by chans on 6/5/15.
  */
-public class PostingList extends LinkedList<Integer> implements IPostingList {
-
+public class PostingList extends LinkedList<IPostingListElement> implements IPostingList {
     // Stores the single termID this PostingList is referring to.
     // Used by insertSortedByTermSimilarity() in case this
     // PostingList is sorted by term similarity.
     private List<Integer> referenceTermIDs;
+
+    private static int postingListIDCounter = 0;
 
     /**
      * Constructor used in case this is a PostingList sorted by timestamp or significance
@@ -29,32 +30,23 @@ public class PostingList extends LinkedList<Integer> implements IPostingList {
     }
 
     /**
+     * Returns a unique ID for this PostingList
+     */
+    public int getPostingListID() {
+        int postingListID = postingListIDCounter;
+        postingListIDCounter++;
+        return postingListID;
+    }
+
+    /**
      * Inserts a tweetID according to sorting by timestamp
      *
      * @param  tweetID  TweetID to be inserted
      */
     public void insertSortedByTimestamp(int insertTweetID) {
-        ListIterator<Integer> iterator = listIterator();
-
-        // Fetch sort key for insertion object
         Date insertTimestamp = TweetDictionary.getTransportObject(insertTweetID).getTimestamp();
-
-        while (true) {
-            if (!iterator.hasNext()) {
-                iterator.add(insertTweetID);
-                return;
-            }
-
-            // Fetch tweetID in list and its sort key
-            int listTweetID = iterator.next();
-            Date listTimestamp = TweetDictionary.getTransportObject(listTweetID).getTimestamp();
-
-            if (insertTimestamp.after(listTimestamp)) {
-                iterator.previous();
-                iterator.add(insertTweetID);
-                return;
-            }
-        }
+        float insertSortKey = (float) insertTimestamp.getTime();
+        this.insertSorted(insertTweetID, insertSortKey);
     }
 
     /**
@@ -63,27 +55,8 @@ public class PostingList extends LinkedList<Integer> implements IPostingList {
      * @param  tweetID  TweetID to be inserted
      */
     public void insertSortedBySignificance(int insertTweetID) {
-        ListIterator<Integer> iterator = listIterator();
-
-        // Fetch sort key for insertion object
-        float insertSignificance = TweetDictionary.getTransportObject(insertTweetID).getSignificance();
-
-        while (true) {
-            if (!iterator.hasNext()) {
-                iterator.add(insertTweetID);
-                return;
-            }
-
-            // Fetch tweetID in list and its sort key
-            int listTweetID = iterator.next();
-            float listSignificance = TweetDictionary.getTransportObject(listTweetID).getSignificance();
-
-            if (listSignificance > insertSignificance) {
-                iterator.previous();
-                iterator.add(insertTweetID);
-                return;
-            }
-        }
+        float insertSortKey = TweetDictionary.getTransportObject(insertTweetID).getSignificance();
+        this.insertSorted(insertTweetID, insertSortKey);
     }
 
     /**
@@ -92,29 +65,87 @@ public class PostingList extends LinkedList<Integer> implements IPostingList {
      * @param  tweetID  TweetID to be inserted
      */
     public void insertSortedByTermSimilarity(int insertTweetID) {
-        ListIterator<Integer> iterator = listIterator();
-
         // Calculate term similarity between termIDs from insertion tweet ID
         // and reference term ID
         List<Integer> insertTermIDs = TweetDictionary.getTransportObject(insertTweetID).getTermIDs();
-        float insertTermSimilarity = HelperFunctions.calculateTermSimilarity(insertTermIDs, this.referenceTermIDs);
+        float insertSortKey = HelperFunctions.calculateTermSimilarity(insertTermIDs, this.referenceTermIDs);
 
-        while (true) {
+        this.insertSorted(insertTweetID, insertSortKey);
+    }
+
+    /**
+     * This function inserts the tweetID sorted according to sortKey should be O(1) on already sorted lists
+     *
+     * @param tweetID
+     * @param sortKey
+     */
+    public void insertSorted(int tweetID, float sortKey) {
+        IPostingListElement sortElement = new PostingListElement(tweetID, sortKey);
+        ListIterator<IPostingListElement> iterator = listIterator();
+        while(true) {
             if (!iterator.hasNext()) {
-                iterator.add(insertTweetID);
+                iterator.add(sortElement);
                 return;
             }
 
-            // Fetch tweetID in list and its sort key
-            int listTweetID = iterator.next();
-            List<Integer> listTermIDs = TweetDictionary.getTransportObject(listTweetID).getTermIDs();
-            float listTermSimilarity = HelperFunctions.calculateTermSimilarity(listTermIDs, this.referenceTermIDs);
-
-            if (listTermSimilarity > insertTermSimilarity) {
+            IPostingListElement elementInList = iterator.next();
+            if (elementInList.getSortKey() > sortElement.getSortKey()) {
                 iterator.previous();
-                iterator.add(insertTweetID);
+                iterator.add(sortElement);
                 return;
             }
         }
+    }
+
+    public boolean containsTweetID(int tweetID) {
+        ListIterator<IPostingListElement> iterator = listIterator();
+
+        while (true){
+            if (!iterator.hasNext()) {
+                return false;
+            }
+
+            IPostingListElement elementInList = iterator.next();
+
+            if (elementInList.getTweetID() == tweetID) {
+                return true;
+            }
+        }
+    }
+
+    public IPostingListElement getPostingListElement(int tweetID) {
+        ListIterator<IPostingListElement> iterator = listIterator();
+
+        while (true){
+            if (!iterator.hasNext()) {
+                return null;
+            }
+
+            IPostingListElement elementInList = iterator.next();
+
+            if (elementInList.getTweetID() == tweetID) {
+                return elementInList;
+            }
+        }
+    }
+
+    /**
+     * Returns TweetIDs stored in this ResultList as ArrayList (in same order)
+     */
+    public List<Integer> getTweetIDs() {
+        List<Integer> tweetIDList = new ArrayList<Integer>(this.size());
+
+        ListIterator<IPostingListElement> iterator = listIterator();
+
+        while(true){
+            if (!iterator.hasNext()) {
+                break;
+            }
+
+            IPostingListElement elementInList = iterator.next();
+            tweetIDList.add(elementInList.getTweetID());
+        }
+
+        return tweetIDList;
     }
 }
