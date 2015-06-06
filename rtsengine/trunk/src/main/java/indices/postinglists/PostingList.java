@@ -41,7 +41,7 @@ public class PostingList extends LinkedList<IPostingListElement> implements IPos
     /**
      * Inserts a tweetID according to sorting by timestamp
      *
-     * @param  tweetID  TweetID to be inserted
+     * @param  insertTweetID  TweetID to be inserted
      */
     public void insertSortedByTimestamp(int insertTweetID) {
         Date insertTimestamp = TweetDictionary.getTransportObject(insertTweetID).getTimestamp();
@@ -52,7 +52,7 @@ public class PostingList extends LinkedList<IPostingListElement> implements IPos
     /**
      * Inserts a tweetID according to sorting by significance
      *
-     * @param  tweetID  TweetID to be inserted
+     * @param  insertTweetID  TweetID to be inserted
      */
     public void insertSortedBySignificance(int insertTweetID) {
         float insertSortKey = TweetDictionary.getTransportObject(insertTweetID).getSignificance();
@@ -62,7 +62,7 @@ public class PostingList extends LinkedList<IPostingListElement> implements IPos
     /**
      * Inserts a tweetID according to sorting by term similarity
      *
-     * @param  tweetID  TweetID to be inserted
+     * @param  insertTweetID  TweetID to be inserted
      */
     public void insertSortedByTermSimilarity(int insertTweetID) {
         // Calculate term similarity between termIDs from insertion tweet ID
@@ -89,7 +89,7 @@ public class PostingList extends LinkedList<IPostingListElement> implements IPos
             }
 
             IPostingListElement elementInList = iterator.next();
-            if (elementInList.getSortKey() > sortElement.getSortKey()) {
+            if (elementInList.getSortKey() < sortElement.getSortKey()) {
                 iterator.previous();
                 iterator.add(sortElement);
                 return;
