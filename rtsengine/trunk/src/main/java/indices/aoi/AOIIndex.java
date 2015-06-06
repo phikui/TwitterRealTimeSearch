@@ -1,12 +1,15 @@
 package indices.aoi;
 
 import indices.IRTSIndex;
-import indices.deprecated.UnsortedPostingList;
+import indices.postinglists.IPostingList;
+import indices.postinglists.IPostingListElement;
+import indices.postinglists.PostingList;
+import indices.postinglists.PostingListElement;
 import model.TransportObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -18,10 +21,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  * significance/timestamp.
  */
 public class AOIIndex implements IRTSIndex {
-    private ConcurrentHashMap<Integer, UnsortedPostingList> invertedIndex;
+    private ConcurrentHashMap<Integer, IPostingList> invertedIndex;
 
     public AOIIndex() {
-        this.invertedIndex = new ConcurrentHashMap<Integer, UnsortedPostingList>();
+        this.invertedIndex = new ConcurrentHashMap<Integer, IPostingList>();
     }
 
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
@@ -32,12 +35,12 @@ public class AOIIndex implements IRTSIndex {
         List<Integer> resultTweetIDs = new ArrayList<Integer>(k);
 
         // Maintain a queue of iterators for each posting list
-        LinkedBlockingQueue<ListIterator<Integer>> postingListIteratorQueue = new LinkedBlockingQueue<ListIterator<Integer>>();
+        LinkedBlockingQueue<Iterator<IPostingListElement>> postingListIteratorQueue = new LinkedBlockingQueue<Iterator<IPostingListElement>>();
 
         // Add one iterator for each posting list corresponding
         // to a termID in the query
         for (int termIDInQuery : termIDsInQuery) {
-            UnsortedPostingList postingListForTermIDInQuery = this.invertedIndex.get(termIDInQuery);
+            IPostingList postingListForTermIDInQuery = this.invertedIndex.get(termIDInQuery);
 
             // Posting list for this termID exists?
             if (postingListForTermIDInQuery == null) {
@@ -45,7 +48,7 @@ public class AOIIndex implements IRTSIndex {
             }
 
             // Fetch list iterator for this posting list
-            ListIterator<Integer> postingListIteratorForTermIDInQuery = postingListForTermIDInQuery.listIterator();
+            Iterator<IPostingListElement> postingListIteratorForTermIDInQuery = postingListForTermIDInQuery.iterator();
 
             // Add iterator to queue if it contains at least one element
             if (postingListIteratorForTermIDInQuery.hasNext()) {
@@ -58,11 +61,15 @@ public class AOIIndex implements IRTSIndex {
         // posting lists for query terms fully scanned) or until
         // the result list has reached size k.
         while (postingListIteratorQueue.size() > 0 && resultTweetIDs.size() < k) {
-            ListIterator<Integer> postingListIterator = postingListIteratorQueue.remove();
+            Iterator<IPostingListElement> postingListIterator = postingListIteratorQueue.remove();
 
-            // ListIterators in the queue always contain at least one element
-            int foundTweetID = postingListIterator.next();
-            resultTweetIDs.add(foundTweetID);
+            // Iterators in the queue always contain at least one element
+            IPostingListElement nextPostingListElement = postingListIterator.next();
+            int nextTweetID = nextPostingListElement.getTweetID();
+
+            if (!resultTweetIDs.contains(nextTweetID)) {
+                resultTweetIDs.add(nextTweetID);
+            }
 
             // Put the list iterator back to the queue in case it has more elements
             if (postingListIterator.hasNext()) {
@@ -73,47 +80,6 @@ public class AOIIndex implements IRTSIndex {
         return resultTweetIDs;
     }
 
-//    public List<Integer> searchTweetIDs(TransportObject transportObject) {
-//        int k = transportObject.getk();
-//        List<Integer> termIDs = transportObject.getTermIDs();
-//        // for each term maintaining a posting list for the querry object
-//        for (int termID: termIDs) {
-//            UnsortedPostingList postingListForEachTermID=  this.invertedIndex.get(termID);
-//            // traversing the each list and maintaining the top k element needed
-//            int value;
-//            int count=0;
-//            value = postingListForEachTermID.getLast();
-//            for (int i=value;i>=postingListForEachTermID.getFirst();i--)
-//            {
-//                // using a counter to get the K term
-//                count++;
-//                UnsortedPostingList postingListForEachKTerm= this.invertedIndex.get(termID);
-//                if(count==k)
-//                    break;
-//                // also need to write condition for freshness score
-//
-//                // need to compare the top k elements in the list and find the actual result
-//                //needed freshness score
-//               float freshness= transportObject.calculateFreshness(); //To Make it verify
-//                //Date dateValue=transportObject.getTimestamp();
-//                // int hh=dateValue.getHours();
-//                //int dd=dateValue.getMinutes();
-//                //int mm=dateValue.getSeconds();
-//                //String time= hh+":"+mm+":"+ dd;
-//                float w1_fresh = ConfigurationObject.getwFreshness();
-//                float w1_significance= ConfigurationObject.getwSignificance();
-//                float w1_similarity = ConfigurationObject.getwSimilarity();
-//                float freshness_score;
-//                freshness_score=(w1_fresh*freshness+w1_significance*0+w1_similarity*0);
-//            }
-//
-//
-//        }
-//        // was trying for freshnes score
-//
-//        return null;
-//    }
-
     public void insertTransportObject(TransportObject transportObjectInsertion) {
         int tweetID = transportObjectInsertion.getTweetID();
         List<Integer> termIDs = transportObjectInsertion.getTermIDs();
@@ -121,22 +87,19 @@ public class AOIIndex implements IRTSIndex {
         // For each termID of the tweet insert the tweetID into
         // the corresponding PostingList
         for (int termID: termIDs) {
-            UnsortedPostingList postingListForTermID = this.invertedIndex.get(termID);
-            //caluculate the time of each posting list
-
+            IPostingList postingListForTermID = this.invertedIndex.get(termID);
 
             // Create PostingList for this termID if necessary
             if (postingListForTermID == null) {
-                postingListForTermID = new UnsortedPostingList();
+                postingListForTermID = new PostingList();
                 this.invertedIndex.put(termID, postingListForTermID);
             }
 
-
-
-            // Insert tweetID into posting list for this term at the last position
+            // Insert tweetID into posting list for this term at the first position
             // of the posting list, since this is the latest arriving tweet with the
             // highest freshness value. Insertion done in O(1) here.
-            postingListForTermID.addFirst(tweetID);
+            IPostingListElement insertElement = new PostingListElement(tweetID, 0);
+            postingListForTermID.addFirst(insertElement);
         }
     }
 
