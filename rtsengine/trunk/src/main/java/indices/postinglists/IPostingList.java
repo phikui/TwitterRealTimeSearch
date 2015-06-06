@@ -48,7 +48,7 @@ public interface IPostingList {
     IPostingListElement getPostingListElement(int tweetID);
 
     /**
-     * Returns TweetIDs stored in this ResultList as ArrayList (in same order)
+     * Returns TweetIDs stored in this PostingList as ArrayList (in same order)
      */
     List<Integer> getTweetIDs();
 
