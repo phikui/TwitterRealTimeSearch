@@ -6,7 +6,6 @@ import iocontroller.queryprocessor.QueryProcessorMainThread;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
-import model.TweetObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +50,13 @@ public class WriterMainThread extends Thread {
                     x = incomingQueue.remove().get();
                     if (x.isQuery()) {
                         //If it is a query dispatch to query processor
+                        List<Integer> termIds = new ArrayList<Integer>();
+                        for (String term : x.getTerms()) {
+                            int id = TermDictionary.insertTerm(term);
+                            termIds.add(id);
+
+                        }
+                        x.setTermIDs(termIds);
                         queryProcessor.scheduleQuery(x);
                     } else {
                         //Update tweet and termDictionaries

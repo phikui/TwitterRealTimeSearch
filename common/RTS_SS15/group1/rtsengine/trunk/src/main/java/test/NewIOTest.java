@@ -1,10 +1,13 @@
 package test;
 
-import model.ConfigurationObject;
 import indices.IndexDispatcher;
 import iocontroller.IOController;
+import model.ConfigurationObject;
 import model.TermDictionary;
+import model.TransportObject;
 import model.TweetDictionary;
+
+import java.util.Calendar;
 
 /**
  * Created by phil on 31.05.2015.
@@ -29,6 +32,8 @@ public class NewIOTest {
             System.out.println("Size of Tweet dictionary: " + TweetDictionary.size());
             System.out.println("Size of AO index: " + IndexDispatcher.size());
             Thread.sleep(3000);
+            TransportObject query = new TransportObject("joke", Calendar.getInstance().getTime(), 5);
+            ioController.addTransportObject(query);
         }
 
 
