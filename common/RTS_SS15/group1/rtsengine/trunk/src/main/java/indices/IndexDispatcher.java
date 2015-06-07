@@ -1,9 +1,9 @@
 package indices;
 
-import model.ConfigurationObject;
 import indices.aoi.AOIIndex;
 import indices.lsii.LSIIIndex;
 import indices.tpl.TPLIndex;
+import model.ConfigurationObject;
 import model.TransportObject;
 
 import java.util.List;
@@ -36,12 +36,14 @@ public class IndexDispatcher {
      * @return
      */
     private static IRTSIndex getActiveIndex() {
-        if (ConfigurationObject.getIndexType() == "aoi") {
+        if (ConfigurationObject.getIndexType() == ConfigurationObject.Index.APPEND_ONLY) {
             return aoi_index;
-        } else if (ConfigurationObject.getIndexType() == "tpl") {
+        } else if (ConfigurationObject.getIndexType() == ConfigurationObject.Index.TRIPLE_POSTING_LIST) {
             return tpl_index;
-        } else {
+        } else if (ConfigurationObject.getIndexType() == ConfigurationObject.Index.LSII) {
             return lsii_index;
+        } else {
+            return null;
         }
     }
 }

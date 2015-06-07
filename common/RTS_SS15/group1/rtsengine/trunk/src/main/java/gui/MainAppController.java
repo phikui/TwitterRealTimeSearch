@@ -1,30 +1,26 @@
 package gui;
 
-import indices.IRTSIndex;
-import indices.aoi.AOIIndex;
-import indices.lsii.LSIIIndex;
-import indices.tpl.TPLIndex;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-
-
-import java.net.URL;
-import java.util.*;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import model.*;
+import model.ConfigurationObject;
+import model.TweetObject;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Created by Guerki on 16/5/15.
  */
 public class MainAppController implements Initializable {
+    final static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
     @FXML
     Button start;
     @FXML
@@ -58,15 +54,9 @@ public class MainAppController implements Initializable {
     @FXML
     TextField queryfield;
 
-    final static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
-
-    // Attach a listener to the index combobox so the indices get filled before anything is searched
-    private void indexChanged(ActionEvent event) {
-        ConfigurationObject.setIndexType(indexType.getSelectionModel().getSelectedItem().toString());
-    }
-
     // gets tweets from the database according to the queries and displays them in the gui
     public static void fillTable(String queries) {
+        /*
         displaysTweets.clear();
         String chosenIndex = ConfigurationObject.getIndexType();
         IRTSIndex index;
@@ -107,7 +97,14 @@ public class MainAppController implements Initializable {
             System.out.println(tweet.getText());
         }
         displaysTweets.addAll(tweetlist);
+        */
     }
+
+    // Attach a listener to the index combobox so the indices get filled before anything is searched
+    private void indexChanged(ActionEvent event) {
+        ConfigurationObject.setIndexType(indexType.getSelectionModel().getSelectedItem().toString());
+    }
+
     public void initialize(URL url, ResourceBundle rsrcs) {
         usernameCol.setCellValueFactory(new PropertyValueFactory<TweetObject,String>("username"));
         contentCol.setCellValueFactory(new PropertyValueFactory<>("text"));
