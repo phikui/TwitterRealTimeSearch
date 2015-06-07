@@ -36,11 +36,11 @@ public class IndexDispatcher {
      * @return
      */
     private static IRTSIndex getActiveIndex() {
-        if (ConfigurationObject.getIndexType() == ConfigurationObject.Index.APPEND_ONLY) {
+        if (ConfigurationObject.getIndexType() == ConfigurationObject.IndexTypes.APPEND_ONLY) {
             return aoi_index;
-        } else if (ConfigurationObject.getIndexType() == ConfigurationObject.Index.TRIPLE_POSTING_LIST) {
+        } else if (ConfigurationObject.getIndexType() == ConfigurationObject.IndexTypes.TRIPLE_POSTING_LIST) {
             return tpl_index;
-        } else if (ConfigurationObject.getIndexType() == ConfigurationObject.Index.LSII) {
+        } else if (ConfigurationObject.getIndexType() == ConfigurationObject.IndexTypes.LSII) {
             return lsii_index;
         } else {
             return null;

@@ -1,16 +1,15 @@
 package indices.lsii;
 
 import indices.IRTSIndex;
+import indices.deprecated.ConcurrentTPLArrayList;
 import indices.deprecated.ConcurrentTriplePostingList;
 import indices.deprecated.UnsortedPostingList;
-import indices.deprecated.ConcurrentTPLArrayList;
 import indices.postinglists.IPostingList;
 import indices.postinglists.IPostingListElement;
 import indices.postinglists.ITriplePostingList;
 import indices.postinglists.PostingList;
 import indices.tpl.TPLHelper;
 import model.TransportObject;
-import utilities.HelperFunctions;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,7 +51,7 @@ public class LSIIIndex implements IRTSIndex {
 
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
 
-        // needed for concurrency in AO Index
+        // needed for concurrency in AO IndexTypes
         Date tsMax = latestTimestamp;
 
         // values for stop condition in TPL/TA

@@ -19,7 +19,7 @@ public class NewIOTest {
         int num_preprocessors = 2;
         int num_queryProcessors = 1;
         boolean debugOutputs = false;
-        ConfigurationObject.setIndexType(ConfigurationObject.Index.APPEND_ONLY);
+        ConfigurationObject.setIndexType(ConfigurationObject.IndexTypes.APPEND_ONLY);
         IOController ioController = new IOController(num_preprocessors, num_queryProcessors, debugOutputs);
 
         ioController.startAll();
