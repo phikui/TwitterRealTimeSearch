@@ -46,6 +46,7 @@ public class LSIIIndex implements IRTSIndex {
         this.tripletHashMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, LSIITriplet>>();
 
         this.invertedIndex3 = new ConcurrentHashMap<>();
+        this.index_zero2 = new ConcurrentHashMap<>();
     }
 
 
@@ -86,8 +87,11 @@ public class LSIIIndex implements IRTSIndex {
         // maximum threshold of all m thresholds, initialize as I_1 upperbound (value = 1.01)
         maxThreshold = upperBoundMap.get(1);
 
-        // TODO does this suffice? We can have the same termID in different Indices, probably need Hashmap of Hashmaps similar to invertedIndex structure
-        HashMap<Integer, Iterator<IPostingListElement>> postingListIteratorMapTPL = new HashMap<Integer, Iterator<IPostingListElement>>();
+        // Hashmap of Hashmaps as  we can have the same termID in different Indices, similar to invertedIndex structure
+        HashMap<Integer, HashMap<Integer, Iterator<IPostingListElement>>> postingListIteratorMapTPL = new HashMap<>();
+        for (int key_index : invertedIndex3.keySet()){
+            postingListIteratorMapTPL.put(key_index, new HashMap<>());
+        }
 
         // TPL/TA iteration based on LSII-paper
         while (maxThreshold > d) {
@@ -98,7 +102,7 @@ public class LSIIIndex implements IRTSIndex {
                 if ((upperBoundMap.get(i)) > d) {
 
                     try {
-                        newUpperBound = TPLHelper.examineTPLIndex(this.invertedIndex3.get(i), postingListIteratorMapTPL, transportObjectQuery, resultList);
+                        newUpperBound = TPLHelper.examineTPLIndex(this.invertedIndex3.get(i), postingListIteratorMapTPL.get(i), transportObjectQuery, resultList);
                         upperBoundMap.put(i, newUpperBound);
                     } catch (IndexOutOfBoundsException e) {
                         break;
