@@ -7,7 +7,6 @@ import model.TweetDictionary;
 import model.TweetObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -22,23 +21,16 @@ import java.util.concurrent.Callable;
 
  */
 public class QueryWorker implements Callable<QueryReturnObject> {
-    private final String query;
-    private final List<String> terms;
-    private final int k;
-    private final Date timestamp;
-    private final TransportObject queryO;
+    private final TransportObject query;
 
 
     public QueryWorker(TransportObject query) {
-        this.query = query.getText();
-        this.terms = query.getTerms();
-        this.k = query.getk();
-        this.timestamp = query.getTimestamp();
-        queryO = query;
+        this.query = query;
     }
 
     public QueryReturnObject call() throws Exception {
-        List<Integer> resultsIndex = IndexDispatcher.searchTweetIDs(queryO);
+        System.out.println("will begin query working on: " + query.getText());
+        List<Integer> resultsIndex = IndexDispatcher.searchTweetIDs(query);
 
         // I don't know what the hell this is but intelliJ suggested doing this instead of the other code
         // List<TweetObject> results = resultsIndex.stream().map(TweetDictionary::getTweetObject).collect(Collectors.toList());
@@ -49,6 +41,6 @@ public class QueryWorker implements Callable<QueryReturnObject> {
         }
 
 
-        return new QueryReturnObject(query, results);
+        return new QueryReturnObject(query.getText(), results);
     }
 }

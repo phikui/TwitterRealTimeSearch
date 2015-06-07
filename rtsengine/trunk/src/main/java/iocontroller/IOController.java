@@ -132,7 +132,7 @@ public class IOController {
     }
 
     public QueryReturnObject getNextOutputElement() throws ExecutionException, InterruptedException {
-        return queueContainer.getQueryOutputQueue().poll().get();
+        return queueContainer.getQueryOutputQueue().remove().get();
     }
 
 
