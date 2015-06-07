@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Inverted Index mapping one TermID to one UnsortedPostingList
+ * Inverted IndexTypes mapping one TermID to one UnsortedPostingList
  * Arriving tweets always have the highest significance/timestamp and
  * are added to the end of the unsorted Posting List. Therefore the
  * posting list will automatically be sorted by ascending

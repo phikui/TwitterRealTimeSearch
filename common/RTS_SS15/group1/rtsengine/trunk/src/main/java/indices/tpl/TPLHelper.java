@@ -1,6 +1,8 @@
 package indices.tpl;
 
-import indices.postinglists.*;
+import indices.postinglists.IPostingList;
+import indices.postinglists.IPostingListElement;
+import indices.postinglists.ITriplePostingList;
 import model.TransportObject;
 import model.TweetDictionary;
 import utilities.HelperFunctions;
@@ -14,10 +16,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TPLHelper {
 
     /**
-     * Scans PostingList of TPL Index, inserts results into resultList and returns ScoreUpperBound.
+     * Scans PostingList of TPL IndexTypes, inserts results into resultList and returns ScoreUpperBound.
      * Uses postingListIteratorMap to fetch next elements from involved PostingLists.
      *
-     * @return  float  Highest possible score that any unseen tweet could have in this Index after
+     * @return float  Highest possible score that any unseen tweet could have in this IndexTypes after
      *                 position i ("Score Upper Bound")
      *
      * @throws  IndexOutOfBoundsException  In case all involved PostingLists have reached their end

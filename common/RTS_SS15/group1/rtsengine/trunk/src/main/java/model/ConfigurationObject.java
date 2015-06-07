@@ -14,7 +14,7 @@ public class ConfigurationObject {
     private static int numberOfTweets;
 
     private static boolean stream;
-    private static Index indexType;
+    private static IndexTypes indexType;
 
     /**
      * Getter and Setter
@@ -75,34 +75,34 @@ public class ConfigurationObject {
         ConfigurationObject.stream = stream;
     }
 
-    public static Index getIndexType() {
+    public static IndexTypes getIndexType() {
         return ConfigurationObject.indexType;
+    }
+
+    public static void setIndexType(IndexTypes index) {
+        ConfigurationObject.indexType = index;
     }
 
     @Deprecated
     public static void setIndexType(String index) {
         switch (index) {
             case "AO":
-                setIndexType(Index.APPEND_ONLY);
+                setIndexType(IndexTypes.APPEND_ONLY);
                 break;
             case "TPL":
-                setIndexType(Index.TRIPLE_POSTING_LIST);
+                setIndexType(IndexTypes.TRIPLE_POSTING_LIST);
                 break;
             case "LSII":
-                setIndexType(Index.LSII);
+                setIndexType(IndexTypes.LSII);
                 break;
             default:
-                setIndexType(Index.APPEND_ONLY);
+                setIndexType(IndexTypes.APPEND_ONLY);
                 break;
         }
 
     }
 
-    public static void setIndexType(Index index) {
-        ConfigurationObject.indexType = index;
-    }
-
-    public enum Index {
+    public enum IndexTypes {
         APPEND_ONLY, TRIPLE_POSTING_LIST, LSII
     }
 

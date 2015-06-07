@@ -1,8 +1,6 @@
 package test;
 
 import indices.IRTSIndex;
-import indices.aoi.AOIIndex;
-import indices.lsii.LSIIIndex;
 import indices.tpl.TPLIndex;
 import model.TransportObject;
 import utilities.RandomObjectFactory;
@@ -61,7 +59,7 @@ public class RTSIndexTestCase {
         // Print query result
 
         List<Integer> tweetIDsAccordingToIndex = index.searchTweetIDs(transportObjectQuery);
-        System.out.println("Found TweetIDs according to Index:");
+        System.out.println("Found TweetIDs according to IndexTypes:");
         System.out.println(tweetIDsAccordingToIndex);
 
 
