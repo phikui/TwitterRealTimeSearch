@@ -1,6 +1,7 @@
 package test;
 
 import indices.IRTSIndex;
+import indices.lsii.LSIIIndex;
 import indices.tpl.TPLIndex;
 import model.TransportObject;
 import utilities.RandomObjectFactory;
@@ -21,7 +22,7 @@ public class RTSIndexTestCase {
 //        System.out.println(randomObjectFactory.generateRandomTransportObjectReadyForWriting());
 
 //        IRTSIndex index = new AOIIndex();
-        IRTSIndex index = new TPLIndex();
+        IRTSIndex index = new LSIIIndex();
 //        IRTSIndex index = new LSIIIndex();
 
         for (int i = 0; i < 50; i++) {
@@ -40,6 +41,7 @@ public class RTSIndexTestCase {
         System.out.println("Inserted TransportObject:"+ " #"+transportObjectInsertion.getTweetID());
         System.out.println(transportObjectInsertion);
         System.out.println();
+
 
         // Query the index for the very first of the just inserted transported object
         String firstTermOfInsertedTransportObject = transportObjectInsertion.getTerms().get(0);

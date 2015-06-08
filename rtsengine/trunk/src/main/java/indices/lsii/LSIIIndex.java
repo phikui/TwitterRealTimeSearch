@@ -129,7 +129,7 @@ public class LSIIIndex implements IRTSIndex {
             upperBoundMap.put(key_index, (float) 1.01);
         }
         // maximum threshold of all m thresholds, initialize as I_1 upperbound (value = 1.01)
-        maxThreshold = upperBoundMap.get(1);
+        maxThreshold = (float)1.01;
 
         // Hashmap of Hashmaps as  we can have the same termID in different Indices, similar to invertedIndex structure
         HashMap<Integer, HashMap<Integer, Iterator<IPostingListElement>>> postingListIteratorMapTPL = new HashMap<>();
@@ -137,8 +137,9 @@ public class LSIIIndex implements IRTSIndex {
             postingListIteratorMapTPL.put(key_index, new HashMap<>());
         }
 
+        boolean listEmpty = false;
         // TPL/TA iteration based on LSII-paper
-        while (maxThreshold > d) {
+        while (maxThreshold > d && !listEmpty) {
 
             // for each index i get the next element and calculate fValues and thresholds
             for (int i : invertedIndex3.keySet()) {
@@ -149,6 +150,7 @@ public class LSIIIndex implements IRTSIndex {
                         newUpperBound = TPLHelper.examineTPLIndex(this.invertedIndex3.get(i), postingListIteratorMapTPL.get(i), transportObjectQuery, resultList);
                         upperBoundMap.put(i, newUpperBound);
                     } catch (IndexOutOfBoundsException e) {
+                        listEmpty = true;
                         break;
                     }
 
@@ -373,7 +375,7 @@ public class LSIIIndex implements IRTSIndex {
     }*/
 
 
-    public void insertTransportObject2(TransportObject transportObjectInsertion) {
+    public void insertTransportObject(TransportObject transportObjectInsertion) {
         int currentIndex = 0;
         int tweetID = transportObjectInsertion.getTweetID();
         List<Integer> termIDs = transportObjectInsertion.getTermIDs();
@@ -401,20 +403,23 @@ public class LSIIIndex implements IRTSIndex {
             } else {
                 // traverse I_i, i = currentIndex
                 currentIndex++;
+
                 while(postingListForTermID.size() > 0) {
+
                     LSIIHelper.mergeWithNextIndex(currentIndex, termID, sizeThreshold, transportObjectInsertion, invertedIndex3, index_zero2);
                 }
+
+                // insert now into I_0 which has space
+                postingListForTermID.addFirst(new PostingListElement(tweetID, freshness));
+                latestTimestamp = transportObjectInsertion.getTimestamp();
             }
 
-            // insert now into I_0 which has space
-            postingListForTermID.addFirst(new PostingListElement(tweetID, freshness));
-            latestTimestamp = transportObjectInsertion.getTimestamp();
         }
 
     }
 
 
-    public void insertTransportObject(TransportObject transportObjectInsertion) {
+    public void insertTransportObject2(TransportObject transportObjectInsertion) {
         // TODO: implement the rest, make performance better
         int currentIndex = 0;
         int tweetID = transportObjectInsertion.getTweetID();

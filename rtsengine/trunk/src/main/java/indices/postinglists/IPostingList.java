@@ -57,6 +57,8 @@ public interface IPostingList {
 
     boolean remove(Object o);
 
+    IPostingListElement get(int index);
+
     void clear();
 
     IPostingListElement getLast();

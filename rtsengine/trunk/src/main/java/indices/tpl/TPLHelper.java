@@ -45,6 +45,10 @@ public class TPLHelper {
         for (int termID : termIDsInQuery) {
             ITriplePostingList tplPostingList = tplInvertedIndex.get(termID);
 
+            if(tplInvertedIndex.get(termID) == null){
+                return (float)0.0;
+            }
+
             // Fetch posting lists for this termID
             IPostingList freshnessPostingList = tplPostingList.getFreshnessPostingList();
             IPostingList significancePostingList = tplPostingList.getSignificancePostingList();
