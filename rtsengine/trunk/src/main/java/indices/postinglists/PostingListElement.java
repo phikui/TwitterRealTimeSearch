@@ -3,7 +3,7 @@ package indices.postinglists;
 /**
  * Created by chans on 6/6/15.
  */
-public class PostingListElement implements IPostingListElement {
+public class PostingListElement implements IPostingListElement, Comparable<PostingListElement> {
     private float sortKey;
     private int tweetID;
 
@@ -18,5 +18,18 @@ public class PostingListElement implements IPostingListElement {
 
     public float getSortKey() {
         return sortKey;
+    }
+
+    public int compareTo(PostingListElement elem) {
+        if (elem.getSortKey() == this.getSortKey()) {
+            return 0;
+        }
+        if (elem.getSortKey() > this.getSortKey()) {
+            return 1;
+        }
+        if (elem.getSortKey() < this.getSortKey()) {
+            return -1;
+        }
+        return -1;
     }
 }

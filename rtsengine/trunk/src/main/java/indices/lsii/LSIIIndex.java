@@ -4,10 +4,7 @@ import indices.IRTSIndex;
 import indices.deprecated.ConcurrentTPLArrayList;
 import indices.deprecated.ConcurrentTriplePostingList;
 import indices.deprecated.UnsortedPostingList;
-import indices.postinglists.IPostingList;
-import indices.postinglists.IPostingListElement;
-import indices.postinglists.ITriplePostingList;
-import indices.postinglists.PostingList;
+import indices.postinglists.*;
 import indices.tpl.TPLHelper;
 import model.TransportObject;
 
@@ -49,14 +46,15 @@ public class LSIIIndex implements IRTSIndex {
         this.index_zero2 = new ConcurrentHashMap<>();
 
     }
+
     // This method will take the  ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex3;
     // and return array list of ITriplePostingList items that were inside invertedIndex3.
-    private   LinkedList<ITriplePostingList> extractITripple(ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex3){
-        LinkedList<ITriplePostingList> iTriplePostingLists=new LinkedList<>();
-        for (Map.Entry<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> entry:invertedIndex3.entrySet()){
+    private LinkedList<ITriplePostingList> extractITripple(ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex3) {
+        LinkedList<ITriplePostingList> iTriplePostingLists = new LinkedList<>();
+        for (Map.Entry<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> entry : invertedIndex3.entrySet()) {
 
-            ConcurrentHashMap<Integer, ITriplePostingList> insideEntry=entry.getValue();
-            for (Map.Entry<Integer,ITriplePostingList> integerITriplePostingListEntry:insideEntry.entrySet()){
+            ConcurrentHashMap<Integer, ITriplePostingList> insideEntry = entry.getValue();
+            for (Map.Entry<Integer, ITriplePostingList> integerITriplePostingListEntry : insideEntry.entrySet()) {
                 iTriplePostingLists.add(integerITriplePostingListEntry.getValue());
             }
         }
@@ -65,34 +63,37 @@ public class LSIIIndex implements IRTSIndex {
 
     // This method will take the  ConcurrentHashMap<Integer, ITriplePostingList> index_zero2;
     // and return array list of IPostingList items that were inside index_zero2.
-    private   synchronized LinkedList<IPostingList> extractIPostingList ( ConcurrentHashMap<Integer, IPostingList> iPostingListConcurrentHashMap){
+    private synchronized LinkedList<IPostingList> extractIPostingList(ConcurrentHashMap<Integer, IPostingList> iPostingListConcurrentHashMap) {
 
-        LinkedList<IPostingList> iPostingLists= new LinkedList<>();
-            for (Map.Entry<Integer,IPostingList> integerITriplePostingListEntry:iPostingListConcurrentHashMap.entrySet()){
-                iPostingLists.add(integerITriplePostingListEntry.getValue());
-            }
+        LinkedList<IPostingList> iPostingLists = new LinkedList<>();
+        for (Map.Entry<Integer, IPostingList> integerITriplePostingListEntry : iPostingListConcurrentHashMap.entrySet()) {
+            iPostingLists.add(integerITriplePostingListEntry.getValue());
+        }
 
         return iPostingLists;
     }
+
     // this method will add all the three triple posting list into one posting list
-    public  synchronized LinkedList<IPostingList> mergeSinglePostingLists( ITriplePostingList iTriplePostingList){
-        LinkedList<IPostingList> temp=new LinkedList<>();
+    public synchronized LinkedList<IPostingList> mergeSinglePostingLists(ITriplePostingList iTriplePostingList) {
+        LinkedList<IPostingList> temp = new LinkedList<>();
         temp.add(iTriplePostingList.getFreshnessPostingList());
         temp.add(iTriplePostingList.getSignificancePostingList());
         temp.add(iTriplePostingList.getTermSimilarityPostingList());
         return temp;
     }
-   //in this method first we will have the ipostinglist value and then the tripleposting list value
-    public  synchronized LinkedList<IPostingList> mergePostingLists( LinkedList<ITriplePostingList> iTriplePostingList,LinkedList<IPostingList> iPostingList){
-        LinkedList<IPostingList> temp=new LinkedList<>();
+
+    //in this method first we will have the ipostinglist value and then the tripleposting list value
+    public synchronized LinkedList<IPostingList> mergePostingLists(LinkedList<ITriplePostingList> iTriplePostingList, LinkedList<IPostingList> iPostingList) {
+        LinkedList<IPostingList> temp = new LinkedList<>();
         temp.addAll(iPostingList);
 
-        for (ITriplePostingList iTriplePostingList1:iTriplePostingList){
+        for (ITriplePostingList iTriplePostingList1 : iTriplePostingList) {
             temp.addAll(mergeSinglePostingLists(iTriplePostingList1));
         }
 
         return temp;
     }
+
     public List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
 
         // needed for concurrency in AO IndexTypes
@@ -132,7 +133,7 @@ public class LSIIIndex implements IRTSIndex {
 
         // Hashmap of Hashmaps as  we can have the same termID in different Indices, similar to invertedIndex structure
         HashMap<Integer, HashMap<Integer, Iterator<IPostingListElement>>> postingListIteratorMapTPL = new HashMap<>();
-        for (int key_index : invertedIndex3.keySet()){
+        for (int key_index : invertedIndex3.keySet()) {
             postingListIteratorMapTPL.put(key_index, new HashMap<>());
         }
 
@@ -372,6 +373,46 @@ public class LSIIIndex implements IRTSIndex {
     }*/
 
 
+    public void insertTransportObject2(TransportObject transportObjectInsertion) {
+        int currentIndex = 0;
+        int tweetID = transportObjectInsertion.getTweetID();
+        List<Integer> termIDs = transportObjectInsertion.getTermIDs();
+
+        // Obtain significance and freshness from the transportObject
+        float significance = transportObjectInsertion.getSignificance();
+        float freshness = (float) transportObjectInsertion.getTimestamp().getTime();
+
+        for (int termID : termIDs) {
+            IPostingList postingListForTermID = this.index_zero2.get(termID);
+
+            // Create PostingList for this termID in I_0 if necessary
+            if (postingListForTermID == null) {
+                postingListForTermID = new PostingList();
+                this.index_zero2.put(termID, postingListForTermID);
+            }
+
+            // insert when new TweetID fits into I_0, else check for I_1, ..., I_m and insert there by merging
+            if (postingListForTermID.size() < sizeThreshold) {
+                postingListForTermID.addFirst(new PostingListElement(tweetID, freshness));
+
+                // set latest timestamp to avoid possible reader/writer conflicts
+                latestTimestamp = transportObjectInsertion.getTimestamp();
+
+            } else {
+                // traverse I_i, i = currentIndex
+                currentIndex++;
+                while(postingListForTermID.size() > 0) {
+                    LSIIHelper.mergeWithNextIndex(currentIndex, termID, sizeThreshold, transportObjectInsertion, invertedIndex3, index_zero2);
+                }
+            }
+
+            // insert now into I_0 which has space
+            postingListForTermID.addFirst(new PostingListElement(tweetID, freshness));
+            latestTimestamp = transportObjectInsertion.getTimestamp();
+        }
+
+    }
+
 
     public void insertTransportObject(TransportObject transportObjectInsertion) {
         // TODO: implement the rest, make performance better
@@ -437,33 +478,35 @@ public class LSIIIndex implements IRTSIndex {
                 if (this.invertedIndex.get(currentIndex).get(termID).getFreshnessPostingList().size() < ((currentIndex + 1) * sizeThreshold)) {
                     // merge I_0 and I_1 -> first sort entries and then merge
                     //creating a merge thread and all the functionality on creation of a thread
-                    LinkedList<IPostingList> I0=extractIPostingList(index_zero2);
+                    LinkedList<IPostingList> I0 = extractIPostingList(index_zero2);
                     LinkedList<IPostingList> I0_;
-                    LinkedList<ITriplePostingList> I1=extractITripple(invertedIndex3);
+                    LinkedList<ITriplePostingList> I1 = extractITripple(invertedIndex3);
 
-                    Thread mergerThread =new Thread(new Runnable() {
+                    Thread mergerThread = new Thread(new Runnable() {
                         public void run() {
                             //first threads create a  new list of inverted index I1
                             LinkedList<IPostingList> I1_;// to ask
                             // shared lock on I0 and I1
                             // shared lock on I0 and I1
-                            synchronized(I0){};
-                            synchronized(I1){};
+                            synchronized (I0) {
+                            }
+                            ;
+                            synchronized (I1) {
+                            }
+                            ;
                             //merge the content of I0 and I1 into I1'
-                            I1_=mergePostingLists(I1,I0);
+                            I1_ = mergePostingLists(I1, I0);
                             // struck here as the paper suggest to use I1 which is triple posting list
                             //but getting the three list from the triple posting list and merging with positing list
                             // then we cannot move back to the triple positing list???
 
 
-
-                        } });
+                        }
+                    });
                     // TODO sort, then merge here (I_0 and I_1 merging)
-                }
-
-                else {
+                } else {
                     // TODO perform merges with I_0, I_1, I_2, I_3, etc until we find sufficient posting list space
-                  //  for (LinkedList<type>:object){}
+                    //  for (LinkedList<type>:object){}
                 }
 
                 // insert now into I_0 which has space

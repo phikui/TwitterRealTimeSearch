@@ -11,4 +11,10 @@ public interface ITriplePostingList {
 
     IPostingList getTermSimilarityPostingList();
 
+    void setFreshnessPostingList(IPostingList freshnessPostingList);
+
+    void setSignificancePostingList(IPostingList significancePostingList);
+
+    void setTermSimilarityPostingList(IPostingList termSimilarityPostingList);
+
 }

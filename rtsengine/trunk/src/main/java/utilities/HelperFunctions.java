@@ -1,5 +1,6 @@
 package utilities;
 
+import indices.postinglists.*;
 import model.ConfigurationObject;
 import model.TweetObject;
 
@@ -196,6 +197,54 @@ public class HelperFunctions {
 
         list.add(insertAt, item);
         return insertAt;
+    }
+
+    public static ITriplePostingList mergeTriplePostingLists(ITriplePostingList listA, ITriplePostingList listB, int termID){
+        ITriplePostingList resultList = new TriplePostingList(termID);
+
+        resultList.setFreshnessPostingList(mergeSinglePostingLists(listA.getFreshnessPostingList(), listB.getFreshnessPostingList()));
+        resultList.setSignificancePostingList(mergeSinglePostingLists(listA.getSignificancePostingList(), listB.getSignificancePostingList()));
+        resultList.setTermSimilarityPostingList(mergeSinglePostingLists(listA.getTermSimilarityPostingList(), listB.getTermSimilarityPostingList()));
+
+        return  resultList;
+    }
+
+
+    public static IPostingList mergeSinglePostingLists(IPostingList listA, IPostingList listB){
+        IPostingList resultList = new PostingList();
+
+        Iterator<IPostingListElement> listAIterator = listA.iterator();
+        Iterator<IPostingListElement> listBIterator = listB.iterator();
+
+        IPostingListElement listAElement = listAIterator.next();
+        IPostingListElement listBElement = listBIterator.next();
+
+        // both lists have elements
+        while (listAIterator.hasNext() && listBIterator.hasNext()){
+
+            if (listAElement.getSortKey() >= listBElement.getSortKey()){
+                resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
+                listAIterator.next();
+            }else{
+                resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
+                listBIterator.next();
+            }
+
+        }
+
+        // list B has no more elements, just append list A
+        while(listAIterator.hasNext() && !listBIterator.hasNext()){
+            resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
+            listAIterator.next();
+        }
+
+        // list A has no more elements, just append list B
+        while(!listAIterator.hasNext() && listBIterator.hasNext()){
+            resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
+            listBIterator.next();
+        }
+
+        return resultList;
     }
 
 }
