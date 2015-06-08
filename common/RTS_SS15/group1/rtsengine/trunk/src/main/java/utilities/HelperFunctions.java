@@ -45,7 +45,7 @@ public class HelperFunctions {
      */
     public static float calculateTermSimilarity(List<Integer> termIDs1, List<Integer> termIDs2) {
         // get all terms without duplicates
-        List<Integer> allTermIDs = concatenateWithoutDuplicates(termIDs1,termIDs2);
+        List<Integer> allTermIDs = concatenateWithoutDuplicates(termIDs1, termIDs2);
 
         List<Integer> vectorTextA = new ArrayList<Integer>();
         List<Integer> vectorTextB = new ArrayList<Integer>();
@@ -53,10 +53,10 @@ public class HelperFunctions {
         int countWordB = 0;
 
         // create vectors A and B which count occurrences of each word
-        for (int termID: allTermIDs){
+        for (int termID : allTermIDs) {
             // set count for vectorA
-            for(int i = 0; i < termIDs1.size(); i++){
-                if(termIDs1.get(i).equals(termID)){
+            for (int i = 0; i < termIDs1.size(); i++) {
+                if (termIDs1.get(i).equals(termID)) {
                     countWordA++;
                 }
             }
@@ -64,8 +64,8 @@ public class HelperFunctions {
             countWordA = 0;
 
             // set count for vectorB
-            for(int j = 0; j < termIDs2.size(); j++){
-                if(termIDs2.get(j).equals(termID)){
+            for (int j = 0; j < termIDs2.size(); j++) {
+                if (termIDs2.get(j).equals(termID)) {
                     countWordB++;
                 }
             }
@@ -78,7 +78,7 @@ public class HelperFunctions {
         return cosineSim;
     }
 
-    public static List<Integer> concatenateWithoutDuplicates(List listA, List listB){
+    public static List<Integer> concatenateWithoutDuplicates(List listA, List listB) {
         List tempList = new ArrayList();
         tempList.addAll(listA);
         tempList.addAll(listB);
@@ -98,31 +98,30 @@ public class HelperFunctions {
             normB += Math.pow(vectorB.get(i), 2);
         }
 
-        return dotProduct / ((float)Math.sqrt(normA) * (float)Math.sqrt(normB));
+        return dotProduct / ((float) Math.sqrt(normA) * (float) Math.sqrt(normB));
     }
 
     /**
      * Use milliseconds for determining freshness:
-     *   3 600 000 =  1 hour
-     *  10 800 000 =  3 hours
-     *  21 600 000 =  6 hours
-     *  43 200 000 = 12 hours
-     *  86 400 000 = 1 day
+     * 3 600 000 =  1 hour
+     * 10 800 000 =  3 hours
+     * 21 600 000 =  6 hours
+     * 43 200 000 = 12 hours
+     * 86 400 000 = 1 day
      * 172 800 000 = 2 days
      * 259 200 000 = 3 days
      * 604 800 000 = 1 week
-     *
+     * <p>
      * freshness based on used granularity given in the constant
      *
      * @param timestampData
      * @param timestampQuery
-     *
      * @return
      */
     public static float calculateFreshness(Date timestampData, Date timestampQuery) {
         float difference = timestampData.getTime() - timestampQuery.getTime();
         float constant = 1 / ONE_HOUR;
-        float freshness = (float)Math.pow(Math.E, (double)(constant * difference));
+        float freshness = (float) Math.pow(Math.E, (double) (constant * difference));
 
         return freshness;
     }
@@ -135,7 +134,7 @@ public class HelperFunctions {
      * @param similarity
      * @return
      */
-    public static float calculateRankingFunction(float freshness, float significance, float similarity){
+    public static float calculateRankingFunction(float freshness, float significance, float similarity) {
         float f;
         float weight_fresh = ConfigurationObject.getwFreshness();
         float weight_sig = ConfigurationObject.getwSignificance();
@@ -165,8 +164,7 @@ public class HelperFunctions {
         int mergedIterator = 0;
 
         // get greater element and insert it into mergedArray
-        while ((prevIterator < prevIndex.length) && (nextIterator < nextIndex.length))
-        {
+        while ((prevIterator < prevIndex.length) && (nextIterator < nextIndex.length)) {
             if (prevIndex[prevIterator] < nextIndex[nextIterator])
                 mergedArray[mergedIterator++] = prevIndex[prevIterator++];
             else
@@ -199,49 +197,81 @@ public class HelperFunctions {
         return insertAt;
     }
 
-    public static ITriplePostingList mergeTriplePostingLists(ITriplePostingList listA, ITriplePostingList listB, int termID){
+    public static ITriplePostingList mergeTriplePostingLists(ITriplePostingList listA, ITriplePostingList listB, int termID) {
         ITriplePostingList resultList = new TriplePostingList(termID);
 
         resultList.setFreshnessPostingList(mergeSinglePostingLists(listA.getFreshnessPostingList(), listB.getFreshnessPostingList()));
         resultList.setSignificancePostingList(mergeSinglePostingLists(listA.getSignificancePostingList(), listB.getSignificancePostingList()));
         resultList.setTermSimilarityPostingList(mergeSinglePostingLists(listA.getTermSimilarityPostingList(), listB.getTermSimilarityPostingList()));
 
-        return  resultList;
+        return resultList;
     }
 
 
-    public static IPostingList mergeSinglePostingLists(IPostingList listA, IPostingList listB){
+    public static IPostingList mergeSinglePostingLists2(IPostingList listA, IPostingList listB) {
         IPostingList resultList = new PostingList();
 
         Iterator<IPostingListElement> listAIterator = listA.iterator();
         Iterator<IPostingListElement> listBIterator = listB.iterator();
+        if (listAIterator.hasNext() && listBIterator.hasNext()) {
 
-        IPostingListElement listAElement = listAIterator.next();
-        IPostingListElement listBElement = listBIterator.next();
+            IPostingListElement listAElement = listAIterator.next();
+            IPostingListElement listBElement = listBIterator.next();
 
-        // both lists have elements
-        while (listAIterator.hasNext() && listBIterator.hasNext()){
+            // both lists have elements
+            while (listAIterator.hasNext() && listBIterator.hasNext()) {
 
-            if (listAElement.getSortKey() >= listBElement.getSortKey()){
+                if (listAElement.getSortKey() >= listBElement.getSortKey()) {
+                    resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
+                    listAIterator.next();
+                } else {
+                    resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
+                    listBIterator.next();
+                }
+
+            }
+        } else {
+            IPostingListElement listAElement = listAIterator.next();
+            // list B has no more elements, just append list A
+            while (listAIterator.hasNext() && !listBIterator.hasNext()) {
                 resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
                 listAIterator.next();
-            }else{
-                resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
-                listBIterator.next();
             }
-
         }
-
-        // list B has no more elements, just append list A
-        while(listAIterator.hasNext() && !listBIterator.hasNext()){
-            resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
-            listAIterator.next();
-        }
-
+        /*
         // list A has no more elements, just append list B
-        while(!listAIterator.hasNext() && listBIterator.hasNext()){
+        while (!listAIterator.hasNext() && listBIterator.hasNext()) {
             resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
             listBIterator.next();
+        }*/
+
+        return resultList;
+    }
+
+    public static IPostingList mergeSinglePostingLists(IPostingList listA, IPostingList listB) {
+        IPostingList resultList = new PostingList();
+
+        int i = 0;
+        int j = 0;
+
+        while (i < listA.size() && j < listB.size()) {
+
+            if (listA.get(i).getSortKey() >= listB.get(j).getSortKey()) {
+                resultList.insertSorted(listA.get(i).getTweetID(), listA.get(i).getSortKey());
+                i++;
+            } else {
+                resultList.insertSorted(listB.get(j).getTweetID(), listB.get(j).getSortKey());
+                j++;
+            }
+        }
+
+        while (i < listA.size()) {
+            resultList.insertSorted(listA.get(i).getTweetID(), listA.get(i).getSortKey());
+            i++;
+        }
+        while (j < listB.size()) {
+            resultList.insertSorted(listB.get(j).getTweetID(), listB.get(j).getSortKey());
+            j++;
         }
 
         return resultList;
