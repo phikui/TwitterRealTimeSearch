@@ -1,5 +1,6 @@
 package indices.postinglists;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,21 +18,21 @@ public interface IPostingList {
     /**
      * Inserts a tweetID according to sorting by timestamp
      *
-     * @param  tweetID  TweetID to be inserted
+     * @param  insertTweetID  TweetID to be inserted
      */
     void insertSortedByTimestamp(int insertTweetID);
 
     /**
      * Inserts a tweetID according to sorting by significance
      *
-     * @param  tweetID  TweetID to be inserted
+     * @param  insertTweetID  TweetID to be inserted
      */
     void insertSortedBySignificance(int insertTweetID);
 
     /**
      * Inserts a tweetID according to sorting by term similarity
      *
-     * @param  tweetID  TweetID to be inserted
+     * @param  insertTweetID  TweetID to be inserted
      */
     void insertSortedByTermSimilarity(int insertTweetID);
 
@@ -55,6 +56,8 @@ public interface IPostingList {
     void addFirst(IPostingListElement element);
 
     boolean remove(Object o);
+
+    void clear();
 
     IPostingListElement getLast();
 

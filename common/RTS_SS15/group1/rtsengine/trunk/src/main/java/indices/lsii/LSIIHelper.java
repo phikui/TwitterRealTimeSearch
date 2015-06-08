@@ -40,7 +40,7 @@ public class LSIIHelper {
             IPostingListElement dateListElement = AOIterator.next();
 
             // stop here to avoid reader/writer conflict as maxTimestamp is the newest object, which may not be inserted
-            if (dateListElement.getSortKey() == maxTimestamp.getTime()){
+            if (dateListElement.getSortKey() == maxTimestamp.getTime()) {
                 return;
             }
 
@@ -93,6 +93,81 @@ public class LSIIHelper {
                 resultList.insertSorted(tweetID, fValue);
             }
         }
+    }
+
+
+    public static void mergeWithNextIndex(int currentIndex, int termID, int i0Size, TransportObject transportObject, ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex, ConcurrentHashMap<Integer, IPostingList> index_zero) {
+
+        boolean performedMerging = false;
+
+        // create new index if necessary, if created then we can directly merge here
+        if (invertedIndex.get(currentIndex) == null) {
+            ConcurrentHashMap termMap = new ConcurrentHashMap<Integer, ITriplePostingList>();
+            invertedIndex.put(currentIndex, termMap);
+
+            // in case if the new created index is I_1, we first generate the TPL structure, otherwise just merge as both are TPL structures
+            if (currentIndex == 1) {
+                ITriplePostingList triplePostingList = new TriplePostingList(termID);
+                triplePostingList = createMissingLists(termID, transportObject, triplePostingList, index_zero);
+
+                ITriplePostingList shadowIndex = HelperFunctions.mergeTriplePostingLists(triplePostingList, invertedIndex.get(currentIndex).get(termID), termID);
+                invertedIndex.get(currentIndex).put(termID, shadowIndex);
+                performedMerging = true;
+            } else {
+                ITriplePostingList shadowIndex = HelperFunctions.mergeTriplePostingLists(invertedIndex.get(currentIndex - 1).get(termID), invertedIndex.get(currentIndex).get(termID), termID);
+                invertedIndex.get(currentIndex).put(termID, shadowIndex);
+                performedMerging = true;
+            }
+
+        } else if (invertedIndex.get(currentIndex).get(termID).getFreshnessPostingList().size() < (currentIndex * 2 * i0Size)) {
+
+            // same as above, if index is I_1, first create lists, else just merge
+            if (currentIndex == 1) {
+                ITriplePostingList triplePostingList = new TriplePostingList(termID);
+                triplePostingList = createMissingLists(termID, transportObject, triplePostingList, index_zero);
+
+                ITriplePostingList shadowIndex = HelperFunctions.mergeTriplePostingLists(triplePostingList, invertedIndex.get(currentIndex).get(termID), termID);
+                invertedIndex.get(currentIndex).put(termID, shadowIndex);
+                performedMerging = true;
+            } else {
+                ITriplePostingList shadowIndex = HelperFunctions.mergeTriplePostingLists(invertedIndex.get(currentIndex - 1).get(termID), invertedIndex.get(currentIndex).get(termID), termID);
+                invertedIndex.get(currentIndex).put(termID, shadowIndex);
+                performedMerging = true;
+            }
+
+        } else {
+            // recursive searching for the next free index to merge with
+            mergeWithNextIndex(currentIndex++, termID, i0Size, transportObject, invertedIndex, index_zero);
+        }
+
+        // cleanup: clear I_i-1
+        // TODO need some locking here: delete old indices if no query is working on them
+        if ((currentIndex == 1) && performedMerging) {
+            index_zero.get(termID).clear();
+
+        } else if ((currentIndex > 1) && performedMerging) {
+            invertedIndex.get(currentIndex - 1).get(termID).getFreshnessPostingList().clear();
+            invertedIndex.get(currentIndex - 1).get(termID).getSignificancePostingList().clear();
+            invertedIndex.get(currentIndex - 1).get(termID).getTermSimilarityPostingList().clear();
+        }
+
+    }
+
+    private static ITriplePostingList createMissingLists(int termID, TransportObject transportObject, ITriplePostingList triplePostingList, ConcurrentHashMap<Integer, IPostingList> index_zero) {
+
+        // iterate through I_0 to calculate the missing values
+        Iterator<IPostingListElement> AOIterator = index_zero.get(termID).iterator();
+
+        while (AOIterator.hasNext()) {
+            IPostingListElement tweetIDElement = AOIterator.next();
+
+            // calculate all the missing values and insert them sorted into the new TPL structure
+            triplePostingList.getFreshnessPostingList().insertSortedByTimestamp(tweetIDElement.getTweetID());
+            triplePostingList.getSignificancePostingList().insertSortedBySignificance(tweetIDElement.getTweetID());
+            triplePostingList.getTermSimilarityPostingList().insertSortedByTermSimilarity(tweetIDElement.getTweetID());
+        }
+
+        return triplePostingList;
     }
 
 

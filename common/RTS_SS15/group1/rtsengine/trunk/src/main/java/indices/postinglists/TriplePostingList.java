@@ -23,4 +23,15 @@ public class TriplePostingList implements ITriplePostingList {
         return termSimilarityPostingList;
     }
 
+    public void setFreshnessPostingList(IPostingList freshnessPostingList) {
+        this.freshnessPostingList = freshnessPostingList;
+    }
+
+    public void setSignificancePostingList(IPostingList significancePostingList) {
+        this.significancePostingList = significancePostingList;
+    }
+
+    public void setTermSimilarityPostingList(IPostingList termSimilarityPostingList) {
+        this.termSimilarityPostingList = termSimilarityPostingList;
+    }
 }
