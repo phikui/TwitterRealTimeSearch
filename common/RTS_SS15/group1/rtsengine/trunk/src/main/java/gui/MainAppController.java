@@ -179,7 +179,7 @@ public class MainAppController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Number of Tweets to small");
             alert.setHeaderText(null);
-            alert.setContentText("The Number of Tweets bigger than 0.");
+            alert.setContentText("The Number of Tweets needs to be bigger than 0.");
             alert.showAndWait();
             return;
         }
