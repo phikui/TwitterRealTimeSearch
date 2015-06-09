@@ -2,7 +2,6 @@ package iocontroller;
 
 import gui.MainAppController;
 import model.QueryReturnObject;
-import model.TweetObject;
 
 import java.util.concurrent.ExecutionException;
 
@@ -24,12 +23,6 @@ public class OutputToGUIThread extends Thread {
             try {
                 if (parent.hasNextOutputElement()) {
                     QueryReturnObject next = parent.getNextOutputElement();
-                    for (TweetObject tweet : next.getResults()) {
-                        System.out.println(tweet.getText());
-                    }
-                    if (next.getResults().isEmpty()) {
-                        System.out.println("no result");
-                    }
                     MainAppController.sendQueryResults(next);
                 } else {
                     Thread.sleep(500);
