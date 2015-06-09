@@ -19,6 +19,7 @@ import model.TransportObject;
 import model.TweetObject;
 
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -28,7 +29,6 @@ import java.util.ResourceBundle;
  */
 public class MainAppController implements Initializable {
     final static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
-    static List<TweetObject> tweetlist;
     IOController ioController = new IOController(1,1,false);
     @FXML
     Button start;
@@ -105,12 +105,11 @@ public class MainAppController implements Initializable {
             tweetlist.add(tweet);
             System.out.println(tweet.getText());
         }
-        displaysTweets.addAll(tweetlist);
         */
     }
     // Send Queryresults to the GUI
     public static void sendQueryResults(QueryReturnObject result){
-        tweetlist = result.getResults();
+        displaysTweets.addAll(result.getResults());
     }
 
     // Convert Index String to Enum
@@ -262,7 +261,7 @@ public class MainAppController implements Initializable {
         ConfigurationObject.setwSignificance(nWSignificance);
         ConfigurationObject.setwSimilarity(nWSimilarity);
 
-        TransportObject query = new TransportObject(queries, new Date(), nNumberOfTweets);
+        TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
         fillTable(queries);
     }
