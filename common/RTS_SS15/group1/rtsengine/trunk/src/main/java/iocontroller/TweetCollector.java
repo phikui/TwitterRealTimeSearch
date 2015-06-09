@@ -5,6 +5,9 @@ import model.TweetObject;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 
 /**
  * Created by phil on 31.05.2015.
@@ -17,12 +20,29 @@ public class TweetCollector {
     public TweetCollector(IOController parent) {
         this.parent = parent;
 
+        //read config file
+        Properties twitterProp = new Properties();
+        try {
+
+            String propFileName = "TwitterConfig.properties";
+            InputStream input = getClass().getClassLoader().getResourceAsStream(propFileName);
+            if (input != null) {
+                twitterProp.load(input);
+            } else {
+                throw new Exception("Input null");
+            }
+        } catch (Exception e) {
+            System.err.println("COULD NOT GET TWITTER PROPERTY FILE: TwitterConfig.properties");
+            e.printStackTrace();
+            System.exit(0);
+        }
+
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("xrHowyItaT65CiN8q4W7oYcPS")
-                .setOAuthConsumerSecret("FMnev5xV3oogUPCCMElLBIb176z9gTUkl2YGUz01tcw6MCaW9t")
-                .setOAuthAccessToken("2419112970-F6DaoiTagHaHtNIRrHN2sBtMC5xqEMOilY6dXfj")
-                .setOAuthAccessTokenSecret("HoXqJxdmMw9VxUGgFUeT1MLGyV2hRrT9lJ3EOR0N0Golk");
+                .setOAuthConsumerKey(twitterProp.getProperty("ConsumerKey"))
+                .setOAuthConsumerSecret(twitterProp.getProperty("ConsumerSecret"))
+                .setOAuthAccessToken(twitterProp.getProperty("AuthAccessToken"))
+                .setOAuthAccessTokenSecret(twitterProp.getProperty("AuthAccessTokenSecret"));
 
 
         listener = new StatusListener() {
