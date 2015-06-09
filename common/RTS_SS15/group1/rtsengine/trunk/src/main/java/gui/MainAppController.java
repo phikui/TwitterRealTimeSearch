@@ -110,6 +110,7 @@ public class MainAppController implements Initializable {
     // Send Queryresults to the GUI
     public static void sendQueryResults(QueryReturnObject result){
         displaysTweets.addAll(result.getResults());
+        System.out.println(result.getResults() + result.getQuery());
     }
 
     // Convert Index String to Enum
@@ -226,7 +227,7 @@ public class MainAppController implements Initializable {
         int nWSimilarity = Integer.parseInt(wSimilarity.getCharacters().toString());
         int nWFreshness = Integer.parseInt(wFreshness.getCharacters().toString());
         ConfigurationObject.IndexTypes nIndexType = toIndex(indexType.getSelectionModel().getSelectedItem());
-        String queries = queryfield.getPromptText();
+        String queries = queryfield.getText();
         Boolean nStream = stream.isSelected();
 
         /**
@@ -260,7 +261,7 @@ public class MainAppController implements Initializable {
         ConfigurationObject.setwFreshness(nWFreshness);
         ConfigurationObject.setwSignificance(nWSignificance);
         ConfigurationObject.setwSimilarity(nWSimilarity);
-
+        System.out.println(queries);
         TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
         fillTable(queries);
