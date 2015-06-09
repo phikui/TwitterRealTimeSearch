@@ -32,10 +32,10 @@ public class NewIOTest {
             System.out.println("Size of Tweet dictionary: " + TweetDictionary.size());
             System.out.println("Size of AO index: " + IndexDispatcher.size());
             Thread.sleep(3000);
-            TransportObject query = new TransportObject("joke", Calendar.getInstance().getTime(), 5);
+            TransportObject query = new TransportObject("Apple", Calendar.getInstance().getTime(), 5);
             ioController.addTransportObject(query);
         }
 
-
+        //TODO: test queries
     }
 }
