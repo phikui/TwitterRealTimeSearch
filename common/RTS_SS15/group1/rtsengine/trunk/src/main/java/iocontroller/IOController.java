@@ -43,6 +43,11 @@ public class IOController {
         writer.setQueryProcessor(queryProcessor);
         guiThread = new OutputToGUIThread(this);
         tweetcollector = new TweetCollector(this);
+
+        //set threads to deamon
+        preProcessor.setDaemon(true);
+        writer.setDaemon(true);
+        guiThread.setDaemon(true);
     }
 
     public IOController(int numPreProcessors, int numQueryProcessors) {
