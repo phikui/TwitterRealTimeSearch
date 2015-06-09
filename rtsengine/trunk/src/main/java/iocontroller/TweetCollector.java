@@ -19,10 +19,10 @@ public class TweetCollector {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("5apv3v5WO5i0DxzVu0zVgPzt4")
-                .setOAuthConsumerSecret("HVySxTkurjj4cFZT8lmGXELsS4aELZxrVSTbDEiAZl9oodht5d")
-                .setOAuthAccessToken("3209655082-AG0xOV3K15RffDQFZL7On3k85CNM1mP7ImTKQXR")
-                .setOAuthAccessTokenSecret("Y8DqS6lIAd2fwslcw6xBWm0JW2y6vvQm2TbePESZqfAIW");
+                .setOAuthConsumerKey("xrHowyItaT65CiN8q4W7oYcPS")
+                .setOAuthConsumerSecret("FMnev5xV3oogUPCCMElLBIb176z9gTUkl2YGUz01tcw6MCaW9t")
+                .setOAuthAccessToken("2419112970-F6DaoiTagHaHtNIRrHN2sBtMC5xqEMOilY6dXfj")
+                .setOAuthAccessTokenSecret("HoXqJxdmMw9VxUGgFUeT1MLGyV2hRrT9lJ3EOR0N0Golk");
 
 
         listener = new StatusListener() {
@@ -35,7 +35,7 @@ public class TweetCollector {
                         status.getPlace(),
                         status.getCreatedAt(),
                         status.getUser().getFollowersCount());
-                System.out.println(status.getText());
+                //System.out.println(status.getText());
                 parent.addTransportObject(new TransportObject(newTweet));
 
             }
