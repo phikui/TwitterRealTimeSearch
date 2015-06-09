@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import model.ConfigurationObject;
+import model.QueryReturnObject;
 import model.TransportObject;
 import model.TweetObject;
 
@@ -108,8 +109,8 @@ public class MainAppController implements Initializable {
         */
     }
     // Send Queryresults to the GUI
-    public void sendQueryResults(List<TweetObject> result){
-        tweetlist = result;
+    public static void sendQueryResults(QueryReturnObject result){
+        tweetlist = result.getResults();
     }
 
     // Convert Index String to Enum
