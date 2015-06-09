@@ -37,8 +37,6 @@ public class MainAppController implements Initializable {
     @FXML
     TextField numberOfTweets;
     @FXML
-    TextField ratio;
-    @FXML
     TextField wSignificance;
     @FXML
     TextField wSimilarity;
@@ -122,14 +120,6 @@ public class MainAppController implements Initializable {
             }
         });
 
-        ratio.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    startButtonPushed();
-                }
-            }
-        });
         wSignificance.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
