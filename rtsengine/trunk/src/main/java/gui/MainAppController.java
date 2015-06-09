@@ -1,5 +1,6 @@
 package gui;
 
+import iocontroller.IOController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -10,10 +11,15 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import model.ConfigurationObject;
+import model.TransportObject;
 import model.TweetObject;
 
 import java.net.URL;
+import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -21,6 +27,8 @@ import java.util.ResourceBundle;
  */
 public class MainAppController implements Initializable {
     final static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
+    static List<TweetObject> tweetlist;
+    IOController ioController = new IOController(1,1,false);
     @FXML
     Button start;
     @FXML
@@ -99,10 +107,23 @@ public class MainAppController implements Initializable {
         displaysTweets.addAll(tweetlist);
         */
     }
+    // Send Queryresults to the GUI
+    public void sendQueryResults(List<TweetObject> result){
+        tweetlist = result;
+    }
 
-    // Attach a listener to the index combobox so the indices get filled before anything is searched
-    private void indexChanged(ActionEvent event) {
-        ConfigurationObject.setIndexType(indexType.getSelectionModel().getSelectedItem().toString());
+    // Convert Index String to Enum
+    private ConfigurationObject.IndexTypes toIndex(String index){
+        switch (index) {
+            case "AO":
+                return ConfigurationObject.IndexTypes.APPEND_ONLY;
+            case "TPL":
+                return ConfigurationObject.IndexTypes.TRIPLE_POSTING_LIST;
+            case "LSII":
+                return ConfigurationObject.IndexTypes.LSII;
+            default:
+                return ConfigurationObject.IndexTypes.APPEND_ONLY;
+        }
     }
 
     public void initialize(URL url, ResourceBundle rsrcs) {
@@ -111,9 +132,12 @@ public class MainAppController implements Initializable {
         timestampCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
         followersCol.setCellValueFactory(new PropertyValueFactory<>("numberOfAuthorFollowers"));
         tweetTable.setItems(displaysTweets);
-
+        ConfigurationObject.setIndexType(ConfigurationObject.IndexTypes.APPEND_ONLY);
+        ioController.startAll();
+        ioController.collectTweets();
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
+
         // start button pushed
         start.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent event) {
@@ -185,6 +209,12 @@ public class MainAppController implements Initializable {
 
     }
 
+    // Attach a listener to the index combobox so the indices get filled before anything is searched
+    private void indexChanged(ActionEvent event) {
+        ConfigurationObject.setIndexType(toIndex(indexType.getSelectionModel().getSelectedItem()));
+        ioController.stopcollectingTweets();
+        ioController.collectTweets();
+    }
     private void startButtonPushed() {
         /**
          * Get all the information from the GUI
@@ -195,8 +225,8 @@ public class MainAppController implements Initializable {
         int nWSignificance = Integer.parseInt(wSignificance.getCharacters().toString());
         int nWSimilarity = Integer.parseInt(wSimilarity.getCharacters().toString());
         int nWFreshness = Integer.parseInt(wFreshness.getCharacters().toString());
-        String nIndexType = indexType.getSelectionModel().getSelectedItem().toString();
-        String queries = queryfield.getPromptText().toString();
+        ConfigurationObject.IndexTypes nIndexType = toIndex(indexType.getSelectionModel().getSelectedItem());
+        String queries = queryfield.getPromptText();
         Boolean nStream = stream.isSelected();
 
         /**
@@ -231,6 +261,8 @@ public class MainAppController implements Initializable {
         ConfigurationObject.setwSignificance(nWSignificance);
         ConfigurationObject.setwSimilarity(nWSimilarity);
 
+        TransportObject query = new TransportObject(queries, new Date(), nNumberOfTweets);
+        ioController.addTransportObject(query);
         fillTable(queries);
     }
 }
