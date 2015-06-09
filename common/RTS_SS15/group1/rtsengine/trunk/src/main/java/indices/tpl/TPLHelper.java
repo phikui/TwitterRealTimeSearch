@@ -46,7 +46,7 @@ public class TPLHelper {
             ITriplePostingList tplPostingList = tplInvertedIndex.get(termID);
 
             if(tplInvertedIndex.get(termID) == null){
-                return (float)0.0;
+                continue;
             }
 
             // Fetch posting lists for this termID

@@ -138,6 +138,14 @@ public class LSIIIndex implements IRTSIndex {
         }
 
         boolean listEmpty = false;
+
+        /*
+        // condition if all lists in all indices are traversed
+        HashMap<Integer, Boolean> listEmptyMap = new HashMap<>();
+        for (int key_index : invertedIndex3.keySet()){
+            listEmptyMap.put(key_index, false);
+        }*/
+
         // TPL/TA iteration based on LSII-paper
         while (maxThreshold > d && !listEmpty) {
 
@@ -151,6 +159,7 @@ public class LSIIIndex implements IRTSIndex {
                         upperBoundMap.put(i, newUpperBound);
                     } catch (IndexOutOfBoundsException e) {
                         listEmpty = true;
+                        //listEmptyMap.put(i, true);
                         break;
                     }
 
@@ -165,6 +174,17 @@ public class LSIIIndex implements IRTSIndex {
                 if (upperBoundMap.get(bound) > maxThreshold)
                     maxThreshold = upperBoundMap.get(bound);
             }
+
+            /*
+            // check if all lists in all indices are empty
+            for (int index : listEmptyMap.keySet()){
+                if (listEmptyMap.get(index)){
+                    listEmpty = true;
+                }else{
+                    listEmpty = false;
+                    break;
+                }
+            }*/
 
         }
 
@@ -381,7 +401,6 @@ public class LSIIIndex implements IRTSIndex {
         List<Integer> termIDs = transportObjectInsertion.getTermIDs();
 
         // Obtain significance and freshness from the transportObject
-        float significance = transportObjectInsertion.getSignificance();
         float freshness = (float) transportObjectInsertion.getTimestamp().getTime();
 
         for (int termID : termIDs) {
