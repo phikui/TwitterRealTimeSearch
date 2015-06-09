@@ -57,12 +57,21 @@ public class MainAppController implements Initializable {
     @FXML
     TextField queryfield;
 
+    public static void emptyResult(){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("No Results Found");
+        alert.setHeaderText(null);
+        alert.setContentText("Your Query did not match any Tweets in our database. Please try another one.");
+        alert.showAndWait();
+        return;
+    }
 
     // Send Queryresults to the GUI
     public static void sendQueryResults(QueryReturnObject result){
-        displaysTweets.clear();
+        if(result.getResults().isEmpty()){
+            emptyResult();
+        }
         displaysTweets.addAll(result.getResults());
-        System.out.println(result.getResults() + result.getQuery());
     }
 
     // Convert Index String to Enum
@@ -194,5 +203,6 @@ public class MainAppController implements Initializable {
         System.out.println(queries);
         TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
+        displaysTweets.clear();
     }
 }

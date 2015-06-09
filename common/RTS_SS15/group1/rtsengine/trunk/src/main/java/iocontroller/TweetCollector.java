@@ -35,7 +35,6 @@ public class TweetCollector {
                         status.getPlace(),
                         status.getCreatedAt(),
                         status.getUser().getFollowersCount());
-                System.out.println(status.getText());
                 parent.addTransportObject(new TransportObject(newTweet));
 
             }
