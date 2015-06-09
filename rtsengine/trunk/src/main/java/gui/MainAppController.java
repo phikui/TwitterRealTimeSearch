@@ -28,16 +28,12 @@ import java.util.ResourceBundle;
  * Created by Guerki on 16/5/15.
  */
 public class MainAppController implements Initializable {
-    final static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
-    IOController ioController = new IOController(1,1,false);
+    volatile static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
+    IOController ioController = new IOController();
     @FXML
     Button start;
     @FXML
-    ToggleButton stream;
-    @FXML
     ComboBox<String> indexType;
-    @FXML
-    TextField numberOfThreads;
     @FXML
     TextField numberOfTweets;
     @FXML
@@ -63,52 +59,10 @@ public class MainAppController implements Initializable {
     @FXML
     TextField queryfield;
 
-    // gets tweets from the database according to the queries and displays them in the gui
-    public static void fillTable(String queries) {
-        /*
-        displaysTweets.clear();
-        String chosenIndex = ConfigurationObject.getIndexType();
-        IRTSIndex index;
-        switch (chosenIndex){
-            case "AO": index  = new AOIIndex();
-                break;
-            case "TPL": index = new TPLIndex();
-                break;
-            case "LSII": index = new LSIIIndex();
-                break;
-            default: index  = new AOIIndex();
-                break;
-        }
 
-        TransportObject transportObjectQuery = new TransportObject(queries, new Date(), ConfigurationObject.getNumberOfTweets());
-        List<String> terms = new LinkedList<String>();
-        List<Integer> termIDs = new LinkedList<Integer>();
-
-        //split the query terms into an array of invidual terms
-        List<String> individual_queries = Arrays.asList(queries.split("\\s*,\\s*"));
-        for (String item : individual_queries){
-            terms.add(item);
-            try {
-                termIDs.add(TermDictionary.getTermID(item));
-            }
-            catch(NullPointerException e){
-                System.err.println("No Tweets matching your Queries found!");
-            }
-        }
-
-        transportObjectQuery.setTerms(terms);
-        transportObjectQuery.setTermIDs(termIDs);
-        List<Integer> tweetIdList = index.searchTweetIDs(transportObjectQuery);
-        List<TweetObject> tweetlist = new ArrayList<TweetObject>();
-        for (Integer id : tweetIdList) {
-            TweetObject tweet = TweetDictionary.getTransportObject(id).getTweetObject();
-            tweetlist.add(tweet);
-            System.out.println(tweet.getText());
-        }
-        */
-    }
     // Send Queryresults to the GUI
     public static void sendQueryResults(QueryReturnObject result){
+        displaysTweets.clear();
         displaysTweets.addAll(result.getResults());
         System.out.println(result.getResults() + result.getQuery());
     }
@@ -212,23 +166,20 @@ public class MainAppController implements Initializable {
 
     // Attach a listener to the index combobox so the indices get filled before anything is searched
     private void indexChanged(ActionEvent event) {
+        //ioController.stopcollectingTweets();
         ConfigurationObject.setIndexType(toIndex(indexType.getSelectionModel().getSelectedItem()));
-        ioController.stopcollectingTweets();
-        ioController.collectTweets();
+        //ioController.collectTweets();
     }
     private void startButtonPushed() {
         /**
          * Get all the information from the GUI
          */
-        int nNumberOfThreads = Integer.parseInt(numberOfThreads.getCharacters().toString());
         int nNumberOfTweets = Integer.parseInt(numberOfTweets.getCharacters().toString());
-        int nRatio = Integer.parseInt(ratio.getCharacters().toString());
         int nWSignificance = Integer.parseInt(wSignificance.getCharacters().toString());
         int nWSimilarity = Integer.parseInt(wSimilarity.getCharacters().toString());
         int nWFreshness = Integer.parseInt(wFreshness.getCharacters().toString());
         ConfigurationObject.IndexTypes nIndexType = toIndex(indexType.getSelectionModel().getSelectedItem());
         String queries = queryfield.getText();
-        Boolean nStream = stream.isSelected();
 
         /**
          * Check if data is valid
@@ -241,29 +192,24 @@ public class MainAppController implements Initializable {
             alert.showAndWait();
             return;
         }
-        if (nRatio < 0 || nRatio > 100){
+        if (nNumberOfTweets < 1){
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Wrong Ratio");
+            alert.setTitle("Number of Tweets to small");
             alert.setHeaderText(null);
-            alert.setContentText("The Ratio must be between 0% and 100%.");
+            alert.setContentText("The Number of Tweets bigger than 0.");
             alert.showAndWait();
             return;
         }
-
         /**
          * Save all the parameters into the ConfigurationObject
          */
         ConfigurationObject.setIndexType(nIndexType);
-        ConfigurationObject.setNumberOfThreads(nNumberOfThreads);
         ConfigurationObject.setNumberOfTweets(nNumberOfTweets);
-        ConfigurationObject.setRatio(nRatio);
-        ConfigurationObject.setStream(nStream);
         ConfigurationObject.setwFreshness(nWFreshness);
         ConfigurationObject.setwSignificance(nWSignificance);
         ConfigurationObject.setwSimilarity(nWSimilarity);
         System.out.println(queries);
         TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
-        fillTable(queries);
     }
 }
