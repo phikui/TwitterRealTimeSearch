@@ -121,14 +121,7 @@ public class MainAppController implements Initializable {
                 }
             }
         });
-        numberOfThreads.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    startButtonPushed();
-                }
-            }
-        });
+
         ratio.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent keyEvent) {
