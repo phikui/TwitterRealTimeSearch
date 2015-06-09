@@ -24,6 +24,11 @@ public class LSIIHelper {
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
 
         for (int termID : termIDsInQuery) {
+
+            if(AOInvertedIndex.get(termID) == null){
+                continue;
+            }
+
             Iterator<IPostingListElement> AOIterator = postingListIteratorMap.get(termID);
 
             // Create iterator and put into postingListIteratorMap if non-existent
@@ -153,7 +158,6 @@ public class LSIIHelper {
 
             // in case if the new created index is I_1, we first generate the TPL structure, otherwise just merge as both are TPL structures
             if (newIndex == 1) {
-                System.out.println(newIndex + "=1 new");
                 ITriplePostingList triplePostingList = new TriplePostingList(termID);
                 triplePostingList = createMissingLists(termID, transportObject, triplePostingList, index_zero);
 
@@ -161,11 +165,9 @@ public class LSIIHelper {
                 invertedIndex.get(newIndex).put(termID, shadowIndex);
 
                 // cleanup
-                System.out.println("clearNew = 1");
                 index_zero.get(termID).clear();
 
             } else {
-                System.out.println(newIndex + ">1 new");
                 ITriplePostingList shadowIndex = HelperFunctions.mergeTriplePostingLists(invertedIndex.get(newIndex - 1).get(termID), invertedIndex.get(newIndex).get(termID), termID);
                 invertedIndex.get(newIndex).put(termID, shadowIndex);
 
