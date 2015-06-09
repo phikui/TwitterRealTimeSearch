@@ -1,5 +1,6 @@
 package iocontroller;
 
+import gui.MainAppController;
 import model.QueryReturnObject;
 import model.TweetObject;
 
@@ -14,7 +15,7 @@ public class OutputToGUIThread extends Thread {
     private volatile boolean isTerminated = false;
 
     public OutputToGUIThread(IOController parent) {
-        this.parent = parent;
+        OutputToGUIThread.parent = parent;
     }
 
     public void run() {
@@ -29,7 +30,7 @@ public class OutputToGUIThread extends Thread {
                     if (next.getResults().isEmpty()) {
                         System.out.println("no result");
                     }
-                    //TODO sent to GUI
+                    MainAppController.sendQueryResults(next);
                 } else {
                     Thread.sleep(500);
                 }

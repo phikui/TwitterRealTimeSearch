@@ -17,6 +17,8 @@ public class IndexDispatcher {
     private static final TPLIndex tpl_index = new TPLIndex();
     private static final LSIIIndex lsii_index = new LSIIIndex();
 
+    //TODO add index enum
+
     public static List<Integer> searchTweetIDs(TransportObject transportObjectQuery) {
         return getActiveIndex().searchTweetIDs(transportObjectQuery);
     }
