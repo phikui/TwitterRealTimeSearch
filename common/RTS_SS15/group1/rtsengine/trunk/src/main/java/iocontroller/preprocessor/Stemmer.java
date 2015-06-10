@@ -20,8 +20,8 @@ public class Stemmer {
     // private static volatile StanfordCoreNLP pipeline;
 
     protected StanfordCoreNLP pipeline;
-    public Stemmer()
-    {
+
+    public Stemmer() {
         // Create StanfordCoreNLP object properties, with POS tagging(required for lemmatization), and lemmatization
         Properties props;
         props = new Properties();
@@ -30,21 +30,23 @@ public class Stemmer {
         this.pipeline = new StanfordCoreNLP(props);
     }
 
-    public static void init() {
 
-    }
 
-    //TODO is to remove special symbols
     public static List<String> trivial_stem(String text) {
         List<String> terms = new LinkedList<String>();
 
         StringTokenizer stringTokenizer = new StringTokenizer(text);
         while (stringTokenizer.hasMoreTokens()) {
             String token = stringTokenizer.nextToken();
+            if (isInvalidTerm(token))
             terms.add(token);
         }
 
         return terms;
+    }
+
+    public static boolean isInvalidTerm(String term) {
+        return term.length() <= 2 || term.startsWith("http") || term.startsWith("@");
     }
 
     public  List<String> stem(String text) {
@@ -61,7 +63,7 @@ public class Stemmer {
             // Iterate over all tokens in a sentence
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
-                if (lemma.length() <= 2 || lemma.startsWith("http") || lemma.startsWith("@")) {
+                if (isInvalidTerm(lemma)) {
                     continue;
                 }
 
@@ -72,6 +74,4 @@ public class Stemmer {
 
         return wordList;
     }
-
-
 }
