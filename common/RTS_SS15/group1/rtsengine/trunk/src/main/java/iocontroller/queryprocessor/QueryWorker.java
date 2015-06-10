@@ -41,6 +41,7 @@ public class QueryWorker implements Callable<QueryReturnObject> {
         }
 
 
+        System.out.println("done working on: " + query.getText());
         return new QueryReturnObject(query.getText(), results);
     }
 }

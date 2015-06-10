@@ -87,7 +87,7 @@ public class WriterMainThread extends Thread {
                 //When output queue empty wait a bit
                 //System.out.println("output queue empty");
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
