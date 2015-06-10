@@ -4,7 +4,7 @@ import iocontroller.preprocessor.PreprocessorRawObject;
 import model.QueryReturnObject;
 import model.TransportObject;
 
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -12,9 +12,9 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by phil on 16.05.15.
  */
 public class QueueContainer {
-    private final Queue<PreprocessorRawObject> preProcessorQueue;
-    private final Queue<Future<TransportObject>> writerQueue;
-    private final Queue<Future<QueryReturnObject>> queryOutputQueue;
+    private final BlockingQueue<PreprocessorRawObject> preProcessorQueue;
+    private final BlockingQueue<Future<TransportObject>> writerQueue;
+    private final BlockingQueue<Future<QueryReturnObject>> queryOutputQueue;
 
     public QueueContainer() {
         preProcessorQueue = new LinkedBlockingQueue<>();
@@ -22,15 +22,15 @@ public class QueueContainer {
         queryOutputQueue = new LinkedBlockingQueue<>();
     }
 
-    public Queue<Future<TransportObject>> getWriterQueue() {
+    public BlockingQueue<Future<TransportObject>> getWriterQueue() {
         return writerQueue;
     }
 
-    public Queue<PreprocessorRawObject> getPreProcessorQueue() {
+    public BlockingQueue<PreprocessorRawObject> getPreProcessorQueue() {
         return preProcessorQueue;
     }
 
-    public Queue<Future<QueryReturnObject>> getQueryOutputQueue() {
+    public BlockingQueue<Future<QueryReturnObject>> getQueryOutputQueue() {
         return queryOutputQueue;
     }
 
