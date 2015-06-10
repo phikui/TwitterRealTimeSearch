@@ -23,15 +23,14 @@ import static java.lang.Runtime.getRuntime;
  *
  */
 public class IOController {
-    public final static boolean useStandfordStemmer = true;
+
     public static final ThreadLocal<Stemmer> stemmer = new ThreadLocal<Stemmer>() {
         @Override
         public Stemmer initialValue() {
             return new Stemmer();
         }
     };
-
-
+    public static boolean useStandfordStemmer = true;
     //protected static final Stemmer stemmer = new Stemmer();
     protected final QueueContainer queueContainer;
     private final Preprocessor preProcessor;
@@ -84,6 +83,19 @@ public class IOController {
         this(getRuntime().availableProcessors(), 1, false);
     }
 
+    public IOController(boolean useStandfordStemmer) {
+        this(getRuntime().availableProcessors(), 1, false);
+        IOController.useStandfordStemmer = useStandfordStemmer;
+    }
+
+    public static boolean isUseStandfordStemmer() {
+        return useStandfordStemmer;
+    }
+
+    public static void setUseStandfordStemmer(boolean useStandfordStemmer) {
+        IOController.useStandfordStemmer = useStandfordStemmer;
+    }
+
     /**
      * Start all threads
      */
@@ -91,7 +103,6 @@ public class IOController {
         writer.start();
         guiThread.start();
     }
-
 
     /**
      * Stop all running threads, it will finish all current preprocessing/writing and queryprocessing
@@ -105,7 +116,6 @@ public class IOController {
         tweetcollector.stopCollecting();
     }
 
-
     public void collectTweets() {
         tweetcollector.startCollecting();
     }
@@ -114,11 +124,9 @@ public class IOController {
         tweetcollector.stopCollecting();
     }
 
-
     public void stopWriter() {
         writer.terminate();
     }
-
 
     /**
      * Calls the join method of associated threads
@@ -146,7 +154,6 @@ public class IOController {
         return queueContainer.getWriterQueue().size() + queueContainer.getQueryOutputQueue().size();
     }
 
-
     public int sizeWriterQueue() {
         return queueContainer.getWriterQueue().size();
     }
@@ -158,7 +165,6 @@ public class IOController {
     public Queue<Future<QueryReturnObject>> getOutputQueue() {
         return queueContainer.getQueryOutputQueue();
     }
-
 
     public boolean hasNextOutputElement() {
         return queueContainer.getQueryOutputQueue().size() > 0;

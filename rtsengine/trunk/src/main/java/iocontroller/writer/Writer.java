@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by phil on 16.05.15.
@@ -47,12 +46,8 @@ public class Writer extends Thread {
                 try {
                     //Get TransportObject out of the queue
                     TransportObject x;
-                    x = incomingQueue.poll(2, TimeUnit.SECONDS).get();
+                    x = incomingQueue.take().get();
 
-                    //check for time out
-                    if (x == null) {
-                        continue;
-                    }
 
                     if (x.isQuery()) {
                         //If it is a query dispatch to query processor
