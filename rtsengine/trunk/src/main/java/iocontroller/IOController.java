@@ -47,7 +47,6 @@ public class IOController {
         tweetcollector = new TweetCollector(this);
 
         //set threads to deamon
-        preProcessor.setDaemon(true);
         writer.setDaemon(true);
         guiThread.setDaemon(true);
     }
@@ -61,7 +60,6 @@ public class IOController {
     }
 
     public void startAll() {
-        preProcessor.start();
         writer.start();
         guiThread.start();
     }
@@ -95,31 +93,24 @@ public class IOController {
     }
 
     public void waitForTermination() throws InterruptedException {
-        preProcessor.join();
         writer.join();
         guiThread.join();
     }
 
-    private void addRawObject(PreprocessorRawObject newRaw) {
-        queueContainer.getPreProcessorQueue().add(newRaw);
-    }
 
     public void addTransportObject(TransportObject transportObject) {
         PreprocessorRawObject rawObject = new PreprocessorRawObject(transportObject);
-        this.addRawObject(rawObject);
+        preProcessor.addElement(rawObject);
     }
 
     public boolean hasUnprocessedItems() {
-        return !(queueContainer.getPreProcessorQueue().isEmpty() && queueContainer.getWriterQueue().isEmpty());
+        return !(queueContainer.getWriterQueue().isEmpty());
     }
 
     public int numUnprocessedItems() {
-        return queueContainer.getWriterQueue().size() + queueContainer.getPreProcessorQueue().size() + queueContainer.getQueryOutputQueue().size();
+        return queueContainer.getWriterQueue().size() + queueContainer.getQueryOutputQueue().size();
     }
 
-    public int sizePreProcessorQueue() {
-        return queueContainer.getPreProcessorQueue().size();
-    }
 
     public int sizeWriterQueue() {
         return queueContainer.getWriterQueue().size();

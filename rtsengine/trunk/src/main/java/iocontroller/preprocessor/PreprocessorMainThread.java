@@ -10,16 +10,14 @@ import static java.lang.Runtime.getRuntime;
 /**
  * Created by phil on 16.05.15.
  */
-public class PreprocessorMainThread extends Thread {
+public class PreprocessorMainThread {
 
     private final ExecutorService preprocessors;
-    private final BlockingQueue<PreprocessorRawObject> incomingQueue;
     private final BlockingQueue<Future<TransportObject>> outputQueue;
     private volatile boolean isTerminated = false;
 
     public PreprocessorMainThread(QueueContainer queueContainer, int num_preprocessors) {
         preprocessors = Executors.newFixedThreadPool(num_preprocessors);
-        incomingQueue = queueContainer.getPreProcessorQueue();
         outputQueue = queueContainer.getWriterQueue();
     }
 
@@ -29,15 +27,18 @@ public class PreprocessorMainThread extends Thread {
         ThreadPoolExecutor x = new ThreadPoolExecutor(0, maxPrepreprocessors, timeOutInSeconds, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
         x.allowCoreThreadTimeOut(true);
         preprocessors = x;
-        incomingQueue = queueContainer.getPreProcessorQueue();
         outputQueue = queueContainer.getWriterQueue();
     }
 
     public PreprocessorMainThread(QueueContainer queueContainer) {
         preprocessors = Executors.newFixedThreadPool(getRuntime().availableProcessors());
-        incomingQueue = queueContainer.getPreProcessorQueue();
         outputQueue = queueContainer.getWriterQueue();
 
+    }
+
+    public void addElement(PreprocessorRawObject e) {
+        Future<TransportObject> output = preprocessors.submit(e);
+        outputQueue.add(output);
     }
 
     public void terminate() {
@@ -45,17 +46,4 @@ public class PreprocessorMainThread extends Thread {
     }
 
 
-    public void run() {
-        System.out.println("Preprocessor has started");
-        while (!isTerminated) {
-            try {
-                PreprocessorRawObject next = incomingQueue.take();
-                Future<TransportObject> output = preprocessors.submit(next);
-                outputQueue.add(output);
-            } catch (Exception e) {
-
-            }
-        }
-        System.out.println("Preprocessor has stopped");
-    }
 }
