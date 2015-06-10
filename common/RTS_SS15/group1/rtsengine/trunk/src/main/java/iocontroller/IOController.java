@@ -1,10 +1,10 @@
 package iocontroller;
 
-import iocontroller.preprocessor.PreprocessorMainThread;
+import iocontroller.preprocessor.Preprocessor;
 import iocontroller.preprocessor.PreprocessorRawObject;
 import iocontroller.preprocessor.Stemmer;
-import iocontroller.queryprocessor.QueryProcessorMainThread;
-import iocontroller.writer.WriterMainThread;
+import iocontroller.queryprocessor.QueryProcessor;
+import iocontroller.writer.Writer;
 import model.QueryReturnObject;
 import model.TransportObject;
 
@@ -34,9 +34,9 @@ public class IOController {
 
     //protected static final Stemmer stemmer = new Stemmer();
     protected final QueueContainer queueContainer;
-    private final PreprocessorMainThread preProcessor;
-    private final WriterMainThread writer;
-    private final QueryProcessorMainThread queryProcessor;
+    private final Preprocessor preProcessor;
+    private final Writer writer;
+    private final QueryProcessor queryProcessor;
     private final OutputToGUIThread guiThread;
     private final TweetCollector tweetcollector;
 
@@ -52,9 +52,9 @@ public class IOController {
      */
     public IOController(int numPreProcessors, int numQueryProcessors, boolean writerOutput) {
         queueContainer = new QueueContainer();
-        preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
-        writer = new WriterMainThread(queueContainer, writerOutput);
-        queryProcessor = new QueryProcessorMainThread(numQueryProcessors, queueContainer.getQueryOutputQueue());
+        preProcessor = new Preprocessor(queueContainer, numPreProcessors);
+        writer = new Writer(queueContainer, writerOutput);
+        queryProcessor = new QueryProcessor(numQueryProcessors, queueContainer.getQueryOutputQueue());
         writer.setQueryProcessor(queryProcessor);
         guiThread = new OutputToGUIThread(this);
         tweetcollector = new TweetCollector(this);
@@ -101,7 +101,6 @@ public class IOController {
             System.out.println("Warning: there are unprocessed items");
         }
         writer.terminate();
-        preProcessor.terminate();
         guiThread.terminate();
         tweetcollector.stopCollecting();
     }
@@ -115,9 +114,6 @@ public class IOController {
         tweetcollector.stopCollecting();
     }
 
-    public void stopPreprocessor() {
-        preProcessor.terminate();
-    }
 
     public void stopWriter() {
         writer.terminate();

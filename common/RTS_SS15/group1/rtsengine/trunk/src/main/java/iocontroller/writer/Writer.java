@@ -2,7 +2,7 @@ package iocontroller.writer;
 
 import indices.IndexDispatcher;
 import iocontroller.QueueContainer;
-import iocontroller.queryprocessor.QueryProcessorMainThread;
+import iocontroller.queryprocessor.QueryProcessor;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
@@ -16,23 +16,23 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by phil on 16.05.15.
  */
-public class WriterMainThread extends Thread {
+public class Writer extends Thread {
     private final boolean output;
     private final BlockingQueue<Future<TransportObject>> incomingQueue;
     private volatile boolean isTerminated = false;
-    private QueryProcessorMainThread queryProcessor;
+    private QueryProcessor queryProcessor;
 
-    public WriterMainThread(QueueContainer queueContainer) {
+    public Writer(QueueContainer queueContainer) {
         incomingQueue = queueContainer.getWriterQueue();
         output = false;
     }
 
-    public WriterMainThread(QueueContainer queueContainer, boolean output) {
+    public Writer(QueueContainer queueContainer, boolean output) {
         incomingQueue = queueContainer.getWriterQueue();
         this.output = output;
     }
 
-    public void setQueryProcessor(QueryProcessorMainThread processor) {
+    public void setQueryProcessor(QueryProcessor processor) {
         queryProcessor = processor;
     }
 
