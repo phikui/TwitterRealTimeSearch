@@ -12,7 +12,7 @@ import java.util.concurrent.Future;
 /**
  * Created by phil on 16.05.15.
  */
-public class QueryProcessorMainThread {
+public class QueryProcessor {
 
     //The writer will dispatch queries to here
 
@@ -20,12 +20,12 @@ public class QueryProcessorMainThread {
     private final Queue<Future<QueryReturnObject>> queryOutputQueue;
 
 
-    public QueryProcessorMainThread(int numQueryProcessors, Queue<Future<QueryReturnObject>> queryQueue) {
+    public QueryProcessor(int numQueryProcessors, Queue<Future<QueryReturnObject>> queryQueue) {
         queryProcessors = Executors.newFixedThreadPool(numQueryProcessors);
         queryOutputQueue = queryQueue;
     }
 
-    public QueryProcessorMainThread(Queue<Future<QueryReturnObject>> queryQueue) {
+    public QueryProcessor(Queue<Future<QueryReturnObject>> queryQueue) {
         queryProcessors = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
         queryOutputQueue = queryQueue;
     }
