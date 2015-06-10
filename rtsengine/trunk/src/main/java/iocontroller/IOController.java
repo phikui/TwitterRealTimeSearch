@@ -39,7 +39,6 @@ public class IOController {
     private final OutputToGUIThread guiThread;
     private final TweetCollector tweetcollector;
 
-    private String message;
 
 
     /**
@@ -174,19 +173,5 @@ public class IOController {
         return queueContainer.getQueryOutputQueue().take().get();
     }
 
-    // Message Passing
-   /* public synchronized void putMessage(){
-        message = "empty";
-        notify();
-    }
-    public synchronized String getMessage() throws InterruptedException{
-        notify();
-        while(message.isEmpty()){
-            wait();
-        }
-        String result = message;
-        message = "";
-        return result;
-    }*/
 
 }

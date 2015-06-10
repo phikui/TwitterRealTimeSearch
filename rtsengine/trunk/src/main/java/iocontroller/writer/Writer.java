@@ -41,7 +41,6 @@ public class Writer extends Thread {
 
 
     public void run() {
-        System.out.println("Writer has started");
         while (!isTerminated) {
                 try {
                     //Get TransportObject out of the queue
@@ -86,6 +85,5 @@ public class Writer extends Thread {
 
 
         }
-        System.out.println("Writer has stopped");
     }
 }

@@ -7,6 +7,7 @@ import twitter4j.GeoLocation;
 import twitter4j.Place;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -17,16 +18,9 @@ public class TweetObject implements Comparable, Serializable {
     private SimpleStringProperty text;
     private SimpleObjectProperty<Date> timestamp;
     private SimpleFloatProperty numberOfAuthorFollowers;
-
-    public GeoLocation getGeoLocation() { return geoLocation; }
-
-    public Place getPlace() { return place; }
-
     private GeoLocation geoLocation;
     private Place place;
-
     private TransportObject transportObject;
-
     public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers) {
         this.username =  new SimpleStringProperty(username);
         this.text = new SimpleStringProperty(text);
@@ -34,6 +28,19 @@ public class TweetObject implements Comparable, Serializable {
         this.place = place;
         this.timestamp = new SimpleObjectProperty<Date>(timestamp);
         this.numberOfAuthorFollowers = new SimpleFloatProperty(numberOfAuthorFollowers);
+    }
+
+    //Constructur for empty dummy object
+    public TweetObject(String query) {
+        this("null", "No results for query " + query + " found.", null, null, Calendar.getInstance().getTime(), 0);
+    }
+
+    public GeoLocation getGeoLocation() {
+        return geoLocation;
+    }
+
+    public Place getPlace() {
+        return place;
     }
 
     public String getUsername() {

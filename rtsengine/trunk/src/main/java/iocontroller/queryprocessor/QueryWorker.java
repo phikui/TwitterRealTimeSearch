@@ -29,7 +29,6 @@ public class QueryWorker implements Callable<QueryReturnObject> {
     }
 
     public QueryReturnObject call() throws Exception {
-        System.out.println("will begin query working on: " + query.getText());
         List<Integer> resultsIndex = IndexDispatcher.searchTweetIDs(query);
 
         // I don't know what the hell this is but intelliJ suggested doing this instead of the other code
@@ -40,8 +39,12 @@ public class QueryWorker implements Callable<QueryReturnObject> {
             results.add(TweetDictionary.getTransportObject(index).getTweetObject());
         }
 
+        //if results are empty create dummy object
+        if (results.isEmpty()) {
+            TweetObject dummy = new TweetObject(query.getText());
+            results.add(dummy);
+        }
 
-        System.out.println("done working on: " + query.getText());
         return new QueryReturnObject(query.getText(), results);
     }
 }
