@@ -2,10 +2,7 @@ package iocontroller.preprocessor;
 
 import iocontroller.IOController;
 import model.TransportObject;
-import model.TweetObject;
-import sun.plugin2.message.transport.Transport;
 
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -24,9 +21,6 @@ public class PreprocessorRawObject implements Callable<TransportObject> {
 
     //Code for prepossessing
     public TransportObject call() throws Exception {
-        //TODO change trivial stem
-        //distinguish between query and tweet
-
         List<String> stems;
         if (IOController.useStandfordStemmer) {
             stems = IOController.stemmer.get().stem(transportObject.getText());

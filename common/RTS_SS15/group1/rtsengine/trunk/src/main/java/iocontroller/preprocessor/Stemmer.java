@@ -38,8 +38,10 @@ public class Stemmer {
         StringTokenizer stringTokenizer = new StringTokenizer(text);
         while (stringTokenizer.hasMoreTokens()) {
             String token = stringTokenizer.nextToken();
-            if (isInvalidTerm(token))
-            terms.add(token);
+            if (isInvalidTerm(token)) {
+                continue;
+            }
+            terms.add(token.toLowerCase());
         }
 
         return terms;
