@@ -1,6 +1,7 @@
 package gui;
 
 import iocontroller.IOController;
+import iocontroller.OutputToGUIThread;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -68,9 +69,6 @@ public class MainAppController implements Initializable {
 
     // Send Queryresults to the GUI
     public static void sendQueryResults(QueryReturnObject result){
-        if(result.getResults().isEmpty()){
-            emptyResult();
-        }
         displaysTweets.addAll(result.getResults());
     }
 
@@ -158,9 +156,7 @@ public class MainAppController implements Initializable {
 
     // Attach a listener to the index combobox so the indices get filled before anything is searched
     private void indexChanged(ActionEvent event) {
-        //ioController.stopcollectingTweets();
         ConfigurationObject.setIndexType(toIndex(indexType.getSelectionModel().getSelectedItem()));
-        //ioController.collectTweets();
     }
     private void startButtonPushed() {
         /**
@@ -204,5 +200,14 @@ public class MainAppController implements Initializable {
         TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
         displaysTweets.clear();
+       /* try {
+            while (true) {
+                String message = ioController.getMessage();
+                System.out.println("Got message: " + message);
+                emptyResult();
+                Thread.sleep(2000);
+            }
+        } catch (InterruptedException e) {
+        }*/
     }
 }
