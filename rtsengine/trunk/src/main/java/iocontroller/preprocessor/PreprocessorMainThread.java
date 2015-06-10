@@ -48,7 +48,7 @@ public class PreprocessorMainThread extends Thread {
 
     public void run() {
         System.out.println("Preprocessor has started");
-        while (!isTerminated) {
+        while (!isTerminated) { //TODO use take from blocking queue
             if (!incomingQueue.isEmpty()) {
                 PreprocessorRawObject next = incomingQueue.remove();
                 Future<TransportObject> output = preprocessors.submit(next);
@@ -57,7 +57,8 @@ public class PreprocessorMainThread extends Thread {
                 //When incoming queue empty wait a bit
                 //System.out.println("Incoming queue empty");
                 try {
-                    Thread.sleep(3000);
+                    //TODO check if incoming queue gets empty
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -28,7 +28,7 @@ public class OutputToGUIThread extends Thread {
                         parent.putMessage();
                     }*/
                 } else {
-                    Thread.sleep(500);
+                    Thread.sleep(10);
                 }
 
             } catch (ExecutionException e) {
