@@ -35,6 +35,8 @@ public class IOController {
     private final OutputToGUIThread guiThread;
     private final TweetCollector tweetcollector;
 
+    private String message;
+
     public IOController(int numPreProcessors, int numQueryProcessors, boolean writerOutput) {
         queueContainer = new QueueContainer();
         preProcessor = new PreprocessorMainThread(queueContainer, numPreProcessors);
@@ -140,5 +142,19 @@ public class IOController {
         return queueContainer.getQueryOutputQueue().remove().get();
     }
 
+    // Message Passing
+   /* public synchronized void putMessage(){
+        message = "empty";
+        notify();
+    }
+    public synchronized String getMessage() throws InterruptedException{
+        notify();
+        while(message.isEmpty()){
+            wait();
+        }
+        String result = message;
+        message = "";
+        return result;
+    }*/
 
 }

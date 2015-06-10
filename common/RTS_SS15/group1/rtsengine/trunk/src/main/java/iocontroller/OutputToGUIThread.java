@@ -24,6 +24,9 @@ public class OutputToGUIThread extends Thread {
                 if (parent.hasNextOutputElement()) {
                     QueryReturnObject next = parent.getNextOutputElement();
                     MainAppController.sendQueryResults(next);
+                   /* if(next.getResults().isEmpty()) {
+                        parent.putMessage();
+                    }*/
                 } else {
                     Thread.sleep(500);
                 }
