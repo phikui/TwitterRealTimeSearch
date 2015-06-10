@@ -9,7 +9,7 @@ import model.TweetDictionary;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
 
 /**
@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
  */
 public class WriterMainThread extends Thread {
     private final boolean output;
-    private final Queue<Future<TransportObject>> incomingQueue;
+    private final BlockingQueue<Future<TransportObject>> incomingQueue;
     private volatile boolean isTerminated = false;
     private QueryProcessorMainThread queryProcessor;
 
@@ -43,11 +43,10 @@ public class WriterMainThread extends Thread {
     public void run() {
         System.out.println("Writer has started");
         while (!isTerminated) {
-            if (!incomingQueue.isEmpty()) {
                 try {
                     //Get TransportObject out of the queue
                     TransportObject x;
-                    x = incomingQueue.remove().get();
+                    x = incomingQueue.take().get();
                     if (x.isQuery()) {
                         //If it is a query dispatch to query processor
                         List<Integer> termIds = new ArrayList<Integer>();
@@ -83,15 +82,7 @@ public class WriterMainThread extends Thread {
                     System.out.println("Could not get element from writer queue");
                 }
 
-            } else {
-                //When output queue empty wait a bit
-                //System.out.println("output queue empty");
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+
         }
         System.out.println("Writer has stopped");
     }

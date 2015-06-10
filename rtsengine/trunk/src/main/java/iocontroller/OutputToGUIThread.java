@@ -21,15 +21,13 @@ public class OutputToGUIThread extends Thread {
         System.out.println("QueryToGUI Thread has started");
         while (!isTerminated) {
             try {
-                if (parent.hasNextOutputElement()) {
+                System.out.println("sending query");
                     QueryReturnObject next = parent.getNextOutputElement();
                     MainAppController.sendQueryResults(next);
+                System.out.println("sending done");
                    /* if(next.getResults().isEmpty()) {
                         parent.putMessage();
                     }*/
-                } else {
-                    Thread.sleep(10);
-                }
 
             } catch (ExecutionException e) {
                 e.printStackTrace();

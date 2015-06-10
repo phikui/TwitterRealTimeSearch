@@ -57,7 +57,7 @@ public class IOController {
     }
 
     public IOController() {
-        this(getRuntime().availableProcessors(), getRuntime().availableProcessors(), false);
+        this(getRuntime().availableProcessors(), 1, false);
     }
 
     public void startAll() {
@@ -139,7 +139,7 @@ public class IOController {
     }
 
     public QueryReturnObject getNextOutputElement() throws ExecutionException, InterruptedException {
-        return queueContainer.getQueryOutputQueue().remove().get();
+        return queueContainer.getQueryOutputQueue().take().get();
     }
 
     // Message Passing

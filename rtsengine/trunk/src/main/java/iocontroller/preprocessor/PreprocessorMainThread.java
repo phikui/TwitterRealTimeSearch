@@ -3,7 +3,6 @@ package iocontroller.preprocessor;
 import iocontroller.QueueContainer;
 import model.TransportObject;
 
-import java.util.Queue;
 import java.util.concurrent.*;
 
 import static java.lang.Runtime.getRuntime;
@@ -14,8 +13,8 @@ import static java.lang.Runtime.getRuntime;
 public class PreprocessorMainThread extends Thread {
 
     private final ExecutorService preprocessors;
-    private final Queue<PreprocessorRawObject> incomingQueue;
-    private final Queue<Future<TransportObject>> outputQueue;
+    private final BlockingQueue<PreprocessorRawObject> incomingQueue;
+    private final BlockingQueue<Future<TransportObject>> outputQueue;
     private volatile boolean isTerminated = false;
 
     public PreprocessorMainThread(QueueContainer queueContainer, int num_preprocessors) {
@@ -48,20 +47,13 @@ public class PreprocessorMainThread extends Thread {
 
     public void run() {
         System.out.println("Preprocessor has started");
-        while (!isTerminated) { //TODO use take from blocking queue
-            if (!incomingQueue.isEmpty()) {
-                PreprocessorRawObject next = incomingQueue.remove();
+        while (!isTerminated) {
+            try {
+                PreprocessorRawObject next = incomingQueue.take();
                 Future<TransportObject> output = preprocessors.submit(next);
                 outputQueue.add(output);
-            } else {
-                //When incoming queue empty wait a bit
-                //System.out.println("Incoming queue empty");
-                try {
-                    //TODO check if incoming queue gets empty
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+
             }
         }
         System.out.println("Preprocessor has stopped");
