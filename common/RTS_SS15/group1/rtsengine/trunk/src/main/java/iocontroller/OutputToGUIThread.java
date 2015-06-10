@@ -18,16 +18,12 @@ public class OutputToGUIThread extends Thread {
     }
 
     public void run() {
-        System.out.println("QueryToGUI Thread has started");
         while (!isTerminated) {
             try {
-                System.out.println("sending query");
-                    QueryReturnObject next = parent.getNextOutputElement();
-                    MainAppController.sendQueryResults(next);
-                System.out.println("sending done");
-                   /* if(next.getResults().isEmpty()) {
-                        parent.putMessage();
-                    }*/
+
+                QueryReturnObject next = parent.getNextOutputElement();
+                MainAppController.sendQueryResults(next);
+
 
             } catch (ExecutionException e) {
                 e.printStackTrace();
