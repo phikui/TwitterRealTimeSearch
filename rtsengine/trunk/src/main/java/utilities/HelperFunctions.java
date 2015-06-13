@@ -20,7 +20,7 @@ public class HelperFunctions {
     private final static float THREE_DAYS = 259200000;
     private final static float ONE_WEEK = 604800000;
 
-    private final static int MAX_FOLLOWER = 10000000;
+    private final static float MAX_FOLLOWER = 10000000;
 
 
     /**
@@ -32,6 +32,7 @@ public class HelperFunctions {
      * @return
      */
     public static float calculateSignificance(TweetObject tweetObject) {
+
         return (tweetObject.getNumberOfAuthorFollowers() / MAX_FOLLOWER);
     }
 
@@ -145,57 +146,6 @@ public class HelperFunctions {
         return f;
     }
 
-    /**
-     * takes the previous and next index and merges them in a sorted fashion
-     * called by LSII
-     *
-     * @param prevIndex
-     * @param nextIndex
-     * @return
-     */
-    public static float[] mergeSortedIndices(float[] prevIndex, float[] nextIndex) {
-        int prevIterator = 0;
-        int nextIterator = 0;
-
-        // TODO probably need a null check here for the empty index
-        // if array empty/null then just copy prevIndex to nextIndex else do the regular merge
-
-        float[] mergedArray = new float[nextIndex.length];
-        int mergedIterator = 0;
-
-        // get greater element and insert it into mergedArray
-        while ((prevIterator < prevIndex.length) && (nextIterator < nextIndex.length)) {
-            if (prevIndex[prevIterator] < nextIndex[nextIterator])
-                mergedArray[mergedIterator++] = prevIndex[prevIterator++];
-            else
-                mergedArray[mergedIterator++] = nextIndex[nextIterator++];
-        }
-
-        // add remaining elements to mergedArray
-        while (prevIterator < prevIndex.length)
-            mergedArray[mergedIterator++] = prevIndex[prevIterator++];
-
-        while (nextIterator < nextIndex.length)
-            mergedArray[mergedIterator++] = nextIndex[nextIterator];
-
-        return mergedArray;
-    }
-
-    public static <T extends Comparable<T>> int insertSorted(final List<T> list, final T item) {
-        final int insertAt;
-
-        // The index of the search key, if it is contained in the list; otherwise, (-(insertion point) - 1).
-        final int index = Collections.binarySearch(list, item);
-
-        if (index < 0) {
-            insertAt = -(index + 1);
-        } else {
-            insertAt = index + 1;
-        }
-
-        list.add(insertAt, item);
-        return insertAt;
-    }
 
     public static ITriplePostingList mergeTriplePostingLists(ITriplePostingList listA, ITriplePostingList listB, int termID) {
         ITriplePostingList resultList = new TriplePostingList(termID);
@@ -207,46 +157,6 @@ public class HelperFunctions {
         return resultList;
     }
 
-
-    public static IPostingList mergeSinglePostingLists2(IPostingList listA, IPostingList listB) {
-        IPostingList resultList = new PostingList();
-
-        Iterator<IPostingListElement> listAIterator = listA.iterator();
-        Iterator<IPostingListElement> listBIterator = listB.iterator();
-        if (listAIterator.hasNext() && listBIterator.hasNext()) {
-
-            IPostingListElement listAElement = listAIterator.next();
-            IPostingListElement listBElement = listBIterator.next();
-
-            // both lists have elements
-            while (listAIterator.hasNext() && listBIterator.hasNext()) {
-
-                if (listAElement.getSortKey() >= listBElement.getSortKey()) {
-                    resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
-                    listAIterator.next();
-                } else {
-                    resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
-                    listBIterator.next();
-                }
-
-            }
-        } else {
-            IPostingListElement listAElement = listAIterator.next();
-            // list B has no more elements, just append list A
-            while (listAIterator.hasNext() && !listBIterator.hasNext()) {
-                resultList.insertSorted(listAElement.getTweetID(), listAElement.getSortKey());
-                listAIterator.next();
-            }
-        }
-        /*
-        // list A has no more elements, just append list B
-        while (!listAIterator.hasNext() && listBIterator.hasNext()) {
-            resultList.insertSorted(listBElement.getTweetID(), listBElement.getSortKey());
-            listBIterator.next();
-        }*/
-
-        return resultList;
-    }
 
     public static IPostingList mergeSinglePostingLists(IPostingList listA, IPostingList listB) {
         IPostingList resultList = new PostingList();
