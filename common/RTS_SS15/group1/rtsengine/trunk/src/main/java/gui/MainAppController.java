@@ -193,9 +193,9 @@ public class MainAppController implements Initializable {
          */
         ConfigurationObject.setIndexType(nIndexType);
         ConfigurationObject.setNumberOfTweets(nNumberOfTweets);
-        ConfigurationObject.setwFreshness(nWFreshness);
-        ConfigurationObject.setwSignificance(nWSignificance);
-        ConfigurationObject.setwSimilarity(nWSimilarity);
+        ConfigurationObject.setwFreshness((float)nWFreshness / (float)100);
+        ConfigurationObject.setwSignificance((float)nWSignificance / (float)100);
+        ConfigurationObject.setwSimilarity((float)nWSimilarity / (float)100);
         System.out.println(queries);
         TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
