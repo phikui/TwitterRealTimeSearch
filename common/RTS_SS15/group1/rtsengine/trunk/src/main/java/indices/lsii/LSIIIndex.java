@@ -145,7 +145,7 @@ public class LSIIIndex implements IRTSIndex {
                 }
 
                 if (d > maxThreshold) {
-                    System.out.println("Break because of threshold: " + maxThreshold + " > " + d);
+                    //System.out.println("Break because of threshold: " + maxThreshold + " > " + d);
                     break;
                 }
 
@@ -160,7 +160,7 @@ public class LSIIIndex implements IRTSIndex {
                     }
                 }
                 if (listEmpty) {
-                    System.out.println("Break because of empty list");
+                    //System.out.println("Break because of empty list");
                     break;
                 }
 
@@ -172,6 +172,7 @@ public class LSIIIndex implements IRTSIndex {
         } finally {
             read.unlock();
             System.out.println("Read-lock removed");
+            System.out.println("Query finished");
             System.out.println("--------------------------------");
         }
         return resultList.getTweetIDs();
