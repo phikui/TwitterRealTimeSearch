@@ -22,36 +22,21 @@ public class LSIIIndex implements IRTSIndex {
     private volatile Date latestTimestamp;
 
     // I_0 = index_zero, I_1 to I_m = invertedIndex
-    private ConcurrentHashMap<Integer, UnsortedPostingList> index_zero;
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ConcurrentTriplePostingList>> invertedIndex;
+    private ConcurrentHashMap<Integer, IPostingList> index_zero;
+    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex;
 
     // starting size threshold
     private int sizeThreshold = 4;
 
-    // HashMap for saving triplet information for TwitterIDs (needed for efficient queries)
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, LSIITriplet>> tripletHashMap;
-
-    /*
-    testing purpose only
-     */
-    private ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ConcurrentTPLArrayList>> invertedIndex2;
-    private volatile ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex3;
-    private volatile ConcurrentHashMap<Integer, IPostingList> index_zero2;
-
-
+    // read-lock/write-lock stuff for merging
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
     private final Lock read = readWriteLock.readLock();
     private final Lock write = readWriteLock.writeLock();
 
 
     public LSIIIndex() {
-        this.index_zero = new ConcurrentHashMap<Integer, UnsortedPostingList>();
-        this.invertedIndex = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ConcurrentTriplePostingList>>();
-        this.tripletHashMap = new ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, LSIITriplet>>();
-
-        this.invertedIndex3 = new ConcurrentHashMap<>();
-        this.index_zero2 = new ConcurrentHashMap<>();
-
+        this.invertedIndex = new ConcurrentHashMap<>();
+        this.index_zero = new ConcurrentHashMap<>();
     }
 
 
@@ -67,10 +52,7 @@ public class LSIIIndex implements IRTSIndex {
 
         int index_count = 0;
 
-        //ConcurrentHashMap<Integer, ConcurrentHashMap<Integer, ITriplePostingList>> invertedIndex3 = this.invertedIndex3;
-
         IPostingList resultList = new PostingList();
-
 
         // Stores Iterator for each PostingList that has already been examined
         HashMap<Integer, Iterator<IPostingListElement>> postingListIteratorMapAO = new HashMap<Integer, Iterator<IPostingListElement>>();
@@ -81,7 +63,7 @@ public class LSIIIndex implements IRTSIndex {
         try {
             while (true) {
                 try {
-                    LSIIHelper.examineAOIndexAtPosition(this.index_zero2, postingListIteratorMapAO, transportObjectQuery, resultList, tsMax);
+                    LSIIHelper.examineAOIndexAtPosition(this.index_zero, postingListIteratorMapAO, transportObjectQuery, resultList, tsMax);
 
                 } catch (IndexOutOfBoundsException e) {
                     break;
@@ -89,11 +71,15 @@ public class LSIIIndex implements IRTSIndex {
             }
 
             // set d as lowest value in our current candidate pool of k elements
-            d = resultList.getLast().getSortKey();
+            if(resultList.size() > 0){
+                d = resultList.getLast().getSortKey();
+            }else {
+                d = (float)0.0;
+            }
 
             // initialize m upperbounds with "infinity" (> 1), one upperbound for each index i element of [1,m]
             HashMap<Integer, Float> upperBoundMap = new HashMap<>();
-            for (int key_index : invertedIndex3.keySet()) {
+            for (int key_index : invertedIndex.keySet()) {
                 //System.out.println("Create upperbound for index: " + key_index);
                 upperBoundMap.put(key_index, (float) 1.01);
             }
@@ -102,7 +88,7 @@ public class LSIIIndex implements IRTSIndex {
 
             // Hashmap of Hashmaps as  we can have the same termID in different Indices, similar to invertedIndex structure
             HashMap<Integer, HashMap<Integer, Iterator<IPostingListElement>>> postingListIteratorMapTPL = new HashMap<>();
-            for (int key_index : invertedIndex3.keySet()) {
+            for (int key_index : invertedIndex.keySet()) {
                 postingListIteratorMapTPL.put(key_index, new HashMap<>());
             }
 
@@ -110,17 +96,16 @@ public class LSIIIndex implements IRTSIndex {
 
             // condition if all lists in all indices are traversed
             HashMap<Integer, Boolean> listEmptyMap = new HashMap<>();
-            for (int key_index : invertedIndex3.keySet()) {
+            for (int key_index : invertedIndex.keySet()) {
                 listEmptyMap.put(key_index, false);
             }
 
             // TPL/TA iteration based on LSII-paper
-            System.out.println(maxThreshold + " > " + d);
             while (maxThreshold > d && !listEmpty) {
                 index_count++;
 
                 // for each index i get the next element and calculate fValues and thresholds
-                for (int i : invertedIndex3.keySet()) {
+                for (int i : invertedIndex.keySet()) {
 
 
                     if (upperBoundMap.get(i) == null) {
@@ -131,7 +116,7 @@ public class LSIIIndex implements IRTSIndex {
                     if ((upperBoundMap.get(i)) > d) {
 
                         try {
-                            newUpperBound = TPLHelper.examineTPLIndex(invertedIndex3.get(i), postingListIteratorMapTPL.get(i), transportObjectQuery, resultList);
+                            newUpperBound = TPLHelper.examineTPLIndex(invertedIndex.get(i), postingListIteratorMapTPL.get(i), transportObjectQuery, resultList);
                             upperBoundMap.put(i, newUpperBound);
                             //System.out.println("Index: " + i + " UpperBound: " + newUpperBound);
                         } catch (IndexOutOfBoundsException e) {
@@ -142,7 +127,10 @@ public class LSIIIndex implements IRTSIndex {
                             }
                         }
 
-                        d = resultList.getLast().getSortKey();
+                        if (resultList.size() > 0){
+                            d = resultList.getLast().getSortKey();
+                        }
+
                     }
                 }
 
@@ -155,7 +143,6 @@ public class LSIIIndex implements IRTSIndex {
                         maxThreshold = upperBoundMap.get(bound);
                     }
                 }
-                System.out.println("d-Value: " + d);
 
                 if (d > maxThreshold) {
                     System.out.println("Break because of threshold: " + maxThreshold + " > " + d);
@@ -185,6 +172,7 @@ public class LSIIIndex implements IRTSIndex {
         } finally {
             read.unlock();
             System.out.println("Read-lock removed");
+            System.out.println("--------------------------------");
         }
         return resultList.getTweetIDs();
     }
@@ -200,12 +188,12 @@ public class LSIIIndex implements IRTSIndex {
         write.lock();
         try {
             for (int termID : termIDs) {
-                IPostingList postingListForTermID = this.index_zero2.get(termID);
+                IPostingList postingListForTermID = this.index_zero.get(termID);
 
                 // Create PostingList for this termID in I_0 if necessary
                 if (postingListForTermID == null) {
                     postingListForTermID = new PostingList();
-                    this.index_zero2.put(termID, postingListForTermID);
+                    this.index_zero.put(termID, postingListForTermID);
                 }
 
                 // insert when new TweetID fits into I_0, else check for I_1, ..., I_m and insert there by merging
@@ -217,9 +205,8 @@ public class LSIIIndex implements IRTSIndex {
 
                 } else {
                     // traverse I_i, i = currentIndex
-
                     while (postingListForTermID.size() > 0) {
-                        LSIIHelper.mergeWithNextIndex(termID, sizeThreshold, invertedIndex3, index_zero2);
+                        LSIIHelper.mergeWithNextIndex(termID, sizeThreshold, invertedIndex, index_zero);
                     }
 
                     // insert now into I_0 which has space

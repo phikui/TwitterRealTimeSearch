@@ -25,12 +25,15 @@ public class LSIIHelper {
 
         List<Integer> termIDsInQuery = transportObjectQuery.getTermIDs();
 
+        boolean allListsEmpty = true;
+
         for (int termID : termIDsInQuery) {
 
-            if(AOInvertedIndex.get(termID) == null){
+            if (AOInvertedIndex.get(termID) == null) {
                 continue;
             }
 
+            allListsEmpty = false;
             Iterator<IPostingListElement> AOIterator = postingListIteratorMap.get(termID);
 
             // Create iterator and put into postingListIteratorMap if non-existent
@@ -46,16 +49,19 @@ public class LSIIHelper {
 
             IPostingListElement dateListElement = AOIterator.next();
 
-            // TODO this breaks the testing because the dates are the same
             // stop here to avoid reader/writer conflict as maxTimestamp is the newest object, which may not be inserted
-            /*
+
             if (dateListElement.getSortKey() == maxTimestamp.getTime()) {
-                System.out.println("Terminating list traversal early as newest object is currently not written.");
+                //System.out.println("Terminating list traversal early as newest object is currently not written.");
                 return;
-            }*/
+            }
 
             insertTweetIDIntoResultList(dateListElement.getTweetID(), resultList, transportObjectQuery);
 
+        }
+
+        if (allListsEmpty){
+            throw new IndexOutOfBoundsException();
         }
 
     }
