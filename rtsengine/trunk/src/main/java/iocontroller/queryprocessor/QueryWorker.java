@@ -40,10 +40,10 @@ public class QueryWorker implements Callable<QueryReturnObject> {
         }
 
         //if results are empty create dummy object
-        if (results.isEmpty()) {
-            TweetObject dummy = new TweetObject(query.getText());
-            results.add(dummy);
-        }
+        //if (results.isEmpty()) {
+        //    TweetObject dummy = new TweetObject(query.getText());
+        //    results.add(dummy);
+        //}
 
         return new QueryReturnObject(query.getText(), results);
     }

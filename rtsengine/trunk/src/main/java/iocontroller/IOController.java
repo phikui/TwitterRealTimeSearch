@@ -39,6 +39,7 @@ public class IOController {
     private final OutputToGUIThread guiThread;
     private final TweetCollector tweetcollector;
 
+    private Boolean message = false;
 
 
     /**
@@ -172,6 +173,15 @@ public class IOController {
     public QueryReturnObject getNextOutputElement() throws ExecutionException, InterruptedException {
         return queueContainer.getQueryOutputQueue().take().get();
     }
-
-
+    public synchronized void putMessage(Boolean bool){
+        message = bool;
+        notify();
+    }
+    public synchronized Boolean getMessage() throws InterruptedException{
+        notify();
+        while(!message){
+            wait();
+        }
+        return message;
+    }
 }

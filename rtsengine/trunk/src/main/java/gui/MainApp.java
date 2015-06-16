@@ -6,7 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import indices.IRTSIndex;
+import iocontroller.IOController;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.JFXPanel;
@@ -25,6 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.WindowEvent;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
@@ -35,6 +38,7 @@ public class MainApp extends Application {
 
     private Stage primaryStage;
     private BorderPane rootLayout;
+    IOController ioController;
     public static void main(String[] args) {
         launch(args);
     }
@@ -43,9 +47,16 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("RTS");
+
         initRootLayout();
         showMainView();
-
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                ioController.stopAll();
+                System.exit(0);
+            }
+        });
     }
 
     /**
@@ -57,7 +68,6 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("/gui/view/RootLayout.fxml"));
             rootLayout = (BorderPane) loader.load();
-
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
@@ -77,8 +87,8 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("/gui/view/MainView.fxml"));
             AnchorPane main = (AnchorPane) loader.load();
-
-            // Set main window into the center of root layout.
+            MainAppController controller = loader.getController();
+            ioController = controller.getIOController();
             rootLayout.setCenter(main);
 
             main.setMinSize(rootLayout.getWidth(),rootLayout.getHeight());
