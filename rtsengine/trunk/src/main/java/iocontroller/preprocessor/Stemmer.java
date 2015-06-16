@@ -25,6 +25,7 @@ public class Stemmer {
         // Create StanfordCoreNLP object properties, with POS tagging(required for lemmatization), and lemmatization
         Properties props;
         props = new Properties();
+        props.put("tokenize.options", "untokenizable=noneDelete");
         props.put("annotators", "tokenize, ssplit, pos, lemma");
         // StanfordCoreNLP loads a lot of models, so we only want to do this once per execution
         this.pipeline = new StanfordCoreNLP(props);
