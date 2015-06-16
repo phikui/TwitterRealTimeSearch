@@ -161,6 +161,9 @@ public class HelperFunctions {
     public static IPostingList mergeSinglePostingLists(IPostingList listA, IPostingList listB) {
         IPostingList resultList = new PostingList();
 
+        //System.out.println("List A: " + listA);
+        //System.out.println("List B: " + listB);
+
         int i = 0;
         int j = 0;
 
@@ -184,6 +187,7 @@ public class HelperFunctions {
             j++;
         }
 
+        //System.out.println(resultList);
         return resultList;
     }
 
