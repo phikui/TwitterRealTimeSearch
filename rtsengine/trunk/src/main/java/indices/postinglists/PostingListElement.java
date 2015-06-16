@@ -32,4 +32,10 @@ public class PostingListElement implements IPostingListElement, Comparable<Posti
         }
         return -1;
     }
+
+    @Override
+    public String toString(){
+        String s = "<"+tweetID+","+sortKey+">";
+        return s;
+    }
 }
