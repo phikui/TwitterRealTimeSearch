@@ -2,18 +2,25 @@ package gui;
 
 import iocontroller.IOController;
 import iocontroller.OutputToGUIThread;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javafx.concurrent.*;
 import model.ConfigurationObject;
 import model.QueryReturnObject;
 import model.TransportObject;
@@ -58,7 +65,9 @@ public class MainAppController implements Initializable {
     @FXML
     TextField queryfield;
 
+
     public static void emptyResult(){
+        System.out.println("emptyResult");
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("No Results Found");
         alert.setHeaderText(null);
@@ -152,6 +161,20 @@ public class MainAppController implements Initializable {
             }
         });
 
+        /**
+         * Creates a new Thread that checks for empty results
+         */
+        Thread th = new Thread(task);
+        th.setDaemon(true);
+        th.start();
+        task.valueProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(task.valueProperty().getValue()){
+                    emptyResult();
+                }
+            }
+        });
     }
 
     // Attach a listener to the index combobox so the indices get filled before anything is searched
@@ -196,18 +219,32 @@ public class MainAppController implements Initializable {
         ConfigurationObject.setwFreshness((float)nWFreshness / (float)100);
         ConfigurationObject.setwSignificance((float)nWSignificance / (float)100);
         ConfigurationObject.setwSimilarity((float)nWSimilarity / (float)100);
-        System.out.println(queries);
         TransportObject query = new TransportObject(queries, Calendar.getInstance().getTime(), nNumberOfTweets);
         ioController.addTransportObject(query);
         displaysTweets.clear();
-       /* try {
-            while (true) {
-                String message = ioController.getMessage();
-                System.out.println("Got message: " + message);
-                emptyResult();
-                Thread.sleep(2000);
+
+    }
+
+    /**
+     * Checks for empty results
+     */
+    Task<Boolean> task = new Task<Boolean>() {
+        @Override
+        protected Boolean call() throws Exception {
+            Boolean message;
+            while(true) {
+                message = ioController.getMessage();
+                if (message) {
+                    ioController.putMessage(false);
+                    updateValue(true);
+                    Thread.sleep(200);
+                    updateValue(false);
+                }
             }
-        } catch (InterruptedException e) {
-        }*/
+        }
+    };
+
+    public IOController getIOController(){
+        return ioController;
     }
 }

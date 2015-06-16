@@ -20,10 +20,11 @@ public class OutputToGUIThread extends Thread {
     public void run() {
         while (!isTerminated) {
             try {
-
                 QueryReturnObject next = parent.getNextOutputElement();
                 MainAppController.sendQueryResults(next);
-
+                if(next.getResults().isEmpty()){
+                    parent.putMessage(true);
+                }
 
             } catch (ExecutionException e) {
                 e.printStackTrace();
