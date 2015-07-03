@@ -205,7 +205,7 @@ public class MainAppController implements Initializable {
         }
         if (nNumberOfTweets < 1){
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Number of Tweets to small");
+            alert.setTitle("Number of Tweets too small");
             alert.setHeaderText(null);
             alert.setContentText("The Number of Tweets needs to be bigger than 0.");
             alert.showAndWait();
