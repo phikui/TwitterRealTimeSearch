@@ -10,12 +10,8 @@ import java.util.Scanner;
  */
 public class FeatureMain {
 
-    public static void main(String[] args) {
+    public static void analyze(String hashtag) {
         String newline = System.getProperty("line.separator");
-
-        System.out.println("Enter a Hashtag you want analyzed:");
-        Scanner reader = new Scanner(System.in);
-        String hashtag = reader.next();
 
         double propagation = TimeSeries.propagation(hashtag);
 
@@ -25,6 +21,7 @@ public class FeatureMain {
             writer = new BufferedWriter(new FileWriter(result));
             writer.write("Propagation: " + propagation + newline);
             writer.write("line 2");
+
         } catch (Exception e){
             e.printStackTrace();
         } finally {
