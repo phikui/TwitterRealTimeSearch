@@ -13,8 +13,12 @@ public class FeatureMain extends Thread{
     public void analyze(String hashtag) {
         String newline = System.getProperty("line.separator");
 
-        double propagation = TimeSeries.propagation(hashtag);
+        // add your feature-methods here
         System.out.println("I'm called yay");
+        // feature for location
+        LocationFeature locationFeature = new LocationFeature();
+        double propagation = locationFeature.calculateLocationScore(hashtag);
+
         BufferedWriter writer = null;
         try{
             File result = new File("results");

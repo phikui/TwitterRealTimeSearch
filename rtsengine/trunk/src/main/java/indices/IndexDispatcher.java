@@ -31,6 +31,10 @@ public class IndexDispatcher {
         return getActiveIndex().size();
     }
 
+    public static List<Integer> searchTweetIDsAO(TransportObject transportObjectQuery){
+        return aoi_index.searchTweetIDs(transportObjectQuery);
+    }
+
     /**
      * Returns the currently active index
      * with regard to the ConfigurationObject.
