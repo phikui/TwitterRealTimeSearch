@@ -64,6 +64,8 @@ public class MainAppController implements Initializable {
     ScrollPane scroll;
     @FXML
     TextField queryfield;
+    @FXML
+    Button analyze;
 
 
     public static void emptyResult(){
@@ -115,6 +117,14 @@ public class MainAppController implements Initializable {
             }
         });
 
+        // analyze button pushed
+        analyze.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                analyzeButtonPushed();
+            }
+        });
+
         // Listen for changes to the indexType
         indexType.setOnAction(this::indexChanged);
 
@@ -131,7 +141,7 @@ public class MainAppController implements Initializable {
             @Override
             public void handle(KeyEvent keyEvent) {
                 if (keyEvent.getCode() == KeyCode.ENTER)  {
-                    startButtonPushed();
+                    analyzeButtonPushed();
                 }
             }
         });
@@ -180,6 +190,11 @@ public class MainAppController implements Initializable {
     // Attach a listener to the index combobox so the indices get filled before anything is searched
     private void indexChanged(ActionEvent event) {
         ConfigurationObject.setIndexType(toIndex(indexType.getSelectionModel().getSelectedItem()));
+    }
+    private void analyzeButtonPushed(){
+        String hashtag = queryfield.getText();
+        features.FeatureMain.analyze(hashtag);
+
     }
     private void startButtonPushed() {
         /**
