@@ -7,16 +7,17 @@ import java.io.FileWriter;
 /**
  * Created by Guerki on 03/07/2015.
  */
-public class FeatureMain {
+public class FeatureMain extends Thread{
+    public FeatureMain(){}
 
-    public static void analyze(String hashtag) {
+    public void analyze(String hashtag) {
         String newline = System.getProperty("line.separator");
 
         double propagation = TimeSeries.propagation(hashtag);
-
+        System.out.println("I'm called yay");
         BufferedWriter writer = null;
         try{
-            File result = new File("result");
+            File result = new File("results");
             writer = new BufferedWriter(new FileWriter(result,true));
             writer.write(hashtag + newline);
             writer.write("Propagation: " + propagation + newline);
