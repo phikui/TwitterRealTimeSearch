@@ -1,5 +1,6 @@
 package gui;
 
+import features.FeatureMain;
 import iocontroller.IOController;
 import iocontroller.OutputToGUIThread;
 import javafx.beans.value.ChangeListener;
@@ -38,6 +39,8 @@ import java.util.ResourceBundle;
 public class MainAppController implements Initializable {
     volatile static ObservableList<TweetObject> displaysTweets = FXCollections.observableArrayList();
     IOController ioController = new IOController();
+    FeatureMain featureMain = new FeatureMain();
+
     @FXML
     Button start;
     @FXML
@@ -193,7 +196,7 @@ public class MainAppController implements Initializable {
     }
     private void analyzeButtonPushed(){
         String hashtag = queryfield.getText();
-        features.FeatureMain.analyze(hashtag);
+        featureMain.analyze(hashtag);
 
     }
     private void startButtonPushed() {
