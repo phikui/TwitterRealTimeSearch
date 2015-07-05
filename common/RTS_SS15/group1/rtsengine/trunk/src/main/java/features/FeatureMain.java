@@ -27,11 +27,20 @@ public class FeatureMain extends Thread{
             File result = new File("results");
             writer = new BufferedWriter(new FileWriter(result,true));
 
-            writer.write(hashtag + newline);
-            writer.write("Propagation: " + propagation + newline);
-            writer.write("Retweet Network Number of Nodes: " + retweetNetworkNumberOfNodes + newline);
-            writer.write("Retweet Network Number of Edges: " + retweetNetworkNumberOfEdges + newline);
-            writer.write("line 2");
+            // File contains one line for each hash tag with the features separated by tab
+            // character in this order:
+            // Propagation, Retweet Network Number of Nodes, Retweet Network Number of Edges
+
+            writer.write(Double.toString(propagation));
+            writer.write('\t');
+
+            writer.write(Integer.toString(retweetNetworkNumberOfNodes));
+            writer.write('\t');
+
+            writer.write(Integer.toString(retweetNetworkNumberOfEdges));
+            writer.write('\t');
+
+            writer.write(newline);
 
         } catch (Exception e){
             e.printStackTrace();
