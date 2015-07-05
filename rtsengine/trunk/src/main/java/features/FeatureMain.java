@@ -13,18 +13,24 @@ public class FeatureMain extends Thread{
     public void analyze(String hashtag) {
         String newline = System.getProperty("line.separator");
 
-        // add your feature-methods here
-        System.out.println("I'm called yay");
-        // feature for location
+        // extract features for location
         LocationFeature locationFeature = new LocationFeature();
         double propagation = locationFeature.calculateLocationScore(hashtag);
 
+        // extract features for retweet network
+        RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
+        int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes(hashtag);
+        int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges(hashtag);
+
         BufferedWriter writer = null;
-        try{
+        try {
             File result = new File("results");
             writer = new BufferedWriter(new FileWriter(result,true));
+
             writer.write(hashtag + newline);
             writer.write("Propagation: " + propagation + newline);
+            writer.write("Retweet Network Number of Nodes: " + retweetNetworkNumberOfNodes + newline);
+            writer.write("Retweet Network Number of Edges: " + retweetNetworkNumberOfEdges + newline);
             writer.write("line 2");
 
         } catch (Exception e){
@@ -32,7 +38,7 @@ public class FeatureMain extends Thread{
         } finally {
             try{
                 writer.close();
-            } catch (Exception e){
+            } catch (Exception e) {
             }
         }
     }

@@ -14,11 +14,13 @@ import java.util.*;
 /**
  * Created by Maik on 03.07.2015.
  */
-public class LocationFeature {
+public class LocationFeature extends FeatureBase {
 
     private List<GeoLocation> geoLocList;
     private Set<String> countrySet;
     private List<Double> distanceList;
+
+    private static int numberOfTweets = 100000;
 
     public LocationFeature() {
         this.geoLocList = new ArrayList<>();
@@ -29,17 +31,14 @@ public class LocationFeature {
     public double calculateLocationScore(String hashtag) {
 
         double locationScore;
-        int numberOfTweets = 100000;
-        List<TweetObject> tweetObjectList;
-
         double sumOfDistances;
         int numberOfCountries;
 
         // create new QueryObject and query AO for Hashtag
-        tweetObjectList = createAndGetTweetList(hashtag, numberOfTweets);
+        this.createAndGetTweetList(hashtag, numberOfTweets);
 
-        // iterate tweetObjectList and gather GeoLocation information
-        populateGeoLocationList(tweetObjectList);
+        // iterate over tweetObjectList and gather GeoLocation information
+        populateGeoLocationList();
 
         // iterate geoLocationList and create distanceList
         createDistanceList();
@@ -55,48 +54,18 @@ public class LocationFeature {
         return locationScore;
     }
 
+    private void populateGeoLocationList() {
 
-    private List<TweetObject> createAndGetTweetList(String hashtag, int k) {
-        TransportObject queryObject = new TransportObject(hashtag, new Date(), k);
+        System.out.println("GeoLocList Size: " + this.tweetObjectList.size());
 
-        // stem/preprocess hashtag
-        List<String> stems;
-        stems = IOController.stemmer.get().stem(queryObject.getText());
-        queryObject.setTerms(stems);
-
-        // write term list
-        List<Integer> termIDs = new ArrayList<Integer>();
-        for (String term : queryObject.getTerms()) {
-            int id = TermDictionary.insertTerm(term);
-            termIDs.add(id);
-        }
-        queryObject.setTermIDs(termIDs);
-
-        // start the AO index query
-        List<Integer> resultsIndex = IndexDispatcher.searchTweetIDsAO(queryObject);
-
-        // create the tweetObject list
-        List<TweetObject> resultTweets = new ArrayList<>();
-        for (int index : resultsIndex) {
-            resultTweets.add(TweetDictionary.getTransportObject(index).getTweetObject());
-        }
-
-        return resultTweets;
-    }
-
-
-    private void populateGeoLocationList(List<TweetObject> tweetObjectList) {
-
-        System.out.println("GeoLocList Size: " + tweetObjectList.size());
-
-        for (int i = 0; i < tweetObjectList.size(); i++) {
+        for (int i = 0; i < this.tweetObjectList.size(); i++) {
 
             // populate geoLocList
-            geoLocList.add(tweetObjectList.get(i).getGeoLocation());
+            geoLocList.add(this.tweetObjectList.get(i).getGeoLocation());
 
             // populate countrySet
-            if ((tweetObjectList.get(i).getPlace() != null) && (tweetObjectList.get(i).getPlace().getCountry() != null)) {
-                countrySet.add(tweetObjectList.get(i).getPlace().getCountry());
+            if ((this.tweetObjectList.get(i).getPlace() != null) && (this.tweetObjectList.get(i).getPlace().getCountry() != null)) {
+                countrySet.add(this.tweetObjectList.get(i).getPlace().getCountry());
             }
         }
 

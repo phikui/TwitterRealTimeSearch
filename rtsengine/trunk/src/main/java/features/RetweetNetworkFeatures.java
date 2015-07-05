@@ -7,42 +7,100 @@ import model.TransportObject;
 import model.TweetDictionary;
 import model.TweetObject;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by chans on 7/5/15.
  */
-public class RetweetNetworkFeatures {
+public class RetweetNetworkFeatures extends FeatureBase {
 
-    protected List<TweetObject> tweetObjectList;
+    /**
+     * Retweet graph Adjacency list
+     *
+     * Nodes: User names
+     * Edge from user name a to user name b: a retweeted b
+     *
+     * Maps each node (a user name) to a list of all neighbors
+     * in the retweet graph (i.e. all users that have been retweeted
+     * by this user)
+     */
+    protected HashMap<String, List<String>> retweetGraphAdjacencyList;
 
+    /**
+     * RegEx pattern used to detect retweets ("RT @retweetedUsername") in tweets
+     */
     private static Pattern retweetPattern = Pattern.compile("(?i)\\brt\\s*@(\\w+)");
 
+    /**
+     * Number of tweets to consider from Index
+     */
+    private static int numberOfTweets = 10000;
+
+    /**
+     * Returns number of nodes in retweet graph
+     *
+     * @param hashtag
+     * @return
+     */
     public int getNumberOfNodes(String hashtag) {
-        int numberOfTweets = 10000;
-        this.createAndGetTweetList(hashtag, numberOfTweets);
-
-        for (int i = 0; i < tweetObjectList.size(); i++) {
-            TweetObject to = tweetObjectList.get(i);
-
-            // Look for retweet in current tweet
-            String retweetedUser = getRetweetedUserFromTweetText(to.getText());
-            if (retweetedUser != null) {
-                String forwardingUser = to.getUsername();
-
-                System.out.println(forwardingUser + " retweeted " + retweetedUser);
-            }
-        }
-
-        return 0;
+        this.buildRetweetGraph(hashtag);
+        return this.retweetGraphAdjacencyList.size();
     }
 
+    /**
+     * Returns number of edges in retweet graph
+     *
+     * @param hashtag
+     * @return
+     */
     public int getNumberOfEdges(String hashtag) {
-        return 0;
+        this.buildRetweetGraph(hashtag);
+
+        int numberOfEdges = 0;
+
+        // Iterate over adjacency list and count edges
+        for (Map.Entry<String, List<String>> entry : this.retweetGraphAdjacencyList.entrySet()) {
+            String fromUsername = entry.getKey();
+            List<String> fromUsernameNeighbourList = entry.getValue();
+            numberOfEdges += fromUsernameNeighbourList.size();
+        }
+
+        return numberOfEdges;
+    }
+
+    private void buildRetweetGraph(String hashtag) {
+        this.retweetGraphAdjacencyList = new HashMap<>();
+        this.createAndGetTweetList(hashtag, numberOfTweets);
+
+        // Iterate over all tweets fetched from index
+        for (int i = 0; i < tweetObjectList.size(); i++) {
+            TweetObject tweetObject = tweetObjectList.get(i);
+
+            // Look for retweet in current tweet
+            String retweetedUser = getRetweetedUserFromTweetText(tweetObject.getText());
+            if (retweetedUser != null) {
+                String forwardingUser = tweetObject.getUsername();
+
+                // TODO: remove debug output
+                System.out.println("#RT: " + forwardingUser + " retweeted " + retweetedUser);
+
+                this.insertEdgeIntoRetweetGraph(forwardingUser, retweetedUser);
+            }
+        }
+    }
+
+    private void insertEdgeIntoRetweetGraph(String fromUsername, String toUsername) {
+        List<String> fromUsernameNeighbourList = this.retweetGraphAdjacencyList.get(fromUsername);
+
+        // Init neighbour list if non-existent
+        if (fromUsernameNeighbourList == null) {
+            fromUsernameNeighbourList = new LinkedList<String>();
+            this.retweetGraphAdjacencyList.put(fromUsername, fromUsernameNeighbourList);
+        }
+
+        fromUsernameNeighbourList.add(toUsername);
     }
 
     /**
@@ -60,34 +118,5 @@ public class RetweetNetworkFeatures {
         }
 
         return null;
-    }
-
-    // TODO: refactor
-    protected void createAndGetTweetList(String hashtag, int k) {
-        TransportObject queryObject = new TransportObject(hashtag, new Date(), k);
-
-        // stem/preprocess hashtag
-        List<String> stems;
-        stems = IOController.stemmer.get().stem(queryObject.getText());
-        queryObject.setTerms(stems);
-
-        // write term list
-        List<Integer> termIDs = new ArrayList<Integer>();
-        for (String term : queryObject.getTerms()) {
-            int id = TermDictionary.insertTerm(term);
-            termIDs.add(id);
-        }
-        queryObject.setTermIDs(termIDs);
-
-        // start the AO index query
-        List<Integer> resultsIndex = IndexDispatcher.searchTweetIDsAO(queryObject);
-
-        // create the tweetObject list
-        List<TweetObject> resultTweets = new ArrayList<>();
-        for (int index : resultsIndex) {
-            resultTweets.add(TweetDictionary.getTransportObject(index).getTweetObject());
-        }
-
-        this.tweetObjectList = resultTweets;
     }
 }
