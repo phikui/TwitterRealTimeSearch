@@ -104,7 +104,7 @@ public class RetweetGraph {
             }
         }
 
-        //floyd warshall
+        //floyd warshall dynamic programming using matrix
         for (int k = 0; k < distanceMatrix.length; k++) {
             for (int i = 0; i < distanceMatrix.length; i++) {
                 for (int j = 0; j < distanceMatrix.length; j++) {
@@ -119,7 +119,7 @@ public class RetweetGraph {
         }
 
 
-        //find maximum
+        //find maximum and ignore inf
         int max = -1;
         //initial values
         for (int i = 0; i < nodes.size(); i++) {

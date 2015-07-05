@@ -58,6 +58,12 @@ public class RetweetNetworkFeatures extends FeatureBase {
         return this.retweetGraph.getNumberOfNodes();
     }
 
+    /**
+     * Returns diameter of retweet graph
+     *
+     * @param hashtag
+     * @return
+     */
     public int getDiameter(String hashtag) {
         this.buildRetweetGraph(hashtag);
         return this.retweetGraph.getDiameter();
@@ -75,6 +81,12 @@ public class RetweetNetworkFeatures extends FeatureBase {
         return this.retweetGraph.getNumberOfEdges();
     }
 
+    /**
+     * Returns average degree of retweet graph
+     *
+     * @param hashtag
+     * @return
+     */
     public double getAverageDegree(String hashtag) {
         this.buildRetweetGraph(hashtag);
 
