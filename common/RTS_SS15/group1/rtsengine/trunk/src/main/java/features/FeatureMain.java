@@ -26,7 +26,6 @@ public class FeatureMain extends Thread{
         try {
             File result = new File("results");
             writer = new BufferedWriter(new FileWriter(result,true));
-
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
             // Propagation, Retweet Network Number of Nodes, Retweet Network Number of Edges
