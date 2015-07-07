@@ -16,18 +16,25 @@ public class EmotionScore extends FeatureBase {
             this.createAndGetTweetList(hashTag, numberOfTweets);
             // Iterate over all tweets fetched from index ans safe them in a file to run on SentiStrength
             //System.out.println("hi oustside the loop"+tweetObjectList.size());
-            for (int i = 0; i < this.tweetObjectList.size(); i++) {
-                TweetObject tweetObject = tweetObjectList.get(i);
+
                 try {
                     // need to save the tweet in the text file to get the emotion score
                     BufferedWriter out = new BufferedWriter(new FileWriter("C:\\tweet\\TestFile.txt"));
-                    out.write(tweetObject.getText()+"\n");
+                    for (int i = 0; i < this.tweetObjectList.size(); i++) {
+                        TweetObject tweetObject = tweetObjectList.get(i);
+                //    String strTemp=tweetObject.getText();
+              //     System.out.println("the value of the tweet is :" + strTemp);
+                    out.write(tweetObject.getText());
+                    out.newLine();
+                    }
+                    out.flush();
                     out.close();
-                } catch (IOException e) {
+                  //  System.out.println("done");
+                }catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }
+      }
+
         // Open the file that have been used by the
         public void extractingTweetFromEmotionFile(){
             FileInputStream fstream = null;
