@@ -89,7 +89,7 @@ public class LocationFeature extends FeatureBase {
             else{
                 break;
             }
-            while(timeDiff(timestamp1, timestamp2) <= 5) {
+            while(timeDiff(timestamp1, timestamp2) <= 5*60000) {
                 i++;
                 tweetList.add(this.tweetObjectList.get(i));
                 if(i < this.tweetObjectList.size()-1){
@@ -104,12 +104,13 @@ public class LocationFeature extends FeatureBase {
             i++;
             tweetList.clear();
         }
+
         return intervalDistanceList;
     }
 
     private double timeDiff(Date ts1, Date ts2){
-        double result = ts2.getTime()/60000 - ts1.getTime()/60000;
-        return result;
+        double result = ts2.getTime() - ts1.getTime();
+        return Math.abs(result);
     }
 
 
