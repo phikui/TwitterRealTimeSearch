@@ -86,10 +86,17 @@ public class TweetCollector {
     public void startCollecting() {
         System.out.println("Collector has started");
 
+        FilterQuery filter = new FilterQuery();
+        String[] lang = {"en"};
+        double[][] locations = { { -180d, -90d }, { 180d, 90d } };
 
+        filter.language(lang);
+        //filter.locations(locations);
+
+        twitterStream.filter(filter);
         // sample() method internally creates a thread which manipulates
         // TwitterStream and calls these adequate listener methods continuously.
-        twitterStream.sample("en");
+        //twitterStream.sample("en");
     }
 
     public void stopCollecting() {
