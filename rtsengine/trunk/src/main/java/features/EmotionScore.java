@@ -19,13 +19,13 @@ public class EmotionScore extends FeatureBase {
 
                 try {
                     // need to save the tweet in the text file to get the emotion score
-                    BufferedWriter out = new BufferedWriter(new FileWriter("C:\\tweet\\TestFile.txt"));
+                    BufferedWriter out = new BufferedWriter(new FileWriter("EmotionFile"));
                     for (int i = 0; i < this.tweetObjectList.size(); i++) {
                         TweetObject tweetObject = tweetObjectList.get(i);
-                //    String strTemp=tweetObject.getText();
-              //     System.out.println("the value of the tweet is :" + strTemp);
-                    out.write(tweetObject.getText());
-                    out.newLine();
+                         //String strTemp=tweetObject.getText();
+                         // System.out.println("the value of the tweet is :" + strTemp);
+                        out.write(tweetObject.getText());
+                        out.newLine();
                     }
                     out.flush();
                     out.close();
@@ -36,26 +36,31 @@ public class EmotionScore extends FeatureBase {
       }
 
         // Open the file that have been used by the
-        public void extractingTweetFromEmotionFile(){
-            FileInputStream fstream = null;
-            try  {
-                fstream = new FileInputStream("C:\\tweet\\outputfile+results.txt");
+        public int extractingEmotionScoreFromEmotionFile() {
+            // Open the file
+            int count =0;
+            try {
+                FileInputStream fstream = new FileInputStream("EmotionOutputFile");
                 BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
                 String strLine;
                 //Read File Line By Line
-                while ((strLine = br.readLine()) != null) {
-                    // Print the content on the console
-                    //  System.out.println (strLine);
-                    if (strLine.contains("5") || strLine.contains("4") || strLine.contains("-3") || strLine.contains("-4")) {
+                while ((strLine = br.readLine()) != null && strLine.length() >= 2) {
+                    String lastTwo = strLine.substring(strLine.length() - 4);
+                    if (lastTwo.contains("5") || lastTwo.contains("4") || lastTwo.contains("-4") || lastTwo.contains("-5")) {
                         System.out.println("" + strLine);
-                        // here i need to safe the result
+                        ++count;
+                        System.out.println("" + count);
                     }
                 }
+                //Close the input stream
+                br.close();
+                fstream.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return count;
         }
 }
 
