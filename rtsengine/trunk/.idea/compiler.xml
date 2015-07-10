@@ -25,6 +25,8 @@
         <module name="rtsengine" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="rtsengine" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
