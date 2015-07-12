@@ -17,13 +17,14 @@ public class FeatureMain extends Thread{
         // popular-value, 0 = not popular, 1 = popular
         int isPopular = 0;
 
+        /* add this when we have a mapDB file
         // load all hashtags and get the popular ones
         List<String> allHashtags = MapDBLoad.loadHashtagFile();
         List<String> popularHashtags = MapDBLoad.getMostPopularHashtags(allHashtags);
 
         if(popularHashtags.contains(hashtag)){
             isPopular = 1;
-        }
+        }*/
 
         // extract features for location
         LocationFeature locationFeature = new LocationFeature();
