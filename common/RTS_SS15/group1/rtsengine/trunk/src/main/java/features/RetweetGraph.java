@@ -11,7 +11,7 @@ public class RetweetGraph {
 
 
     public RetweetGraph() {
-        nodes = new ArrayList<>();
+        nodes = new ArrayList<RetweetGraphNode>();
     }
 
 
@@ -124,6 +124,7 @@ public class RetweetGraph {
         //initial values
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = 0; j < nodes.size(); j++) {
+                //System.out.println(distanceMatrix[i][j]);
                 if (distanceMatrix[i][j] > max && distanceMatrix[i][j] < Integer.MAX_VALUE) {
                     max = distanceMatrix[i][j];
                 }
