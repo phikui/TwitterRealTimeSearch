@@ -1,8 +1,5 @@
 package model;
 
-import org.mapdb.DB;
-import org.mapdb.HTreeMap;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,12 +12,6 @@ public class TweetDictionary {
     private static Map<Integer, TransportObject> tweetDictionary = new ConcurrentHashMap<Integer, TransportObject>();
 
     private static int tweetIDCounter;
-
-    // Objects for storing inserted tweet directly in MapDB
-    private static DB mapDB;
-    private static HTreeMap<Integer, TweetObject> tweetObjectsMapDB;
-
-
 
 
     /**
@@ -55,8 +46,6 @@ public class TweetDictionary {
         tweetIDCounter++;
 
         tweetDictionary.put(tweetID, transportObject);
-
-        // Also store inserted tweet Object in MapDB
 
 
         return tweetID;
