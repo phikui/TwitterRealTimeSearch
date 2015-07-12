@@ -7,7 +7,13 @@ import iocontroller.queryprocessor.QueryProcessor;
 import iocontroller.writer.Writer;
 import model.QueryReturnObject;
 import model.TransportObject;
+import model.TweetDictionary;
+import model.TweetObject;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
 
+import java.io.File;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -184,4 +190,40 @@ public class IOController {
         }
         return message;
     }
+
+
+    public void dumpTweetDictionaryToDatabase(String filename) {
+        DB mapDB = DBMaker.newFileDB(new File(filename))
+                .closeOnJvmShutdown()
+                .make();
+
+
+        HTreeMap<Integer, TweetObject> tweetObjectsMapDB = mapDB.getHashMap("tweetObjects");
+
+        for (int index : TweetDictionary.getTweetDictionary().keySet()) {
+            TweetObject tweet = TweetDictionary.getTweetDictionary().get(index).getTweetObject();
+            tweetObjectsMapDB.put(index, tweet);
+        }
+        mapDB.commit();
+        mapDB.close();
+
+    }
+
+    public void loadTweetDictionaryFromDatabase(String filename) {
+        DB mapDB = DBMaker.newFileDB(new File(filename))
+                .closeOnJvmShutdown()
+                .make();
+
+
+        HTreeMap<Integer, TweetObject> tweetObjectsMapDB = mapDB.getHashMap("tweetObjects");
+
+        //insert into index
+        for (int index : tweetObjectsMapDB.keySet()) {
+            TweetObject currentTweetObject = tweetObjectsMapDB.get(index);
+            this.addTransportObject(new TransportObject(currentTweetObject));
+        }
+        mapDB.close();
+
+    }
+
 }
