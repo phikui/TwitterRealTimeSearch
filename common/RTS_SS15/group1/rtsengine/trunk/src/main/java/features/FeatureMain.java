@@ -3,6 +3,7 @@ package features;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 
 /**
  * Created by Guerki on 03/07/2015.
@@ -12,6 +13,17 @@ public class FeatureMain extends Thread{
 
     public void analyze(String hashtag) {
         String newline = System.getProperty("line.separator");
+
+        // popular-value, 0 = not popular, 1 = popular
+        int isPopular = 0;
+
+        // load all hashtags and get the popular ones
+        List<String> allHashtags = MapDBLoad.loadHashtagFile();
+        List<String> popularHashtags = MapDBLoad.getMostPopularHashtags(allHashtags);
+
+        if(popularHashtags.contains(hashtag)){
+            isPopular = 1;
+        }
 
         // extract features for location
         LocationFeature locationFeature = new LocationFeature();
@@ -38,6 +50,8 @@ public class FeatureMain extends Thread{
 
             writer.write(Integer.toString(retweetNetworkNumberOfEdges));
             writer.write('\t');
+
+            writer.write(isPopular);
 
             writer.write(newline);
 
