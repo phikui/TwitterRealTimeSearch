@@ -1,7 +1,11 @@
 package model;
 
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.HTreeMap;
 import sun.plugin2.message.transport.Transport;
 
+import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,9 +18,19 @@ public class TweetDictionary {
 
     private static int tweetIDCounter;
 
+    // Objects for storing inserted tweet directly in MapDB
+    private static DB mapDB;
+    private static HTreeMap<Integer, TweetObject> tweetObjectsMapDB;
+
     static {
         tweetIDCounter = 0;
         tweetDictionary = new ConcurrentHashMap<Integer, TransportObject>();
+
+        // Init and load MapDB for storing of TweetObjects
+        mapDB = DBMaker.newFileDB(new File("tweetdb"))
+                .closeOnJvmShutdown()
+                .make();
+        tweetObjectsMapDB = mapDB.getHashMap("tweetObjects");
     }
 
     /**
@@ -47,11 +61,26 @@ public class TweetDictionary {
 
         tweetDictionary.put(tweetID, transportObject);
 
+        // Also store inserted tweet Object in MapDB
+        storeTweetObjectInMapDB(transportObject.getTweetObject(), tweetID);
+
         return tweetID;
+    }
+
+    private static void storeTweetObjectInMapDB(TweetObject tweetObject, int tweetID) {
+        // Also store tweet Object in MapDB
+        tweetObjectsMapDB.put(tweetID, tweetObject);
+
+//        System.out.println("Inserted new tweet into MapDB after collecting " + tweetID + " tweets");
+
+        // Commit MapDB every 100 tweets
+        if (tweetID % 100 == 0) {
+            mapDB.commit();
+            System.out.println("Commited MapDB after collecting " + tweetID + " tweets");
+        }
     }
 
     public static int size() {
         return tweetDictionary.size();
     }
-
 }

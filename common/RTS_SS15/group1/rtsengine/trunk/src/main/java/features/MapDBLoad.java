@@ -3,6 +3,8 @@ package features;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
+import gui.MainApp;
+import iocontroller.IOController;
 import model.TweetObject;
 import org.mapdb.*;
 
@@ -16,16 +18,26 @@ import java.util.regex.Pattern;
  */
 public class MapDBLoad {
 
-    public static void createPopularHashtagSet() {
+    // Objects that handle/contain loaded mapDB from file
+    private static DB mapDB;
+    private static HTreeMap<Integer, TweetObject> tweetObjectsMapDB;
 
-        // TODO load MapDB file here
-        final DB db = DBMaker.newFileDB(new File("tweetdb"))
+    static {
+        // Init and load MapDB containing TweetObjects from file
+        mapDB = DBMaker.newFileDB(new File("tweetdb"))
                 .closeOnJvmShutdown()
                 .make();
+        tweetObjectsMapDB = mapDB.getHashMap("tweetObjects");
+    }
 
-        // for now assuming this format
-        final HTreeMap<Integer, TweetObject> tweetObjectMap = db.getHashMap("Tweets");
+    public static void reinsertTweetObjectsFromMapDBIntoIndex() {
+        for (int index : tweetObjectsMapDB.keySet()) {
+            TweetObject currentTweetObject = tweetObjectsMapDB.get(index);
+            // TODO: Insert tweetObject from MapDB into Index using IOController
+        }
+    }
 
+    public static void createPopularHashtagSet() {
         // set with hashtags
         Multiset<String> hashTagSet = HashMultiset.create();
 
@@ -35,8 +47,8 @@ public class MapDBLoad {
         // Pattern for recognizing hashtags
         Pattern hashtagPattern = Pattern.compile("#(\\w+|\\W+)");
 
-        for (int index : tweetObjectMap.keySet()) {
-            currentTweetObject = tweetObjectMap.get(index);
+        for (int index : tweetObjectsMapDB.keySet()) {
+            currentTweetObject = tweetObjectsMapDB.get(index);
             currentTweetText = currentTweetObject.getText();
 
             //currentTweetText = "#test #test #hallo #test #ggg #hallo #test nope #tt #test #i #d #just #write #some #stuff #i #i #can #just #i #more #words #to #have #and #sdf #a #b #c";
@@ -124,6 +136,4 @@ public class MapDBLoad {
         //System.out.println(popularHashtagList);
         return popularHashtagList;
     }
-
-
 }
