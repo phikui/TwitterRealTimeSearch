@@ -34,6 +34,8 @@ public class FeatureMain extends Thread{
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
         int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes(hashtag);
         int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges(hashtag);
+        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter(hashtag);
+        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree(hashtag);
 
         BufferedWriter writer = null;
         try {
@@ -41,7 +43,11 @@ public class FeatureMain extends Thread{
             writer = new BufferedWriter(new FileWriter(result,true));
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
-            // Propagation, Retweet Network Number of Nodes, Retweet Network Number of Edges
+            // isPopular, Propagation, Retweet Network Number of Nodes, Retweet Network Number of Edges,
+            // Retweet Network Diameter, Retweet Network Average Degree
+
+            writer.write(isPopular);
+            writer.write('\t');
 
             writer.write(Double.toString(propagation));
             writer.write('\t');
@@ -52,7 +58,10 @@ public class FeatureMain extends Thread{
             writer.write(Integer.toString(retweetNetworkNumberOfEdges));
             writer.write('\t');
 
-            writer.write(isPopular);
+            writer.write(Integer.toString(retweetNetworkDiameter));
+            writer.write('\t');
+
+            writer.write(Double.toString(retweetNetworkAverageDegree));
 
             writer.write(newline);
 
