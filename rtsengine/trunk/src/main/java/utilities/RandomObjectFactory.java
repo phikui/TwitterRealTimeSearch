@@ -131,7 +131,7 @@ public class RandomObjectFactory {
         Date timestamp = new Date();
         float numberOfAuthorFollowers = this.random.nextInt(250);
 
-        return new TweetObject(username, text, geoLocation, place, timestamp, numberOfAuthorFollowers);
+        return new TweetObject(username, text, geoLocation, place, timestamp, numberOfAuthorFollowers, false);
     }
 
     /**

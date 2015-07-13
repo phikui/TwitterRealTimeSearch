@@ -18,18 +18,23 @@ public class TweetObject implements Comparable, Serializable {
     private GeoLocation geoLocation;
     private Place place;
     private TransportObject transportObject;
-    public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers) {
+    private boolean isRetweet;
+
+
+    public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers, boolean isRetweet) {
         this.username = username;
         this.text = text;
         this.geoLocation = geoLocation;
         this.place = place;
         this.timestamp = timestamp;
         this.numberOfAuthorFollowers = numberOfAuthorFollowers;
+        this.isRetweet = isRetweet;
+
     }
 
     //Constructur for empty dummy object
     public TweetObject(String query) {
-        this("null", "No results for query " + query + " found.", null, null, Calendar.getInstance().getTime(), 0);
+        this("null", "No results for query " + query + " found.", null, null, Calendar.getInstance().getTime(), 0, false);
     }
 
     public GeoLocation getGeoLocation() {

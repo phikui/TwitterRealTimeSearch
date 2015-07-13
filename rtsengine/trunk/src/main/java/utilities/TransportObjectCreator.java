@@ -96,6 +96,6 @@ public class TransportObjectCreator {
         System.out.println("Followers: " + numberOfAuthorFollowers);
 
 
-        return new TweetObject(name, text, geoLocation, place, timestamp, numberOfAuthorFollowers);
+        return new TweetObject(name, text, geoLocation, place, timestamp, numberOfAuthorFollowers, false);
     }
 }

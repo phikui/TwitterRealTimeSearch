@@ -17,6 +17,7 @@ public class TweetCollector {
     private StatusListener listener;
     private TwitterStream twitterStream;
 
+
     public TweetCollector(IOController parent) {
         this.parent = parent;
 
@@ -48,13 +49,15 @@ public class TweetCollector {
         listener = new StatusListener() {
             public void onStatus(Status status) {
 
+
                 TweetObject newTweet = new TweetObject(
                         status.getUser().getName(),
                         status.getText(),
                         status.getGeoLocation(),
                         status.getPlace(),
                         status.getCreatedAt(),
-                        status.getUser().getFollowersCount());
+                        status.getUser().getFollowersCount(),
+                        status.isRetweet());
                 parent.addTransportObject(new TransportObject(newTweet));
 
             }
@@ -80,6 +83,7 @@ public class TweetCollector {
 
         // init twitter stream with cb as a configurationObject that handles authorization
         twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+
         twitterStream.addListener(listener);
     }
 
