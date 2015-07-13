@@ -36,10 +36,10 @@ public class FeatureMain extends Thread{
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
         retweetNetworkFeatures.buildRetweetGraph(hashtag);
-        int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes(hashtag);
-        int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges(hashtag);
-        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter(hashtag);
-        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree(hashtag);
+        int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes();
+        int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges();
+        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();
+        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree();
 
         BufferedWriter writer = null;
         try {
