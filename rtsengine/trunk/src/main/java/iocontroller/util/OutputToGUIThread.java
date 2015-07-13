@@ -1,6 +1,7 @@
-package iocontroller;
+package iocontroller.util;
 
 import gui.MainAppController;
+import iocontroller.IOController;
 import model.QueryReturnObject;
 
 import java.util.concurrent.ExecutionException;

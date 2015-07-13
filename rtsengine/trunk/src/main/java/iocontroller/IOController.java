@@ -4,6 +4,9 @@ import iocontroller.preprocessor.Preprocessor;
 import iocontroller.preprocessor.PreprocessorRawObject;
 import iocontroller.preprocessor.Stemmer;
 import iocontroller.queryprocessor.QueryProcessor;
+import iocontroller.util.OutputToGUIThread;
+import iocontroller.util.TweetCollector;
+import iocontroller.util.TweetDictionarySaver;
 import iocontroller.writer.Writer;
 import model.QueryReturnObject;
 import model.TransportObject;
@@ -121,6 +124,7 @@ public class IOController {
         writer.terminate();
         guiThread.terminate();
         tweetcollector.stopCollecting();
+        stopSaveDatabasePeriodically();
     }
 
     public void collectTweets() {
