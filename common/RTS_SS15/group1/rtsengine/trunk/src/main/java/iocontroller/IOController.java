@@ -44,6 +44,7 @@ public class IOController {
     private final QueryProcessor queryProcessor;
     private final OutputToGUIThread guiThread;
     private final TweetCollector tweetcollector;
+    private TweetDictionarySaver saver;
 
     private Boolean message = false;
 
@@ -192,7 +193,7 @@ public class IOController {
     }
 
 
-    public void dumpTweetDictionaryToDatabase(String filename) {
+    public synchronized void dumpTweetDictionaryToDatabase(String filename) {
         DB mapDB = DBMaker.newFileDB(new File(filename))
                 .closeOnJvmShutdown()
                 .make();
@@ -210,7 +211,7 @@ public class IOController {
 
     }
 
-    public void loadTweetDictionaryFromDatabase(String filename) {
+    public synchronized void loadTweetDictionaryFromDatabase(String filename) {
         DB mapDB = DBMaker.newFileDB(new File(filename))
                 .closeOnJvmShutdown()
                 .make();
@@ -227,4 +228,22 @@ public class IOController {
 
     }
 
+    public void saveDatabasePeriodically(String filename, long intervallInMs) {
+        if (saver != null) {
+            saver.stopSaving();
+            try {
+                saver.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        saver = new TweetDictionarySaver(this, intervallInMs, filename);
+        saver.start();
+    }
+
+    public void stopSaveDatabasePeriodically() {
+        if (saver != null) {
+            saver.stopSaving();
+        }
+    }
 }
