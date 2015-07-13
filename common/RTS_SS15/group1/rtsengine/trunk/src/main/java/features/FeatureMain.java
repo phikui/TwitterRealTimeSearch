@@ -1,25 +1,43 @@
 package features;
 
+import model.TweetDictionary;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.List;
 
 /**
  * Created by Guerki on 03/07/2015.
  */
-public class FeatureMain extends Thread{
-    public FeatureMain(){}
+public class FeatureMain extends Thread {
+    public FeatureMain() {
+    }
 
-    public void analyze(String hashtag) {
+    // function to perform analyze for each hashtag in our mapDB-file/tweetDictionary
+    public void analyzeForEachHashtag() {
+
+        MapDBLoad.createPopularHashtagSet();
+
+        List<String> allHashtags = MapDBLoad.loadHashtagFile();
+        List<String> popularHashtags = MapDBLoad.getMostPopularHashtags(allHashtags);
+
+        for (int i = 0; i < allHashtags.size(); i++) {
+            analyze(allHashtags.get(i)/*, popularHashtags*/);
+            if (i % 500 == 0) {
+                System.out.println(i + " hashtags done, still computing...");
+            }
+        }
+        System.out.println("All hashtags done!");
+
+    }
+
+    public void analyze(String hashtag/*, List<String> popularHashtags*/) {
         String newline = System.getProperty("line.separator");
 
         boolean isPopular = false;
 
-        /* add this when we have a mapDB file
-        // load all hashtags and get the popular ones
-        List<String> allHashtags = MapDBLoad.loadHashtagFile();
-        List<String> popularHashtags = MapDBLoad.getMostPopularHashtags(allHashtags);
-
+        /*
         if(popularHashtags.contains(hashtag)){
             isPopular = true;
         }*/
@@ -44,7 +62,7 @@ public class FeatureMain extends Thread{
         BufferedWriter writer = null;
         try {
             File result = new File("results");
-            writer = new BufferedWriter(new FileWriter(result,true));
+            writer = new BufferedWriter(new FileWriter(result, true));
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
             // isPopular, Propagation, Average Tweetlength, Average number of followers,
@@ -76,10 +94,10 @@ public class FeatureMain extends Thread{
 
             writer.write(newline);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try{
+            try {
                 writer.close();
             } catch (Exception e) {
             }

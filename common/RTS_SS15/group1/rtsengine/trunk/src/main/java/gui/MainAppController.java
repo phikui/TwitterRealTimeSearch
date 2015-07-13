@@ -208,6 +208,7 @@ public class MainAppController implements Initializable {
     private void analyzeButtonPushed(){
         String hashtag = queryfield.getText();
         featureMain.analyze(hashtag);
+        //featureMain.analyzeForEachHashtag();
 
     }
 

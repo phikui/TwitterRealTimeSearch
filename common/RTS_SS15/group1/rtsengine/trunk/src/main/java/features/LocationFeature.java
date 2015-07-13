@@ -26,7 +26,6 @@ public class LocationFeature extends FeatureBase {
     public double calculateLocationScore(String hashtag) {
 
         double locationScore;
-        double sumOfDistancs;
         int numberOfCountries;
         double totalSlope;
         List<GeoLocation> geoLocList = new ArrayList<>();
@@ -117,7 +116,7 @@ public class LocationFeature extends FeatureBase {
      private List<GeoLocation> populateGeoLocationList(List<TweetObject> tweetObjectList) {
         List<GeoLocation> geoLocList = new ArrayList<>();
 
-        System.out.println("GeoLocList Size: " + tweetObjectList.size());
+        //System.out.println("GeoLocList Size: " + tweetObjectList.size());
 
         for (int i = 0; i < tweetObjectList.size(); i++) {
 
@@ -169,7 +168,7 @@ public class LocationFeature extends FeatureBase {
 
                         // calculate distance in km
                         distance = calculateLatLongDistance(latitude_first, longitude_first, latitude_second, longitude_second);
-                        System.out.println("Distance: " + distance);
+                        //System.out.println("Distance: " + distance);
                         distanceList.add(distance);
                     }
                 }
@@ -217,7 +216,7 @@ public class LocationFeature extends FeatureBase {
             totalDistance += distanceList.get(i);
         }
 
-        System.out.println("Total Distance: " + totalDistance);
+        //System.out.println("Total Distance: " + totalDistance);
         return totalDistance;
     }
 
@@ -227,7 +226,7 @@ public class LocationFeature extends FeatureBase {
 
         featureScore = numberOfCountries * sumOfDistances * Math.exp(totalSlope);
 
-        System.out.println("Feature Score: " + featureScore);
+        //System.out.println("Feature Score: " + featureScore);
         return featureScore;
     }
 

@@ -5,7 +5,9 @@ import com.google.common.collect.Multiset;
 import com.google.common.collect.Multisets;
 import gui.MainApp;
 import iocontroller.IOController;
+import model.TweetDictionary;
 import model.TweetObject;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.mapdb.*;
 
 import java.io.*;
@@ -18,26 +20,9 @@ import java.util.regex.Pattern;
  */
 public class MapDBLoad {
 
-    // Objects that handle/contain loaded mapDB from file
-    private static DB mapDB;
-    private static HTreeMap<Integer, TweetObject> tweetObjectsMapDB;
-
-    static {
-        // Init and load MapDB containing TweetObjects from file
-        mapDB = DBMaker.newFileDB(new File("tweetdb"))
-                .closeOnJvmShutdown()
-                .make();
-        tweetObjectsMapDB = mapDB.getHashMap("tweetObjects");
-    }
-
-    public static void reinsertTweetObjectsFromMapDBIntoIndex() {
-        for (int index : tweetObjectsMapDB.keySet()) {
-            TweetObject currentTweetObject = tweetObjectsMapDB.get(index);
-            // TODO: Insert tweetObject from MapDB into Index using IOController
-        }
-    }
 
     public static void createPopularHashtagSet() {
+
         // set with hashtags
         Multiset<String> hashTagSet = HashMultiset.create();
 
@@ -47,8 +32,8 @@ public class MapDBLoad {
         // Pattern for recognizing hashtags
         Pattern hashtagPattern = Pattern.compile("#(\\w+|\\W+)");
 
-        for (int index : tweetObjectsMapDB.keySet()) {
-            currentTweetObject = tweetObjectsMapDB.get(index);
+        for (int index : TweetDictionary.getTweetDictionary().keySet()) {
+            currentTweetObject = TweetDictionary.getTweetDictionary().get(index).getTweetObject();
             currentTweetText = currentTweetObject.getText();
 
             //currentTweetText = "#test #test #hallo #test #ggg #hallo #test nope #tt #test #i #d #just #write #some #stuff #i #i #can #just #i #more #words #to #have #and #sdf #a #b #c";
@@ -83,6 +68,7 @@ public class MapDBLoad {
             writer = new BufferedWriter(new FileWriter(result, false));
 
             for (String hashtag : Multisets.copyHighestCountFirst(uniqueHashTagSet).elementSet()) {
+                StringEscapeUtils.escapeJava(hashtag);
                 writer.write(hashtag);
                 writer.write(newline);
             }
