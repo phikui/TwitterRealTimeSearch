@@ -3,7 +3,6 @@ package features;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.List;
 
 /**
  * Created by Guerki on 03/07/2015.
@@ -32,6 +31,7 @@ public class FeatureMain extends Thread{
 
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
+        retweetNetworkFeatures.buildRetweetGraph(hashtag);
         int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes(hashtag);
         int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges(hashtag);
         int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter(hashtag);

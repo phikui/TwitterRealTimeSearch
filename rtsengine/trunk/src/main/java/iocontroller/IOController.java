@@ -205,6 +205,7 @@ public class IOController {
             tweetObjectsMapDB.put(index, tweet);
         }
         mapDB.commit();
+        mapDB.compact(); //make file smaller
         mapDB.close();
 
     }

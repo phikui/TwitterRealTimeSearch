@@ -11,7 +11,7 @@ public class RetweetGraph {
 
 
     public RetweetGraph() {
-        nodes = new ArrayList<RetweetGraphNode>();
+        nodes = new ArrayList<>();
     }
 
 
@@ -32,6 +32,8 @@ public class RetweetGraph {
             nodes.add(to);
         }
         from.addNeighbor(to);
+        //System.out.println(from.id + " -> " + to.id);
+        //System.out.println(from.hasNeighbor(to));
 
     }
 
@@ -101,6 +103,7 @@ public class RetweetGraph {
                 } else {
                     distanceMatrix[i][j] = Integer.MAX_VALUE; //set to inf
                 }
+                //System.out.println(iNode.id + " ("+ i + ")" +" -> " + jNode.id + " ("+ j + ")" + ": "+distanceMatrix[i][j]);
             }
         }
 
@@ -108,7 +111,15 @@ public class RetweetGraph {
         for (int k = 0; k < distanceMatrix.length; k++) {
             for (int i = 0; i < distanceMatrix.length; i++) {
                 for (int j = 0; j < distanceMatrix.length; j++) {
-                    distanceMatrix[i][j] = Math.min(distanceMatrix[i][j], distanceMatrix[i][k] + distanceMatrix[k][j]);
+
+                    int step = distanceMatrix[i][k] + distanceMatrix[k][j];
+
+                    //handle integer overflow (max value + x)
+                    if (step < 0) {
+                        step = Integer.MAX_VALUE; //set to inf
+                    }
+
+                    distanceMatrix[i][j] = Math.min(distanceMatrix[i][j], step);
 
                     //handle integer overflow (max value + x)
                     if (distanceMatrix[i][j] < 0) {
@@ -124,7 +135,7 @@ public class RetweetGraph {
         //initial values
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = 0; j < nodes.size(); j++) {
-                //System.out.println(distanceMatrix[i][j]);
+                //System.out.println("("+i+","+j+")"+ distanceMatrix[i][j]);
                 if (distanceMatrix[i][j] > max && distanceMatrix[i][j] < Integer.MAX_VALUE) {
                     max = distanceMatrix[i][j];
                 }
