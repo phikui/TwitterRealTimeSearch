@@ -54,7 +54,7 @@ public class RetweetNetworkFeatures extends FeatureBase {
      * @return
      */
     public int getNumberOfNodes(String hashtag) {
-        this.buildRetweetGraph(hashtag);
+        // this.buildRetweetGraph(hashtag);
         return this.retweetGraph.getNumberOfNodes();
     }
 
@@ -65,7 +65,7 @@ public class RetweetNetworkFeatures extends FeatureBase {
      * @return
      */
     public int getDiameter(String hashtag) {
-        this.buildRetweetGraph(hashtag);
+        //this.buildRetweetGraph(hashtag);
         return this.retweetGraph.getDiameter();
     }
 
@@ -76,7 +76,7 @@ public class RetweetNetworkFeatures extends FeatureBase {
      * @return
      */
     public int getNumberOfEdges(String hashtag) {
-        this.buildRetweetGraph(hashtag);
+        //this.buildRetweetGraph(hashtag);
 
         return this.retweetGraph.getNumberOfEdges();
     }
@@ -88,12 +88,12 @@ public class RetweetNetworkFeatures extends FeatureBase {
      * @return
      */
     public double getAverageDegree(String hashtag) {
-        this.buildRetweetGraph(hashtag);
+        //this.buildRetweetGraph(hashtag);
 
         return this.retweetGraph.getAverageDegree();
     }
 
-    private void buildRetweetGraph(String hashtag) {
+    public void buildRetweetGraph(String hashtag) {
         this.retweetGraph = new RetweetGraph();
         this.createAndGetTweetList(hashtag, numberOfTweets);
 

@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class RetweetGraphNode {
     private static int idCounter = 0;
-    private int id;
+    protected int id;
     private String name;
     private List<RetweetGraphNode> neighbors;
 
