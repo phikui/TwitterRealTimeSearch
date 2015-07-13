@@ -107,7 +107,7 @@ public class RetweetNetworkFeatures extends FeatureBase {
                 String forwardingUser = tweetObject.getUsername();
 
                 // TODO: remove debug output
-                System.out.println("#RT: " + forwardingUser + " retweeted " + retweetedUser);
+                //System.out.println("#RT: " + forwardingUser + " retweeted " + retweetedUser);
 
                 this.insertEdgeIntoRetweetGraph(retweetGraph.getNodeFromName(forwardingUser),
                         retweetGraph.getNodeFromName(retweetedUser));
