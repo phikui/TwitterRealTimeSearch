@@ -47,7 +47,8 @@ public class FeatureMain extends Thread{
             writer = new BufferedWriter(new FileWriter(result,true));
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
-            // isPopular, Propagation, Retweet Network Number of Nodes, Retweet Network Number of Edges,
+            // isPopular, Propagation, Average Tweetlength, Average number of followers,
+            // Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
 
             writer.write(isPopular ? "1" : "0");

@@ -16,7 +16,7 @@ public class SimpleFeatures extends FeatureBase{
             text = this.tweetObjectList.get(i).getText();
             average += text.length();
         }
-        return average/tweetObjectList.size();
+        return average/tweetObjectList.size()+1;
     }
 
     double getAverageFollowers(String hashtag){
@@ -25,6 +25,6 @@ public class SimpleFeatures extends FeatureBase{
         for (int i = 0; i < tweetObjectList.size(); i++) {
             average = tweetObjectList.get(i).getNumberOfAuthorFollowers();
         }
-        return average/tweetObjectList.size();
+        return average/tweetObjectList.size()+1;
     }
 }
