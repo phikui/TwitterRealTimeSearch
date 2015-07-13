@@ -2,26 +2,19 @@ package gui;
 
 import features.FeatureMain;
 import iocontroller.IOController;
-import iocontroller.OutputToGUIThread;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
-import javafx.concurrent.*;
 import model.ConfigurationObject;
 import model.QueryReturnObject;
 import model.TransportObject;
@@ -29,8 +22,6 @@ import model.TweetObject;
 
 import java.net.URL;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -69,7 +60,24 @@ public class MainAppController implements Initializable {
     TextField queryfield;
     @FXML
     Button analyze;
-
+    /**
+     * Checks for empty results
+     */
+    Task<Boolean> task = new Task<Boolean>() {
+        @Override
+        protected Boolean call() throws Exception {
+            Boolean message;
+            while (true) {
+                message = ioController.getMessage();
+                if (message) {
+                    ioController.putMessage(false);
+                    updateValue(true);
+                    Thread.sleep(200);
+                    updateValue(false);
+                }
+            }
+        }
+    };
 
     public static void emptyResult(){
         System.out.println("emptyResult");
@@ -101,6 +109,7 @@ public class MainAppController implements Initializable {
     }
 
     public void initialize(URL url, ResourceBundle rsrcs) {
+        ioController.loadTweetDictionaryFromDatabase("temp");
         usernameCol.setCellValueFactory(new PropertyValueFactory<TweetObject,String>("username"));
         contentCol.setCellValueFactory(new PropertyValueFactory<>("text"));
         timestampCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
@@ -109,6 +118,7 @@ public class MainAppController implements Initializable {
         ConfigurationObject.setIndexType(ConfigurationObject.IndexTypes.APPEND_ONLY);
         ioController.startAll();
         ioController.collectTweets();
+        ioController.saveDatabasePeriodically("temp", 30000);
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);
 
@@ -194,11 +204,13 @@ public class MainAppController implements Initializable {
     private void indexChanged(ActionEvent event) {
         ConfigurationObject.setIndexType(toIndex(indexType.getSelectionModel().getSelectedItem()));
     }
+
     private void analyzeButtonPushed(){
         String hashtag = queryfield.getText();
         featureMain.analyze(hashtag);
 
     }
+
     private void startButtonPushed() {
         /**
          * Get all the information from the GUI
@@ -242,25 +254,6 @@ public class MainAppController implements Initializable {
         displaysTweets.clear();
 
     }
-
-    /**
-     * Checks for empty results
-     */
-    Task<Boolean> task = new Task<Boolean>() {
-        @Override
-        protected Boolean call() throws Exception {
-            Boolean message;
-            while(true) {
-                message = ioController.getMessage();
-                if (message) {
-                    ioController.putMessage(false);
-                    updateValue(true);
-                    Thread.sleep(200);
-                    updateValue(false);
-                }
-            }
-        }
-    };
 
     public IOController getIOController(){
         return ioController;
