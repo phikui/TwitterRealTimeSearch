@@ -56,7 +56,13 @@ public class RetweetGraph {
             sum += x.getDegree();
         }
 
-        return sum / ((float) nodes.size()); //force float division
+        if (nodes.size() > 0) {
+            return sum / ((float) nodes.size()); //force float division
+        } else {
+            return 0;
+        }
+
+
     }
 
 
