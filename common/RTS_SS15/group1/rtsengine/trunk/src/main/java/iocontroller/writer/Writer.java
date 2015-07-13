@@ -21,6 +21,7 @@ public class Writer extends Thread {
     private volatile boolean isTerminated = false;
     private QueryProcessor queryProcessor;
 
+
     public Writer(QueueContainer queueContainer) {
         incomingQueue = queueContainer.getWriterQueue();
         output = false;
@@ -41,6 +42,9 @@ public class Writer extends Thread {
 
 
     public void run() {
+        //counting inserted tweets per minute
+        int numWordsLastMinute = 0;
+        long lastWordCountStart = System.currentTimeMillis();
         while (!isTerminated) {
                 try {
                     //Get TransportObject out of the queue
@@ -76,6 +80,15 @@ public class Writer extends Thread {
                             System.out.println(x.getText());
                             System.out.println();
                             System.out.println();
+                        }
+
+                        if (System.currentTimeMillis() - lastWordCountStart < 15000) {
+                            //less than a quarter of a minute ago
+                            numWordsLastMinute++;
+                        } else {
+                            lastWordCountStart = System.currentTimeMillis();
+                            System.out.println("current rate: " + numWordsLastMinute * 4 + " tweets per minute");
+                            numWordsLastMinute = 0;
                         }
                     }
                 } catch (Exception e) {
