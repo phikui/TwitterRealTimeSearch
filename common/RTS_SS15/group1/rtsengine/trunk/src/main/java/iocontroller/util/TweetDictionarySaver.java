@@ -1,4 +1,6 @@
-package iocontroller;
+package iocontroller.util;
+
+import iocontroller.IOController;
 
 /**
  * Created by phil on 13.07.15.

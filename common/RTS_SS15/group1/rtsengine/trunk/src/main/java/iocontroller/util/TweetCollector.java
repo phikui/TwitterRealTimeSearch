@@ -1,5 +1,6 @@
-package iocontroller;
+package iocontroller.util;
 
+import iocontroller.IOController;
 import model.TransportObject;
 import model.TweetObject;
 import twitter4j.*;
