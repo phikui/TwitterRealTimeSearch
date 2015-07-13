@@ -127,7 +127,7 @@ public class RandomObjectFactory {
         String username = this.generateRandomWord(15);
         String text = this.generateRandomSentence(10) + " testterm";
         GeoLocation geoLocation = new GeoLocation(50, 55);
-        Place place = null; // TODO
+        Place place = null;
         Date timestamp = new Date();
         float numberOfAuthorFollowers = this.random.nextInt(250);
 
@@ -140,7 +140,7 @@ public class RandomObjectFactory {
      *
      * Sentences are generated based on randomWordList.
      *
-     * @param numberOfWords
+     * @param maximumNumberOfWords
      * @return
      */
     public String generateRandomSentence(int maximumNumberOfWords) {
@@ -168,7 +168,7 @@ public class RandomObjectFactory {
      *
      * Characters are generated randomly.
      *
-     * @param length
+     * @param maximumLength
      * @return
      */
     public String generateRandomWord(int maximumLength) {
