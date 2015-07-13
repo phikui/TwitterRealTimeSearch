@@ -1,7 +1,5 @@
 package indices.deprecated;
 
-import indices.deprecated.ConcurrentSortedPostingListElement;
-
 import java.util.ListIterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ConcurrentSortedArrayList extends CopyOnWriteArrayList<ConcurrentSortedPostingListElement> {
 
-    // TODO pretty sure this method is not threadsafe right now
+
     public void insertSorted(int tweetID, float sortKey) {
         ConcurrentSortedPostingListElement sortElement = new ConcurrentSortedPostingListElement(tweetID, sortKey);
         ListIterator<ConcurrentSortedPostingListElement> iterator = listIterator();
