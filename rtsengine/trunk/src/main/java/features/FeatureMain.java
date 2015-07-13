@@ -28,6 +28,11 @@ public class FeatureMain extends Thread{
         LocationFeature locationFeature = new LocationFeature();
         double propagation = locationFeature.calculateLocationScore(hashtag);
 
+        // extract simple average features
+        SimpleFeatures simpleFeatures = new SimpleFeatures();
+        double averageTweetlength = simpleFeatures.getAverageTweetlength(hashtag);
+        double averageFollowers = simpleFeatures.getAverageFollowers(hashtag);
+
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
         retweetNetworkFeatures.buildRetweetGraph(hashtag);
@@ -49,6 +54,12 @@ public class FeatureMain extends Thread{
             writer.write('\t');
 
             writer.write(Double.toString(propagation));
+            writer.write('\t');
+
+            writer.write(Double.toString(averageTweetlength));
+            writer.write('\t');
+
+            writer.write(Double.toString(averageFollowers));
             writer.write('\t');
 
             writer.write(Integer.toString(retweetNetworkNumberOfNodes));
