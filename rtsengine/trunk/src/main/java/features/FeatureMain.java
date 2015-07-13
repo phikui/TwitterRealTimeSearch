@@ -13,8 +13,7 @@ public class FeatureMain extends Thread{
     public void analyze(String hashtag) {
         String newline = System.getProperty("line.separator");
 
-        // popular-value, 0 = not popular, 1 = popular
-        int isPopular = 0;
+        boolean isPopular = false;
 
         /* add this when we have a mapDB file
         // load all hashtags and get the popular ones
@@ -22,7 +21,7 @@ public class FeatureMain extends Thread{
         List<String> popularHashtags = MapDBLoad.getMostPopularHashtags(allHashtags);
 
         if(popularHashtags.contains(hashtag)){
-            isPopular = 1;
+            isPopular = true;
         }*/
 
         // extract features for location
@@ -46,7 +45,7 @@ public class FeatureMain extends Thread{
             // isPopular, Propagation, Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
 
-            writer.write(isPopular);
+            writer.write(isPopular ? "1" : "0");
             writer.write('\t');
 
             writer.write(Double.toString(propagation));
