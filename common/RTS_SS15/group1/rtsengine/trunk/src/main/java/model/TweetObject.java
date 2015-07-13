@@ -1,8 +1,5 @@
 package model;
 
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import twitter4j.GeoLocation;
 import twitter4j.Place;
 
@@ -14,20 +11,20 @@ import java.util.Date;
  * Created by Phil on 27.04.2015.
  */
 public class TweetObject implements Comparable, Serializable {
-    private SimpleStringProperty username;
-    private SimpleStringProperty text;
-    private SimpleObjectProperty<Date> timestamp;
-    private SimpleFloatProperty numberOfAuthorFollowers;
+    private String username;
+    private String text;
+    private Date timestamp;
+    private float numberOfAuthorFollowers;
     private GeoLocation geoLocation;
     private Place place;
     private TransportObject transportObject;
     public TweetObject(String username, String text, GeoLocation geoLocation, Place place, Date timestamp, float numberOfAuthorFollowers) {
-        this.username =  new SimpleStringProperty(username);
-        this.text = new SimpleStringProperty(text);
+        this.username = username;
+        this.text = text;
         this.geoLocation = geoLocation;
         this.place = place;
-        this.timestamp = new SimpleObjectProperty<Date>(timestamp);
-        this.numberOfAuthorFollowers = new SimpleFloatProperty(numberOfAuthorFollowers);
+        this.timestamp = timestamp;
+        this.numberOfAuthorFollowers = numberOfAuthorFollowers;
     }
 
     //Constructur for empty dummy object
@@ -44,19 +41,19 @@ public class TweetObject implements Comparable, Serializable {
     }
 
     public String getUsername() {
-        return username.get();
+        return username;
     }
 
     public String getText() {
-        return text.get();
+        return text;
     }
 
     public Date getTimestamp() {
-        return timestamp.get();
+        return timestamp;
     }
 
     public float getNumberOfAuthorFollowers() {
-        return numberOfAuthorFollowers.get();
+        return numberOfAuthorFollowers;
     }
 
     public int compareTo(Object o) {
