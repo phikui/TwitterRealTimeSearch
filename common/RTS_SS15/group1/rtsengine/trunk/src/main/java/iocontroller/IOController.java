@@ -194,6 +194,7 @@ public class IOController {
 
 
     public synchronized void dumpTweetDictionaryToDatabase(String filename) {
+        System.out.println("savin to database");
         DB mapDB = DBMaker.newFileDB(new File(filename))
                 .closeOnJvmShutdown()
                 .make();
@@ -218,13 +219,15 @@ public class IOController {
 
 
         HTreeMap<Integer, TweetObject> tweetObjectsMapDB = mapDB.getHashMap("tweetObjects");
-
+        int amount = tweetObjectsMapDB.size();
         //insert into index
         for (int index : tweetObjectsMapDB.keySet()) {
             TweetObject currentTweetObject = tweetObjectsMapDB.get(index);
             this.addTransportObject(new TransportObject(currentTweetObject));
         }
         mapDB.close();
+
+        System.out.println(amount + "tweets loaded");
 
     }
 
@@ -238,6 +241,7 @@ public class IOController {
             }
         }
         saver = new TweetDictionarySaver(this, intervallInMs, filename);
+        saver.setDaemon(true);
         saver.start();
     }
 
