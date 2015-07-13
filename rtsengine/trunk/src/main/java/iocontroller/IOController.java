@@ -204,7 +204,10 @@ public class IOController {
 
         for (int index : TweetDictionary.getTweetDictionary().keySet()) {
             TweetObject tweet = TweetDictionary.getTweetDictionary().get(index).getTweetObject();
-            tweetObjectsMapDB.put(index, tweet);
+            //check if it is already contained
+            if (!tweetObjectsMapDB.containsKey(index)) {
+                tweetObjectsMapDB.put(index, tweet);
+            }
         }
         mapDB.commit();
         mapDB.compact(); //make file smaller
