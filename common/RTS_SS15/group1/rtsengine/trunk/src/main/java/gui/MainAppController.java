@@ -113,14 +113,14 @@ public class MainAppController implements Initializable {
 
     public void initialize(URL url, ResourceBundle rsrcs) {
         ioController.loadTweetDictionaryFromDatabase("temp");
-        usernameCol.setCellValueFactory(new PropertyValueFactory<TweetObject,String>("username"));
+        usernameCol.setCellValueFactory(new PropertyValueFactory<TweetObject, String>("username"));
         contentCol.setCellValueFactory(new PropertyValueFactory<>("text"));
         timestampCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
         followersCol.setCellValueFactory(new PropertyValueFactory<>("numberOfAuthorFollowers"));
         tweetTable.setItems(displaysTweets);
         ConfigurationObject.setIndexType(ConfigurationObject.IndexTypes.APPEND_ONLY);
         ioController.startAll();
-        //ioController.collectTweets();
+        ioController.collectTweets();
         ioController.saveDatabasePeriodically("temp", 30000);
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);

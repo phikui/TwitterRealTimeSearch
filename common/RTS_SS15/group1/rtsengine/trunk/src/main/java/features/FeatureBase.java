@@ -2,6 +2,7 @@ package features;
 
 import indices.IndexDispatcher;
 import iocontroller.IOController;
+import iocontroller.preprocessor.SentimentAnalyser;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
@@ -26,7 +27,7 @@ abstract public class FeatureBase {
 
         // stem/preprocess hashtag
         List<String> stems;
-        stems = IOController.stemmer.get().stemmingAndSentiment(queryObject.getText()).stems;
+        stems = IOController.stemmer.get().stem(queryObject.getText());
         queryObject.setTerms(stems);
 
         // write term list
@@ -42,8 +43,12 @@ abstract public class FeatureBase {
 
         // create the tweetObject list
         List<TweetObject> resultTweets = new ArrayList<>();
+
+        SentimentAnalyser sentimentAnalyser = new SentimentAnalyser();
         for (int index : resultsIndex) {
-            resultTweets.add(TweetDictionary.getTransportObject(index).getTweetObject());
+            TransportObject transportObject = TweetDictionary.getTransportObject(index);
+            transportObject.setSentiment(sentimentAnalyser.getSentiment(transportObject.getTweetObject().getText()));
+            resultTweets.add(transportObject.getTweetObject());
         }
 
         this.tweetObjectList = resultTweets;
