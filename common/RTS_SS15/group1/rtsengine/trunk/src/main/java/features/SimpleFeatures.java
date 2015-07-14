@@ -11,20 +11,32 @@ public class SimpleFeatures extends FeatureBase{
     double getAverageTweetlength(String hashtag){
         this.createAndGetTweetList(hashtag, numberOfTweets);
         double average = 0;
+        double size = tweetObjectList.size();
         String text = "";
-        for (int i = 0; i < tweetObjectList.size(); i++) {
+        for (int i = 0; i < size; i++) {
             text = this.tweetObjectList.get(i).getText();
             average += text.length();
         }
-        return average/tweetObjectList.size()+1;
+        if (size == 0){
+            return 1d;
+        }
+        else{
+            return average/size;
+        }
     }
 
     double getAverageFollowers(String hashtag){
         this.createAndGetTweetList(hashtag, numberOfTweets);
         double average = 0;
+        double size = tweetObjectList.size();
         for (int i = 0; i < tweetObjectList.size(); i++) {
             average = tweetObjectList.get(i).getNumberOfAuthorFollowers();
         }
-        return average/tweetObjectList.size()+1;
+        if (size == 0){
+            return 1d;
+        }
+        else{
+            return average/size;
+        }
     }
 }

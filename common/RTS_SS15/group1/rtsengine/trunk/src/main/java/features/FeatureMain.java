@@ -46,6 +46,10 @@ public class FeatureMain extends Thread {
         LocationFeature locationFeature = new LocationFeature();
         double propagation = locationFeature.calculateLocationScore(hashtag);
 
+        // extract tweets over time
+        TweetsOverTime tweetsOverTime = new TweetsOverTime();
+        double tweetSlope = tweetsOverTime.computeTweetsOverTime(hashtag);
+
         // extract simple average features
         SimpleFeatures simpleFeatures = new SimpleFeatures();
         double averageTweetlength = simpleFeatures.getAverageTweetlength(hashtag);
@@ -65,9 +69,12 @@ public class FeatureMain extends Thread {
             writer = new BufferedWriter(new FileWriter(result, true));
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
-            // isPopular, Propagation, Average Tweetlength, Average number of followers,
+            // Label, isPopular, Propagation, Average Tweetlength, Average number of followers, Tweets over Time
             // Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
+            System.out.println("test");
+            writer.write(hashtag);
+            writer.write('\t');
 
             writer.write(hashtag);
             writer.write('\t');
@@ -82,6 +89,9 @@ public class FeatureMain extends Thread {
             writer.write('\t');
 
             writer.write(Double.toString(averageFollowers));
+            writer.write('\t');
+
+            writer.write(Double.toString(tweetSlope));
             writer.write('\t');
 
             writer.write(Integer.toString(retweetNetworkNumberOfNodes));
