@@ -72,10 +72,6 @@ public class FeatureMain extends Thread {
             // Label, isPopular, Propagation, Average Tweetlength, Average number of followers, Tweets over Time
             // Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
-            System.out.println("test");
-            writer.write(hashtag);
-            writer.write('\t');
-
             writer.write(hashtag);
             writer.write('\t');
 
