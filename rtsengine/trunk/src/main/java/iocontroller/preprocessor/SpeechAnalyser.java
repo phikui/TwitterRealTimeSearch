@@ -2,8 +2,11 @@ package iocontroller.preprocessor;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
+import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.LinkedList;
@@ -14,19 +17,19 @@ import java.util.StringTokenizer;
 /**
  * Created by phil on 17.05.2015.
  */
-public class Stemmer {
+public class SpeechAnalyser {
 
     // private static volatile Properties props;
     // private static volatile StanfordCoreNLP pipeline;
 
     protected StanfordCoreNLP pipeline;
 
-    public Stemmer() {
+    public SpeechAnalyser() {
         // Create StanfordCoreNLP object properties, with POS tagging(required for lemmatization), and lemmatization
         Properties props;
         props = new Properties();
         props.put("tokenize.options", "untokenizable=noneDelete");
-        props.put("annotators", "tokenize, ssplit, pos, lemma");
+        props.put("annotators", "tokenize, ssplit, pos, lemma, parse, sentiment");
         // StanfordCoreNLP loads a lot of models, so we only want to do this once per execution
         this.pipeline = new StanfordCoreNLP(props);
     }
@@ -52,7 +55,10 @@ public class Stemmer {
         return term.length() <= 2 || term.startsWith("http") || term.startsWith("@");
     }
 
-    public  List<String> stem(String text) {
+    public SpeechAnalysisResult stemmingAndSentiment(String text) {
+        int mainSentiment = 0;
+        int longest = 0;
+
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(text);
         // run all Annotators on this text
@@ -63,6 +69,21 @@ public class Stemmer {
         // Iterate over all of the sentences found
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
         for (CoreMap sentence : sentences) {
+            //Get sentiment for sentence
+            Tree tree = sentence
+                    .get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+            int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
+
+
+            String partText = sentence.toString();
+            if (partText.length() > longest) {
+                mainSentiment = sentiment;
+                longest = partText.length();
+            }
+
+
+
+
             // Iterate over all tokens in a sentence
             for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
                 String lemma = token.get(CoreAnnotations.LemmaAnnotation.class);
@@ -75,6 +96,6 @@ public class Stemmer {
             }
         }
 
-        return wordList;
+        return new SpeechAnalysisResult(wordList, mainSentiment);
     }
 }
