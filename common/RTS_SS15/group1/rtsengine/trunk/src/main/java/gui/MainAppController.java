@@ -60,6 +60,9 @@ public class MainAppController implements Initializable {
     TextField queryfield;
     @FXML
     Button analyze;
+    @FXML
+    Button analyze_all;
+
     /**
      * Checks for empty results
      */
@@ -138,6 +141,14 @@ public class MainAppController implements Initializable {
             }
         });
 
+        // analyze_all button pushed
+        analyze_all.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                analyzeAllButtonPushed();
+            }
+        });
+
         // Listen for changes to the indexType
         indexType.setOnAction(this::indexChanged);
 
@@ -209,6 +220,11 @@ public class MainAppController implements Initializable {
         String hashtag = queryfield.getText();
         featureMain.analyze(hashtag);
         //featureMain.analyzeForEachHashtag();
+
+    }
+
+    private void analyzeAllButtonPushed(){
+        featureMain.analyzeForEachHashtag();
 
     }
 
