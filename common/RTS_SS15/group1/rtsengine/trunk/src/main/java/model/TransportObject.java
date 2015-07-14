@@ -65,6 +65,7 @@ public class TransportObject {
     // Constructor for arriving tweets
     public TransportObject(TweetObject tweetObject) {
         this.tweetObject = tweetObject;
+        tweetObject.setTransportObject(this);
         this.isQuery = false;
         this.text = tweetObject.getText();
         this.timestamp = tweetObject.getTimestamp();
