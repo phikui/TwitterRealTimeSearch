@@ -24,11 +24,11 @@ public class PreprocessorRawObject implements Callable<TransportObject> {
         List<String> stems;
         int sentiment = 0;
         if (IOController.useStandfordStemmer) {
-            SpeechAnalysisResult result = IOController.stemmer.get().stemmingAndSentiment(transportObject.getText());
-            stems = result.stems;
-            sentiment = result.sentiment;
+
+            stems = IOController.stemmer.get().stem(transportObject.getText());
+
         } else {
-            stems = SpeechAnalyser.trivial_stem(transportObject.getText());
+            stems = Stemmer.trivial_stem(transportObject.getText());
         }
         transportObject.setTerms(stems);
         transportObject.setSentiment(sentiment);
