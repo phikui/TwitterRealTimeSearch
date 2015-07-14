@@ -69,6 +69,9 @@ public class FeatureMain extends Thread {
             // Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
 
+            writer.write(hashtag);
+            writer.write('\t');
+
             writer.write(isPopular ? "P" : "N");
             writer.write('\t');
 
@@ -93,7 +96,7 @@ public class FeatureMain extends Thread {
 //            writer.write(Double.toString(retweetNetworkAverageDegree));
 
             writer.write(newline);
-            writer.write(newline);
+//            writer.write(newline);
 
         } catch (Exception e) {
             e.printStackTrace();
