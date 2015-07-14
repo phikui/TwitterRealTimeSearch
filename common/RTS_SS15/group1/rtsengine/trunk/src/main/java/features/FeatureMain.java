@@ -56,12 +56,12 @@ public class FeatureMain extends Thread {
         retweetNetworkFeatures.buildRetweetGraph(hashtag);
         int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes();
         int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges();
-        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();
-        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree();
+//        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();
+//        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree();
 
         BufferedWriter writer = null;
         try {
-            File result = new File("results");
+            File result = new File("trainingSet");
             writer = new BufferedWriter(new FileWriter(result, true));
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
@@ -69,7 +69,7 @@ public class FeatureMain extends Thread {
             // Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
 
-            writer.write(isPopular ? "1" : "0");
+            writer.write(isPopular ? "P" : "N");
             writer.write('\t');
 
             writer.write(Double.toString(propagation));
@@ -85,13 +85,14 @@ public class FeatureMain extends Thread {
             writer.write('\t');
 
             writer.write(Integer.toString(retweetNetworkNumberOfEdges));
-            writer.write('\t');
+//            writer.write('\t');
+//
+//            writer.write(Integer.toString(retweetNetworkDiameter));
+//            writer.write('\t');
+//
+//            writer.write(Double.toString(retweetNetworkAverageDegree));
 
-            writer.write(Integer.toString(retweetNetworkDiameter));
-            writer.write('\t');
-
-            writer.write(Double.toString(retweetNetworkAverageDegree));
-
+            writer.write(newline);
             writer.write(newline);
 
         } catch (Exception e) {
