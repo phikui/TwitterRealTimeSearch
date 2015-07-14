@@ -48,7 +48,7 @@
                   <TextField fx:id="wSimilarity" layoutX="165.0" layoutY="269.0" prefHeight="16.0" prefWidth="47.0" promptText="33" text="33" />
                   <TextField fx:id="wFreshness" layoutX="165.0" layoutY="304.0" prefHeight="26.0" prefWidth="47.0" promptText="34" text="34" />
       
-                  <Button fx:id="start" layoutX="85.0" layoutY="369.0" mnemonicParsing="false" text="Start" />
+                  <Button fx:id="start" layoutX="26.0" layoutY="369.0" mnemonicParsing="false" text="Start" />
                   <TextField fx:id="numberOfTweets" layoutX="165.0" layoutY="200.0" prefHeight="26.0" prefWidth="47.0" promptText="10" text="10" />
                   <Label layoutX="86.0" layoutY="205.0" text="# of Tweets:" />
                   <Separator layoutX="73.0" layoutY="240.0" orientation="VERTICAL" prefHeight="91.0" prefWidth="3.0" />
@@ -60,7 +60,8 @@
                   <TextField fx:id="queryfield" layoutX="83.0" layoutY="22.0" prefHeight="26.0" prefWidth="167.0" />
                   <Label layoutX="35.0" layoutY="27.0" text="Query:" />
                   <Label layoutX="82.0" layoutY="68.0" text="Tweet Index:" />
-                  <Button fx:id="analyze" layoutX="143.0" layoutY="369.0" mnemonicParsing="false" text="Analyze" />
+                  <Button fx:id="analyze" layoutX="84.0" layoutY="369.0" mnemonicParsing="false" text="Analyze" />
+                  <Button fx:id="analyze_all" layoutX="157.0" layoutY="369.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="82.0" text="Analyze All" />
                </children>
             </AnchorPane>
         </items>
