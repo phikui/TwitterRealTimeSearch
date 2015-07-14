@@ -1,6 +1,7 @@
 package features;
 
-import model.TweetDictionary;
+import iocontroller.preprocessor.SentimentAnalyser;
+import model.TransportObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,7 +12,10 @@ import java.util.List;
  * Created by Guerki on 03/07/2015.
  */
 public class FeatureMain extends Thread {
+
+    private static int numberOfTweets = 100000;
     public FeatureMain() {
+        SentimentAnalyser.init();
     }
 
     // function to perform analyze for each hashtag in our mapDB-file/tweetDictionary
@@ -33,6 +37,7 @@ public class FeatureMain extends Thread {
     }
 
     public void analyze(String hashtag/*, List<String> popularHashtags*/) {
+
         String newline = System.getProperty("line.separator");
 
         boolean isPopular = false;
@@ -42,23 +47,33 @@ public class FeatureMain extends Thread {
             isPopular = true;
         }*/
 
+
+        List<TransportObject> tweetList = TweetListFromHashtag.createAndGetTweetList(hashtag, numberOfTweets);
+
+
         // extract features for location
         LocationFeature locationFeature = new LocationFeature();
-        double propagation = locationFeature.calculateLocationScore(hashtag);
+        double propagation = locationFeature.calculateLocationScore(tweetList);
+
+
 
         // extract tweets over time
         TweetsOverTime tweetsOverTime = new TweetsOverTime();
-        double tweetSlope = tweetsOverTime.computeTweetsOverTime(hashtag);
+        double tweetSlope = tweetsOverTime.computeTweetsOverTime(tweetList);
+
+
 
         // extract simple average features
         SimpleFeatures simpleFeatures = new SimpleFeatures();
-        double averageTweetlength = simpleFeatures.getAverageTweetlength(hashtag);
-        double averageFollowers = simpleFeatures.getAverageFollowers(hashtag);
-        double averageSentiment = simpleFeatures.getAverageSentiment(hashtag);
+        double averageTweetlength = simpleFeatures.getAverageTweetlength(tweetList);
+        double averageFollowers = simpleFeatures.getAverageFollowers(tweetList);
+
+        //double averageSentiment = simpleFeatures.getAverageSentiment(tweetList);
+        double averageSentiment = 0;
 
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
-        retweetNetworkFeatures.buildRetweetGraph(hashtag);
+        retweetNetworkFeatures.buildRetweetGraph(tweetList);
         int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes();
         int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges();
 //        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();
@@ -128,23 +143,24 @@ public class FeatureMain extends Thread {
             isPopular = true;
         }
 
+        List<TransportObject> tweetList = TweetListFromHashtag.createAndGetTweetList(hashtag, numberOfTweets);
         // extract features for location
         LocationFeature locationFeature = new LocationFeature();
-        double propagation = locationFeature.calculateLocationScore(hashtag);
+        double propagation = locationFeature.calculateLocationScore(tweetList);
 
         // extract tweets over time
         TweetsOverTime tweetsOverTime = new TweetsOverTime();
-        double tweetSlope = tweetsOverTime.computeTweetsOverTime(hashtag);
+        double tweetSlope = tweetsOverTime.computeTweetsOverTime(tweetList);
 
         // extract simple average features
         SimpleFeatures simpleFeatures = new SimpleFeatures();
-        double averageTweetlength = simpleFeatures.getAverageTweetlength(hashtag);
-        double averageFollowers = simpleFeatures.getAverageFollowers(hashtag);
-        double averageSentiment = simpleFeatures.getAverageSentiment(hashtag);
-
+        double averageTweetlength = simpleFeatures.getAverageTweetlength(tweetList);
+        double averageFollowers = simpleFeatures.getAverageFollowers(tweetList);
+        //double averageSentiment = simpleFeatures.getAverageSentiment(tweetList);
+        double averageSentiment = 0;
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
-        retweetNetworkFeatures.buildRetweetGraph(hashtag);
+        retweetNetworkFeatures.buildRetweetGraph(tweetList);
         int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes();
         int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges();
 //        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();

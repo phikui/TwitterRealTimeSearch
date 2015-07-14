@@ -2,7 +2,6 @@ package features;
 
 import indices.IndexDispatcher;
 import iocontroller.IOController;
-import iocontroller.preprocessor.SentimentAnalyser;
 import model.TermDictionary;
 import model.TransportObject;
 import model.TweetDictionary;
@@ -15,14 +14,14 @@ import java.util.List;
 /**
  * Created by chans on 7/5/15.
  */
-abstract public class FeatureBase {
+public class TweetListFromHashtag {
 
     /**
      * Tweets fetched from index
      */
     protected List<TweetObject> tweetObjectList;
 
-    protected void createAndGetTweetList(String hashtag, int k) {
+    public static List<TransportObject> createAndGetTweetList(String hashtag, int k) {
         TransportObject queryObject = new TransportObject(hashtag, new Date(), k);
 
         // stem/preprocess hashtag
@@ -42,15 +41,15 @@ abstract public class FeatureBase {
         List<Integer> resultsIndex = IndexDispatcher.searchTweetIDsAO(queryObject);
 
         // create the tweetObject list
-        List<TweetObject> resultTweets = new ArrayList<>();
+        List<TransportObject> resultTweets = new ArrayList<>();
 
-        SentimentAnalyser sentimentAnalyser = new SentimentAnalyser();
+
         for (int index : resultsIndex) {
             TransportObject transportObject = TweetDictionary.getTransportObject(index);
-            transportObject.setSentiment(sentimentAnalyser.getSentiment(transportObject.getTweetObject().getText()));
-            resultTweets.add(transportObject.getTweetObject());
+
+            resultTweets.add(transportObject);
         }
 
-        this.tweetObjectList = resultTweets;
+        return resultTweets;
     }
 }

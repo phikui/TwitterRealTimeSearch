@@ -16,27 +16,27 @@ import java.util.Properties;
  */
 public class SentimentAnalyser {
 
-    protected StanfordCoreNLP pipeline;
+    private static StanfordCoreNLP pipeline;
 
-    public SentimentAnalyser() {
+    public static void init() {
         // Create StanfordCoreNLP object properties
         Properties props;
         props = new Properties();
         props.put("tokenize.options", "untokenizable=noneDelete");
         props.put("annotators", "tokenize, ssplit, parse, sentiment");
         // StanfordCoreNLP loads a lot of models, so we only want to do this once per execution
-        this.pipeline = new StanfordCoreNLP(props);
+        pipeline = new StanfordCoreNLP(props);
     }
 
 
-    public int getSentiment(String text) {
+    public static int getSentiment(String text) {
         int mainSentiment = 0;
         int longest = 0;
 
         // create an empty Annotation just with the given text
         Annotation document = new Annotation(text);
         // run all Annotators on this text
-        this.pipeline.annotate(document);
+        pipeline.annotate(document);
         // these are all the sentences in this document
         // a CoreMap is essentially a Map that uses class objects as keys and has values with custom types
 

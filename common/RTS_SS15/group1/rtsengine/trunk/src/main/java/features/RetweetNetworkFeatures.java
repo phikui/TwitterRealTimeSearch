@@ -1,14 +1,16 @@
 package features;
 
+import model.TransportObject;
 import model.TweetObject;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by chans on 7/5/15.
  */
-public class RetweetNetworkFeatures extends FeatureBase {
+public class RetweetNetworkFeatures {
 
     /**
      * RegEx pattern used to detect retweets ("RT @retweetedUsername") in tweets
@@ -89,13 +91,13 @@ public class RetweetNetworkFeatures extends FeatureBase {
         return this.retweetGraph.getAverageDegree();
     }
 
-    public void buildRetweetGraph(String hashtag) {
+    public void buildRetweetGraph(List<TransportObject> tweetObjectList) {
         this.retweetGraph = new RetweetGraph();
-        this.createAndGetTweetList(hashtag, numberOfTweets);
+
 
         // Iterate over all tweets fetched from index
         for (int i = 0; i < tweetObjectList.size(); i++) {
-            TweetObject tweetObject = tweetObjectList.get(i);
+            TweetObject tweetObject = tweetObjectList.get(i).getTweetObject();
 
             // Look for retweet in current tweet
             String retweetedUser = getRetweetedUserFromTweetText(tweetObject.getText());
