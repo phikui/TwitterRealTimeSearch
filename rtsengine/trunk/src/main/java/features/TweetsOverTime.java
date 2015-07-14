@@ -1,5 +1,6 @@
 package features;
 
+import model.TransportObject;
 import model.TweetObject;
 
 import java.util.ArrayList;
@@ -9,22 +10,23 @@ import java.util.List;
 /**
  * Created by Guerki on 13/07/2015.
  */
-public class TweetsOverTime extends FeatureBase {
-    public TweetsOverTime(){}
-
+public class TweetsOverTime {
     private static int numberOfTweets = 100000;
 
-    double computeTweetsOverTime(String hashtag){
-        // create new QueryObject and query AO for Hashtag
-        this.createAndGetTweetList(hashtag, numberOfTweets);
+    public TweetsOverTime() {
+    }
 
-        List<Integer> intervalTweetList = computeIntervalTweetList();
+    double computeTweetsOverTime(List<TransportObject> tweetObjectList) {
+        // create new QueryObject and query AO for Hashtag
+
+
+        List<Integer> intervalTweetList = computeIntervalTweetList(tweetObjectList);
         double totalSlope = computeSlope(intervalTweetList);
 
         return Math.exp(totalSlope);
     }
 
-    private List<Integer> computeIntervalTweetList(){
+    private List<Integer> computeIntervalTweetList(List<TransportObject> tweetObjectList) {
         Date timestamp1;
         Date timestamp2;
         int i = 0;
@@ -32,21 +34,21 @@ public class TweetsOverTime extends FeatureBase {
         TweetObject tweet1;
         List<Integer> intervalTweetList = new ArrayList<>();
 
-        while(i <= this.tweetObjectList.size()-1){
-            tweet1 = this.tweetObjectList.get(i);
+        while (i <= tweetObjectList.size() - 1) {
+            tweet1 = tweetObjectList.get(i).getTweetObject();
             tweetList.add(tweet1);
             timestamp1 = tweet1.getTimestamp();
-            if(i < this.tweetObjectList.size()-1){
-                timestamp2 = this.tweetObjectList.get(i+1).getTimestamp();
+            if (i < tweetObjectList.size() - 1) {
+                timestamp2 = tweetObjectList.get(i + 1).getTimestamp();
             }
             else{
                 break;
             }
             while(timeDiff(timestamp1, timestamp2) <= 30*60000) {
                 i++;
-                tweetList.add(this.tweetObjectList.get(i));
-                if(i < this.tweetObjectList.size()-1){
-                    timestamp2 = this.tweetObjectList.get(i+1).getTimestamp();
+                tweetList.add(tweetObjectList.get(i).getTweetObject());
+                if (i < tweetObjectList.size() - 1) {
+                    timestamp2 = tweetObjectList.get(i + 1).getTweetObject().getTimestamp();
                 }
                 else{
                     break;

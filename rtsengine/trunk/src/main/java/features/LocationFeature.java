@@ -1,5 +1,6 @@
 package features;
 
+import model.TransportObject;
 import model.TweetObject;
 import twitter4j.GeoLocation;
 
@@ -8,15 +9,17 @@ import java.util.*;
 /**
  * Created by Maik on 03.07.2015.
  */
-public class LocationFeature extends FeatureBase {
+public class LocationFeature {
 
     private static int numberOfTweets = 100000;
     Set<String> countrySet = new HashSet<>();
 
+
     public LocationFeature() {
+
     }
 
-    public double calculateLocationScore(String hashtag) {
+    public double calculateLocationScore(List<TransportObject> transportObjectList) {
 
         double locationScore;
         int numberOfCountries;
@@ -26,10 +29,10 @@ public class LocationFeature extends FeatureBase {
         List<Double> intervalDistanceList = new ArrayList<>();
 
         // create new QueryObject and query AO for Hashtag
-        this.createAndGetTweetList(hashtag, numberOfTweets);
 
-        // iterate over tweetObjectList and gather GeoLocation information
-        geoLocList = populateGeoLocationList(this.tweetObjectList);
+
+        // iterate over transportObjectList and gather GeoLocation information
+        geoLocList = populateGeoLocationList(transportObjectList);
 
         // iterate geoLocationList and create distanceList
         distanceList = createDistanceList(geoLocList);
@@ -38,7 +41,7 @@ public class LocationFeature extends FeatureBase {
         double sumOfDistances = calculateTotalDistance(distanceList);
 
         // compute what distance the hashtag travelled per 5 minute intervals
-        intervalDistanceList = computeIntervalDistanceList();
+        intervalDistanceList = computeIntervalDistanceList(transportObjectList);
 
         totalSlope = computeSlope(intervalDistanceList);
 
@@ -63,7 +66,7 @@ public class LocationFeature extends FeatureBase {
         }
     }
 
-    private List<Double> computeIntervalDistanceList(){
+    private List<Double> computeIntervalDistanceList(List<TransportObject> transportObjectList) {
         Date timestamp1;
         Date timestamp2;
         int i = 0;
@@ -71,27 +74,27 @@ public class LocationFeature extends FeatureBase {
         TweetObject tweet1;
         List<Double> intervalDistanceList = new ArrayList<>();
 
-        while(i <= this.tweetObjectList.size()-1){
-            tweet1 = this.tweetObjectList.get(i);
+        while (i <= transportObjectList.size() - 1) {
+            tweet1 = transportObjectList.get(i).getTweetObject();
             tweetList.add(tweet1);
             timestamp1 = tweet1.getTimestamp();
-            if(i < this.tweetObjectList.size()-1){
-                timestamp2 = this.tweetObjectList.get(i+1).getTimestamp();
+            if (i < transportObjectList.size() - 1) {
+                timestamp2 = transportObjectList.get(i + 1).getTimestamp();
             }
             else{
                 break;
             }
             while(timeDiff(timestamp1, timestamp2) <= 30*60000) {
                 i++;
-                tweetList.add(this.tweetObjectList.get(i));
-                if(i < this.tweetObjectList.size()-1){
-                    timestamp2 = this.tweetObjectList.get(i+1).getTimestamp();
+                tweetList.add(transportObjectList.get(i).getTweetObject());
+                if (i < transportObjectList.size() - 1) {
+                    timestamp2 = transportObjectList.get(i + 1).getTimestamp();
                 }
                 else{
                     break;
                 }
             }
-            double sumOfDistances = calculateTotalDistance(createDistanceList(populateGeoLocationList(tweetList)));
+            double sumOfDistances = calculateTotalDistance(createDistanceList(populateGeoLocationList(transportObjectList)));
             intervalDistanceList.add(sumOfDistances);
             i++;
             tweetList.clear();
@@ -106,19 +109,19 @@ public class LocationFeature extends FeatureBase {
     }
 
 
-     private List<GeoLocation> populateGeoLocationList(List<TweetObject> tweetObjectList) {
+    private List<GeoLocation> populateGeoLocationList(List<TransportObject> transportObjectList) {
         List<GeoLocation> geoLocList = new ArrayList<>();
 
-        //System.out.println("GeoLocList Size: " + tweetObjectList.size());
+        //System.out.println("GeoLocList Size: " + transportObjectList.size());
 
-        for (int i = 0; i < tweetObjectList.size(); i++) {
+        for (int i = 0; i < transportObjectList.size(); i++) {
 
             // populate geoLocList
-            geoLocList.add(tweetObjectList.get(i).getGeoLocation());
+            geoLocList.add(transportObjectList.get(i).getTweetObject().getGeoLocation());
 
             // populate countrySet
-            if ((tweetObjectList.get(i).getPlace() != null) && (tweetObjectList.get(i).getPlace().getCountry() != null)) {
-                countrySet.add(tweetObjectList.get(i).getPlace().getCountry());
+            if ((transportObjectList.get(i).getTweetObject().getPlace() != null) && (transportObjectList.get(i).getTweetObject().getPlace().getCountry() != null)) {
+                countrySet.add(transportObjectList.get(i).getTweetObject().getPlace().getCountry());
             }
         }
 

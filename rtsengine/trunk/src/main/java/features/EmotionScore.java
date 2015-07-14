@@ -15,7 +15,7 @@ import java.util.Properties;
 /**
  * Created by niharika singhal on 07-07-2015.
  */
-public class EmotionScore extends FeatureBase {
+public class EmotionScore extends TweetListFromHashtag {
 
     private static int numberOfTweets = 100000;
 
@@ -49,7 +49,7 @@ public class EmotionScore extends FeatureBase {
 
       public void getTweetForEmotion(String hashTag) {
 
-            this.createAndGetTweetList(hashTag, numberOfTweets);
+          createAndGetTweetList(hashTag, numberOfTweets);
             // Iterate over all tweets fetched from index ans safe them in a file to run on SentiStrength
             //System.out.println("hi oustside the loop"+tweetObjectList.size());
 
