@@ -1,8 +1,16 @@
 package features;
-
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.util.CoreMap;
 import model.TweetObject;
 
 import java.io.*;
+import java.util.Properties;
+
 
 /**
  * Created by niharika singhal on 07-07-2015.
@@ -10,6 +18,34 @@ import java.io.*;
 public class EmotionScore extends FeatureBase {
 
     private static int numberOfTweets = 100000;
+
+
+    public static int findSentiment(String tweet) {
+        StanfordCoreNLP pipeline = null;
+        Properties props = new Properties();
+        props.put("annotators", "tokenize, ssplit, pos, parse, sentiment");
+        pipeline = new StanfordCoreNLP(props);
+        Annotation annotation;
+        int mainSentiment = 0;
+        if (tweet != null && tweet.length() > 0) {
+            int longest = 0;
+            annotation = pipeline.process(tweet);
+            for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class))
+            {
+                Tree tree ;
+                tree= sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+                int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
+                String partText = sentence.toString();
+                if (partText.length() > longest) {
+                    mainSentiment = sentiment;
+                    longest = partText.length();
+                }
+
+            }
+        }
+        return mainSentiment;
+    }
+
 
       public void getTweetForEmotion(String hashTag) {
 
@@ -62,5 +98,10 @@ public class EmotionScore extends FeatureBase {
             }
             return count;
         }
+
+
+
+
+
 }
 
