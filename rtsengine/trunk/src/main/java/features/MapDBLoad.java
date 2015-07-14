@@ -68,7 +68,6 @@ public class MapDBLoad {
             writer = new BufferedWriter(new FileWriter(result, false));
 
             for (String hashtag : Multisets.copyHighestCountFirst(uniqueHashTagSet).elementSet()) {
-                StringEscapeUtils.escapeJava(hashtag);
                 writer.write(hashtag);
                 writer.write(newline);
             }
@@ -79,6 +78,33 @@ public class MapDBLoad {
             try {
                 assert writer != null;
                 writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        BufferedWriter writer2 = null;
+        try {
+            File result = new File("UniqueHashtagSetCount");
+            writer2 = new BufferedWriter(new FileWriter(result, false));
+            int count;
+            String strCount;
+
+            for (String hashtag : Multisets.copyHighestCountFirst(uniqueHashTagSet).elementSet()) {
+                writer2.write(hashtag);
+                writer2.write('\t');
+                count = uniqueHashTagSet.count(hashtag);
+                strCount = ""+count;
+                writer2.write(strCount);
+                writer2.write(newline);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                assert writer2 != null;
+                writer2.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
