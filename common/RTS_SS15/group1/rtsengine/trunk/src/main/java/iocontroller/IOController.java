@@ -2,7 +2,7 @@ package iocontroller;
 
 import iocontroller.preprocessor.Preprocessor;
 import iocontroller.preprocessor.PreprocessorRawObject;
-import iocontroller.preprocessor.Stemmer;
+import iocontroller.preprocessor.SpeechAnalyser;
 import iocontroller.queryprocessor.QueryProcessor;
 import iocontroller.util.OutputToGUIThread;
 import iocontroller.util.TweetCollector;
@@ -33,14 +33,14 @@ import static java.lang.Runtime.getRuntime;
  */
 public class IOController {
 
-    public static final ThreadLocal<Stemmer> stemmer = new ThreadLocal<Stemmer>() {
+    public static final ThreadLocal<SpeechAnalyser> stemmer = new ThreadLocal<SpeechAnalyser>() {
         @Override
-        public Stemmer initialValue() {
-            return new Stemmer();
+        public SpeechAnalyser initialValue() {
+            return new SpeechAnalyser();
         }
     };
     public static boolean useStandfordStemmer = true;
-    //protected static final Stemmer stemmer = new Stemmer();
+    //protected static final SpeechAnalyser stemmer = new SpeechAnalyser();
     protected final QueueContainer queueContainer;
     private final Preprocessor preProcessor;
     private final Writer writer;

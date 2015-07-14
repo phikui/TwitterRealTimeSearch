@@ -22,12 +22,17 @@ public class PreprocessorRawObject implements Callable<TransportObject> {
     //Code for prepossessing
     public TransportObject call() throws Exception {
         List<String> stems;
+        int sentiment = 0;
         if (IOController.useStandfordStemmer) {
-            stems = IOController.stemmer.get().stem(transportObject.getText());
+            SpeechAnalysisResult result = IOController.stemmer.get().stemmingAndSentiment(transportObject.getText());
+            stems = result.stems;
+            sentiment = result.sentiment;
         } else {
-            stems = Stemmer.trivial_stem(transportObject.getText());
+            stems = SpeechAnalyser.trivial_stem(transportObject.getText());
         }
         transportObject.setTerms(stems);
+        transportObject.setSentiment(sentiment);
+
 
         return transportObject;
     }

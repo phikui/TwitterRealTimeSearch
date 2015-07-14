@@ -2,8 +2,8 @@ package model;
 
 import utilities.HelperFunctions;
 
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -33,6 +33,8 @@ public class TransportObject {
     // filled by the preprocessor based on number of
     // followers at point in time when tweet was written
     private Float significance = null;
+
+    private int sentiment = 0;
 
     /*
      * Fields populated by the preprocessor
@@ -123,6 +125,14 @@ public class TransportObject {
 
     public void setTermIDs(List<Integer> termIDs) {
         this.termIDs = termIDs;
+    }
+
+    public int getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(int sentiment) {
+        this.sentiment = sentiment;
     }
 
     /*

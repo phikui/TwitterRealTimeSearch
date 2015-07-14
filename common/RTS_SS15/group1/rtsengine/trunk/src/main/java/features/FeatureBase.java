@@ -26,7 +26,7 @@ abstract public class FeatureBase {
 
         // stem/preprocess hashtag
         List<String> stems;
-        stems = IOController.stemmer.get().stem(queryObject.getText());
+        stems = IOController.stemmer.get().stemmingAndSentiment(queryObject.getText()).stems;
         queryObject.setTerms(stems);
 
         // write term list

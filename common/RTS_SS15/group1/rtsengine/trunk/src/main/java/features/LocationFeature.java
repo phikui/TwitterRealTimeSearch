@@ -1,11 +1,5 @@
 package features;
 
-import indices.IndexDispatcher;
-import iocontroller.IOController;
-import iocontroller.preprocessor.Stemmer;
-import model.TermDictionary;
-import model.TransportObject;
-import model.TweetDictionary;
 import model.TweetObject;
 import twitter4j.GeoLocation;
 
@@ -16,9 +10,8 @@ import java.util.*;
  */
 public class LocationFeature extends FeatureBase {
 
-    Set<String> countrySet = new HashSet<>();
-
     private static int numberOfTweets = 100000;
+    Set<String> countrySet = new HashSet<>();
 
     public LocationFeature() {
     }
