@@ -117,7 +117,7 @@ public class MainAppController implements Initializable {
         tweetTable.setItems(displaysTweets);
         ConfigurationObject.setIndexType(ConfigurationObject.IndexTypes.APPEND_ONLY);
         ioController.startAll();
-        ioController.collectTweets();
+        //ioController.collectTweets();
         ioController.saveDatabasePeriodically("temp", 30000);
         scroll.setFitToHeight(true);
         scroll.setFitToWidth(true);

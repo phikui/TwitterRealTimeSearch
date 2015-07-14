@@ -88,7 +88,7 @@ public class LocationFeature extends FeatureBase {
             else{
                 break;
             }
-            while(timeDiff(timestamp1, timestamp2) <= 5*60000) {
+            while(timeDiff(timestamp1, timestamp2) <= 30*60000) {
                 i++;
                 tweetList.add(this.tweetObjectList.get(i));
                 if(i < this.tweetObjectList.size()-1){
