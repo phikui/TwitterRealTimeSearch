@@ -54,6 +54,7 @@ public class FeatureMain extends Thread {
         SimpleFeatures simpleFeatures = new SimpleFeatures();
         double averageTweetlength = simpleFeatures.getAverageTweetlength(hashtag);
         double averageFollowers = simpleFeatures.getAverageFollowers(hashtag);
+        double averageSentiment = simpleFeatures.getAverageSentiment(hashtag);
 
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
@@ -70,7 +71,7 @@ public class FeatureMain extends Thread {
             // File contains one line for each hash tag with the features separated by tab
             // character in this order:
             // Label, isPopular, Propagation, Average Tweetlength, Average number of followers, Tweets over Time
-            // Retweet Network Number of Nodes, Retweet Network Number of Edges,
+            // Average Sentiment, Retweet Network Number of Nodes, Retweet Network Number of Edges,
             // Retweet Network Diameter, Retweet Network Average Degree
             writer.write(hashtag);
             writer.write('\t');
@@ -88,6 +89,9 @@ public class FeatureMain extends Thread {
             writer.write('\t');
 
             writer.write(Double.toString(tweetSlope));
+            writer.write('\t');
+
+            writer.write(Double.toString(averageSentiment));
             writer.write('\t');
 
             writer.write(Integer.toString(retweetNetworkNumberOfNodes));
