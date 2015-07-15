@@ -26,14 +26,17 @@ public class FeatureMain extends Thread {
         List<String> allHashtags = MapDBLoad.loadHashtagFile();
         List<String> popularHashtags = MapDBLoad.getMostPopularHashtags(allHashtags);
 
+        System.out.println("Found " + allHashtags.size() + " hashtags in total.");
+        System.out.println("Identified " + popularHashtags.size() + " popular hashtags.");
+
         for (int i = 0; i < allHashtags.size(); i++) {
             analyze(allHashtags.get(i), popularHashtags);
             if (i % 500 == 0) {
                 System.out.println(i + " hashtags done, still computing...");
             }
         }
-        System.out.println("All hashtags done!");
 
+        System.out.println("All hashtags done!");
     }
 
     public void analyze(String hashtag/*, List<String> popularHashtags*/) {
