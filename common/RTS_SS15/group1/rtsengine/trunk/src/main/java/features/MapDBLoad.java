@@ -135,7 +135,7 @@ public class MapDBLoad {
         List<String> popularHashtagList = new ArrayList<>();
 
         // top 20% rounded to int
-        int topK = (int) (hashtagList.size() * 0.2);
+        int topK = (int) (hashtagList.size() * 0.05);
 
         // current hashTagList element
         String currentHashtag;
@@ -153,7 +153,7 @@ public class MapDBLoad {
         List<String> unPopularHashtagList = new ArrayList<>();
 
         // bottom 20% rounded to int
-        int bottomK = (int) (hashtagList.size() * 0.8);
+        int bottomK = (int) (hashtagList.size() * 0.95);
 
         // current hashTagList element
         String currentHashtag;
