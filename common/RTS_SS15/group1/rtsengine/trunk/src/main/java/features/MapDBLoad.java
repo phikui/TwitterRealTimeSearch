@@ -131,11 +131,11 @@ public class MapDBLoad {
         return hashtagList;
     }
 
-    public static List<String> getMostPopularHashtags(List<String> hashtagList) {
+    public static List<String> getPopularHashtags(List<String> hashtagList) {
         List<String> popularHashtagList = new ArrayList<>();
 
         // top 20% rounded to int
-        int topK = hashtagList.size() / 5;
+        int topK = (int) (hashtagList.size() * 0.2);
 
         // current hashTagList element
         String currentHashtag;
@@ -147,5 +147,23 @@ public class MapDBLoad {
 
         //System.out.println(popularHashtagList);
         return popularHashtagList;
+    }
+
+    public static List<String> getUnPopularHashtags(List<String> hashtagList) {
+        List<String> unPopularHashtagList = new ArrayList<>();
+
+        // bottom 20% rounded to int
+        int bottomK = (int) (hashtagList.size() * 0.8);
+
+        // current hashTagList element
+        String currentHashtag;
+
+        for (int i = hashtagList.size() - 1; i >= bottomK; i--) {
+            currentHashtag = hashtagList.get(i);
+            unPopularHashtagList.add(currentHashtag);
+        }
+
+        //System.out.println(unPopularHashtagList);
+        return unPopularHashtagList;
     }
 }
