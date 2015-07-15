@@ -43,7 +43,8 @@ public class Writer extends Thread {
 
     public void run() {
         //counting inserted tweets per minute
-        int numWordsLastMinute = 0;
+        int numTweetsTotal = 0;
+        int numTweetsLastMinute = 0;
         long lastWordCountStart = System.currentTimeMillis();
         while (!isTerminated) {
                 try {
@@ -82,13 +83,16 @@ public class Writer extends Thread {
                             System.out.println();
                         }
 
+                        numTweetsTotal++;
+
                         if (System.currentTimeMillis() - lastWordCountStart < 15000) {
                             //less than a quarter of a minute ago
-                            numWordsLastMinute++;
+                            numTweetsLastMinute++;
                         } else {
                             lastWordCountStart = System.currentTimeMillis();
-                            System.out.println("current rate: " + numWordsLastMinute * 4 + " tweets per minute");
-                            numWordsLastMinute = 0;
+                            System.out.println("current rate: " + numTweetsLastMinute * 4 + " tweets per minute");
+                            System.out.println("inserted tweets in total: " + numTweetsTotal);
+                            numTweetsLastMinute = 0;
                         }
                     }
                 } catch (Exception e) {
