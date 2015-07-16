@@ -131,36 +131,50 @@ public class MapDBLoad {
         return hashtagList;
     }
 
-    public static List<String> getPopularHashtags(List<String> hashtagList) {
+    public static List<String> samplePopularHashtags(List<String> hashtagList, int maximumNumberOfHashtags) {
         List<String> popularHashtagList = new ArrayList<>();
 
-        // top 20% rounded to int
-        int topK = (int) (hashtagList.size() * 0.05);
+        // top 33% rounded to int
+        int topK = (int) (hashtagList.size() * 0.33);
+
+        // sample from top 0.33 quantile
+        int sample_increment = (int) ((hashtagList.size() * 0.33) / maximumNumberOfHashtags) - 1;
 
         // current hashTagList element
         String currentHashtag;
 
-        for (int i = 0; i < topK; i++) {
+        for (int i = 0; i < topK; i = i + sample_increment) {
             currentHashtag = hashtagList.get(i);
             popularHashtagList.add(currentHashtag);
+
+            if (popularHashtagList.size() >= maximumNumberOfHashtags) {
+                break;
+            }
         }
 
         //System.out.println(popularHashtagList);
         return popularHashtagList;
     }
 
-    public static List<String> getUnPopularHashtags(List<String> hashtagList) {
+    public static List<String> sampleUnPopularHashtags(List<String> hashtagList, int maximumNumberOfHashtags) {
         List<String> unPopularHashtagList = new ArrayList<>();
 
-        // bottom 20% rounded to int
-        int bottomK = (int) (hashtagList.size() * 0.95);
+        // bottom 33% rounded to int
+        int bottomK = (int) (hashtagList.size() * 0.66);
+
+        // sample from bottom 0.33 quantile
+        int sample_increment = (int) ((hashtagList.size() * 0.33) / maximumNumberOfHashtags) - 1;
 
         // current hashTagList element
         String currentHashtag;
 
-        for (int i = hashtagList.size() - 1; i >= bottomK; i--) {
+        for (int i = hashtagList.size() - 1; i >= bottomK; i = i - sample_increment) {
             currentHashtag = hashtagList.get(i);
             unPopularHashtagList.add(currentHashtag);
+
+            if (unPopularHashtagList.size() >= maximumNumberOfHashtags) {
+                break;
+            }
         }
 
         //System.out.println(unPopularHashtagList);

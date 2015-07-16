@@ -23,9 +23,10 @@ public class FeatureMain extends Thread {
 
         MapDBLoad.createPopularHashtagSet();
 
+        // Obtain 500 popular and 500 non-popular hashtags via sampling from allHashtags
         List<String> allHashtags = MapDBLoad.loadHashtagFile();
-        List<String> popularHashtags = MapDBLoad.getPopularHashtags(allHashtags);
-        List<String> unPopularHashtags = MapDBLoad.getUnPopularHashtags(allHashtags);
+        List<String> popularHashtags = MapDBLoad.samplePopularHashtags(allHashtags, 100);
+        List<String> unPopularHashtags = MapDBLoad.sampleUnPopularHashtags(allHashtags, 100);
 
         System.out.println("Found " + allHashtags.size() + " hashtags in total.");
         System.out.println("Identified " + popularHashtags.size() + " popular hashtags.");
@@ -36,7 +37,7 @@ public class FeatureMain extends Thread {
         System.out.println("Started analyzing popular hashtags...");
         for (int i = 0; i < popularHashtags.size(); i++) {
             analyze(popularHashtags.get(i), isPopular);
-            if (i % 500 == 0) {
+            if (i % 100 == 0) {
                 System.out.println(i + " popular hashtags done, still computing...");
             }
         }
@@ -46,7 +47,7 @@ public class FeatureMain extends Thread {
         System.out.println("Started analyzing unpopular hashtags...");
         for (int i = 0; i < unPopularHashtags.size(); i++) {
             analyze(unPopularHashtags.get(i), isPopular);
-            if (i % 500 == 0) {
+            if (i % 100 == 0) {
                 System.out.println(i + " unpopular hashtags done, still computing...");
             }
         }
@@ -60,7 +61,7 @@ public class FeatureMain extends Thread {
         List<TransportObject> tweetList = TweetListFromHashtag.createAndGetTweetList(hashtag, numberOfTweets);
         // extract features for location
         LocationFeature locationFeature = new LocationFeature();
-        double propagation = locationFeature.calculateLocationScore(tweetList);
+        double locationScore = locationFeature.calculateLocationScore(tweetList);
 
         // extract tweets over time
         TweetsOverTime tweetsOverTime = new TweetsOverTime();
@@ -68,17 +69,17 @@ public class FeatureMain extends Thread {
 
         // extract simple average features
         SimpleFeatures simpleFeatures = new SimpleFeatures();
-        double averageTweetlength = simpleFeatures.getAverageTweetlength(tweetList);
+        double averageTweetLength = simpleFeatures.getAverageTweetlength(tweetList);
         double averageFollowers = simpleFeatures.getAverageFollowers(tweetList);
-        //double averageSentiment = simpleFeatures.getAverageSentiment(tweetList);
-        double averageSentiment = 0;
+        double averageSentiment = simpleFeatures.getAverageSentiment(tweetList);
+//        double averageSentiment = 0;
         // extract features for retweet network
         RetweetNetworkFeatures retweetNetworkFeatures = new RetweetNetworkFeatures();
         retweetNetworkFeatures.buildRetweetGraph(tweetList);
         int retweetNetworkNumberOfNodes = retweetNetworkFeatures.getNumberOfNodes();
         int retweetNetworkNumberOfEdges = retweetNetworkFeatures.getNumberOfEdges();
-//        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();
-//        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree();
+        int retweetNetworkDiameter = retweetNetworkFeatures.getDiameter();
+        double retweetNetworkAverageDegree = retweetNetworkFeatures.getAverageDegree();
 
         BufferedWriter writer = null;
         try {
@@ -95,34 +96,33 @@ public class FeatureMain extends Thread {
             writer.write(isPopular ? "P" : "N");
             writer.write('\t');
 
-            writer.write(Double.toString(propagation));
-            writer.write('\t');
-
-            writer.write(Double.toString(averageTweetlength));
-            writer.write('\t');
-
-            writer.write(Double.toString(averageFollowers));
+            writer.write(Double.toString(locationScore));
             writer.write('\t');
 
             writer.write(Double.toString(tweetSlope));
             writer.write('\t');
 
-//            writer.write(Double.toString(averageSentiment));
-//            writer.write('\t');
+            writer.write(Double.toString(averageTweetLength));
+            writer.write('\t');
+
+            writer.write(Double.toString(averageFollowers));
+            writer.write('\t');
+
+            writer.write(Double.toString(averageSentiment));
+            writer.write('\t');
 
             writer.write(Integer.toString(retweetNetworkNumberOfNodes));
             writer.write('\t');
 
             writer.write(Integer.toString(retweetNetworkNumberOfEdges));
-//            writer.write('\t');
-//
-//            writer.write(Integer.toString(retweetNetworkDiameter));
-//            writer.write('\t');
-//
-//            writer.write(Double.toString(retweetNetworkAverageDegree));
+            writer.write('\t');
+
+            writer.write(Integer.toString(retweetNetworkDiameter));
+            writer.write('\t');
+
+            writer.write(Double.toString(retweetNetworkAverageDegree));
 
             writer.write(newline);
-//            writer.write(newline);
 
         } catch (Exception e) {
             e.printStackTrace();
